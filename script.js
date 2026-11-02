@@ -405,6 +405,13 @@ function galItems() {
 }
 function renderGallery(scroll = false) {
   stopInline();
+  // hide category buttons that have nothing in them yet (e.g. Short films until you post one)
+  gal.querySelectorAll(".gal-chips [data-cat]").forEach((b) => {
+    if (b.dataset.cat === "all") return;
+    const m = b.closest(".gal-chips").dataset.for;
+    b.hidden = ![...gal.querySelectorAll(".gi")].some((g) => g.dataset.cat === b.dataset.cat &&
+      g.dataset.medium.split(" ").some((x) => (m === "mix" ? x === "film" || x === "art" : x === m)));
+  });
   setTimeout(() => window.sizeGalRows && sizeGalRows(), 0);
   const grid = gal.querySelector(".gal-grid");
   grid.dataset.medium = galState.medium;
