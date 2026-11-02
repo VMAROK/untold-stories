@@ -1546,7 +1546,20 @@ function inlineEmbed(url) {
   if (vm) return `<iframe src="https://player.vimeo.com/video/${vm[1]}?autoplay=1&playsinline=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Video"></iframe>`;
   return `<video src="${url}" controls autoplay playsinline></video>`;
 }
-function stopInline() { if (inlineEl) { inlineEl.remove(); inlineEl = null; } }
+function stopInline() { if (inlineEl) { inlineEl.stop && inlineEl.stop(); inlineEl.remove(); inlineEl = null; } }
+// YouTube in place: YouTube's own controls are hidden and a clear layer sits over the video, so tapping
+// the picture does nothing. Only the pause / play button pauses, and the timeline lets you jump around.
+let ytApi = null;
+function loadYT() {
+  if (!ytApi) ytApi = new Promise((ok) => {
+    if (window.YT && YT.Player) return ok();
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { prev && prev(); ok(); };
+    const s = document.createElement("script"); s.src = "https://www.youtube.com/iframe_api"; document.head.appendChild(s);
+  });
+  return ytApi;
+}
+const fmtT = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 function playInline(tile, url) {
   stopInline();
   if (typeof MP !== "undefined" && MP.r && !MP.paused) togglePause();   // pause any music
@@ -1559,9 +1572,64 @@ function playInline(tile, url) {
     left: t.left - b.left + box.scrollLeft + "px", top: t.top - b.top + box.scrollTop + "px",
     width: t.width + "px", height: t.height + "px",
   });
-  el.innerHTML = inlineEmbed(url) + `<button type="button" class="inline-x" aria-label="Stop video">×</button>`;
-  el.querySelector(".inline-x").addEventListener("click", stopInline);
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/);
+  if (!yt) {
+    el.innerHTML = inlineEmbed(url) + `<button type="button" class="inline-x" aria-label="Stop video">×</button>`;
+    el.querySelector(".inline-x").addEventListener("click", stopInline);
+    box.appendChild(el); return;
+  }
+  el.innerHTML = `<div class="ip-video"><div></div></div>
+    <div class="ip-shield"></div>
+    <div class="ip-bar">
+      <button type="button" class="ip-pp" aria-label="Pause"></button>
+      <span class="ip-cur">0:00</span>
+      <input class="ip-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Video position" />
+      <span class="ip-dur">0:00</span>
+    </div>
+    <button type="button" class="inline-x" aria-label="Stop video">×</button>`;
   box.appendChild(el);
+  const pp = el.querySelector(".ip-pp"), seek = el.querySelector(".ip-seek");
+  let player = null, dragging = false, timer = null;
+  el.querySelector(".inline-x").addEventListener("click", stopInline);
+  el.stop = () => { clearInterval(timer); try { player && player.destroy(); } catch (e) {} };
+  const sync = () => {
+    if (!player || !player.getDuration) return;
+    const d = player.getDuration() || 0, c = player.getCurrentTime() || 0;
+    el.querySelector(".ip-dur").textContent = fmtT(d);
+    if (!dragging) { el.querySelector(".ip-cur").textContent = fmtT(c); seek.value = d ? Math.round((c / d) * 1000) : 0; }
+  };
+  pp.addEventListener("click", () => {
+    if (!player) return;
+    player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo();
+  });
+  seek.addEventListener("input", () => {
+    dragging = true;
+    const d = player && player.getDuration ? player.getDuration() : 0;
+    el.querySelector(".ip-cur").textContent = fmtT((seek.value / 1000) * d);
+  });
+  seek.addEventListener("change", () => {
+    const d = player && player.getDuration ? player.getDuration() : 0;
+    if (player) player.seekTo((seek.value / 1000) * d, true);
+    dragging = false;
+  });
+  loadYT().then(() => {
+    if (inlineEl !== el) return;
+    player = new YT.Player(el.querySelector(".ip-video > div"), {
+      videoId: yt[1],
+      playerVars: { autoplay: 1, controls: 0, playsinline: 1, rel: 0, modestbranding: 1, fs: 0, iv_load_policy: 3, disablekb: 1 },
+      events: {
+        onReady: (e) => { e.target.playVideo(); sync(); },
+        onStateChange: (e) => {
+          const playing = e.data === 1;
+          el.classList.toggle("playing", playing);
+          if (playing) el.classList.add("started");            // after the first start, taps on the picture do nothing
+          pp.setAttribute("aria-label", playing ? "Pause" : "Play");
+          sync();
+        },
+      },
+    });
+    timer = setInterval(sync, 250);
+  });
 }
 document.addEventListener("click", (e) => {
   const play = e.target.closest(".gi-play");

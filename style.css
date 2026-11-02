@@ -2405,3 +2405,26 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.25); color: #fff; font-size: 18px; line-height: 1; cursor: pointer;
 }
 .gi .gi-cap { cursor: pointer; }
+
+/* YouTube in place: our own controls; tapping the picture doesn't pause */
+.inline-play .ip-video, .inline-play .ip-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.ip-shield { position: absolute; inset: 0; z-index: 1; pointer-events: none; }   /* until it starts, YouTube's own play button can be tapped (iPad) */
+.inline-play.started .ip-shield { pointer-events: auto; }
+.ip-bar {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
+  display: flex; align-items: center; gap: 10px; padding: 26px 12px 10px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
+  font-family: var(--body); font-size: 11px; color: #f2ede6;
+}
+.ip-pp { flex: none; position: relative; width: 34px; height: 34px; border-radius: 50%; background: #f2ede6; border: 0; cursor: pointer; }
+.ip-pp::before {   /* play icon */
+  content: ""; position: absolute; left: 13px; top: 10px; width: 0; height: 0;
+  border-left: 11px solid #0b0909; border-top: 7px solid transparent; border-bottom: 7px solid transparent;
+}
+.inline-play.playing .ip-pp::before {   /* pause icon */
+  left: 11px; top: 10px; width: 12px; height: 14px; border: 0;
+  background: linear-gradient(90deg, #0b0909 0 35%, transparent 35% 65%, #0b0909 65%);
+}
+.ip-cur, .ip-dur { flex: none; min-width: 32px; text-align: center; font-variant-numeric: tabular-nums; }
+.ip-seek { flex: 1; min-width: 0; height: 22px; accent-color: var(--crimson-bright); background: transparent; cursor: pointer; }
+.inline-x { z-index: 3; }
