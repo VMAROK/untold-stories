@@ -847,8 +847,9 @@ function scLoadApi() {
 // iPad / iPhone only let SoundCloud start straight from a tap if its player is already loaded.
 // So the release you open (and the latest release) is loaded ahead of time; one tap on Play starts it.
 // If a track isn't ready yet, SoundCloud's own player pops up above the mini player to tap once.
-const dockShow = () => scDock && scDock.classList.add("show");
-const dockHide = () => scDock && scDock.classList.remove("show");
+// hidden players are made "inert" so they can never grab focus (on iPad that makes the page jump back up)
+const dockShow = () => { if (!scDock) return; scDock.classList.add("show"); if (scCur) scCur.f.inert = false; };
+const dockHide = () => { if (!scDock) return; scDock.classList.remove("show"); scDock.querySelectorAll("iframe").forEach((f) => (f.inert = true)); };
 function scEnsureDock() {
   if (scDock) return;
   scDock = document.createElement("div");
@@ -860,13 +861,13 @@ function scEnsureDock() {
 function scSetCur(o) {
   if (scCur && scCur !== o) scCur.f.remove();
   scCur = o; scFrame = o ? o.f : null; scW = o ? o.w : null;
-  scDock.querySelectorAll("iframe").forEach((f) => f.classList.toggle("cur", !!o && f === o.f));
+  scDock.querySelectorAll("iframe").forEach((f) => { f.classList.toggle("cur", !!o && f === o.f); f.inert = !(f === (o && o.f) && scDock.classList.contains("show")); });
 }
 // a brand-new player each time (changing an existing player's address would add browser-history steps)
 function scMake(url, autoplay) {
   scEnsureDock();
   const o = { url, f: document.createElement("iframe"), w: null, ready: false, want: autoplay };
-  o.f.title = "SoundCloud player"; o.f.allow = "autoplay; encrypted-media";
+  o.f.title = "SoundCloud player"; o.f.allow = "autoplay; encrypted-media"; o.f.inert = true; o.f.tabIndex = -1;
   o.f.src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&auto_play=${autoplay}&visual=false&show_comments=false&show_reposts=false&hide_related=true&color=%238e2533`;
   scDock.appendChild(o.f);
   scLoadApi().then(() => {
@@ -1373,7 +1374,7 @@ function updateMuFilter() {
   const SPOTIFY = "https://open.spotify.com/artist/16kZEsy2rvo6h7gwWlDl0Z";
   const saved = MUSIC.slice();                                  // the list in index.html: fallback + Spotify links
   const f = document.createElement("iframe");
-  f.className = "sc-reader"; f.title = "SoundCloud track list"; f.setAttribute("aria-hidden", "true"); f.tabIndex = -1;
+  f.className = "sc-reader"; f.title = "SoundCloud track list"; f.setAttribute("aria-hidden", "true"); f.tabIndex = -1; f.inert = true;
   f.src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(PROFILE)}&auto_play=false&visual=false`;
   document.body.appendChild(f);
 
@@ -1508,4 +1509,26 @@ function updateMuFilter() {
     });
     renderGallery();
   }).catch(() => {});
+})();
+
+/* ---------- Scroll guard ----------
+   Outside players (SoundCloud / Spotify / YouTube) sometimes yank the page back up on iPad while they load.
+   If a scroll area jumps to the top without you touching it, it's put back where you were. */
+(() => {
+  let touching = false, lastTouch = 0;
+  const mark = () => { touching = true; lastTouch = Date.now(); };
+  ["touchstart", "wheel", "keydown", "pointerdown"].forEach((ev) => addEventListener(ev, mark, { passive: true, capture: true }));
+  addEventListener("touchend", () => { touching = false; lastTouch = Date.now(); }, { passive: true, capture: true });
+  const watch = (el, get, set) => {
+    let last = 0;
+    (el === window ? window : el).addEventListener("scroll", () => {
+      const y = get();
+      const recent = touching || Date.now() - lastTouch < 1500;
+      // a big jump to the very top, not caused by you and not by a Back/top button, is undone
+      if (y < 5 && last > 300 && !recent && !el.__allowTop) { set(last); return; }
+      last = y;
+    }, { passive: true });
+  };
+  watch(window, () => scrollY, (y) => scrollTo(0, y));
+  document.querySelectorAll(".folio, .coll, .release, .reader").forEach((el) => watch(el, () => el.scrollTop, (y) => (el.scrollTop = y)));
 })();
