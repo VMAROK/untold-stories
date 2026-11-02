@@ -51,6 +51,17 @@ window.addEventListener("scroll", () => {
 // Contact form: sends the message to your email through Web3Forms (free).
 // Put your Web3Forms access key below. It only routes messages to your inbox; it doesn't reveal your email.
 const WEB3FORMS_KEY = "995072c5-9b16-42fc-9e83-033eb399072c";
+// EmailJS sends the visitor a copy of their message (from your Zoho address). Free: 200 a month.
+const EMAILJS = { service: "service_33s7lzm", template: "template_xep9qud", publicKey: "2nwiQiLLs_cG2h3nu" };
+function sendCopy(d) {
+  fetch("https://api.emailjs.com/api/v1.0/email/send", {
+    method: "POST", headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      service_id: EMAILJS.service, template_id: EMAILJS.template, user_id: EMAILJS.publicKey,
+      template_params: { email: d.email, name: `${d.first} ${d.last}`.trim(), subject: d.subject || "(no subject)", message: d.message },
+    }),
+  }).catch(() => {});                                                      // if the copy fails, your message still reached you
+}
 const form = document.getElementById("contactForm");
 const note = document.getElementById("formNote");
 if (form) {
@@ -73,7 +84,11 @@ if (form) {
         }),
       });
       const res = await r.json().catch(() => ({}));
-      if (r.ok && res.success) { note.textContent = "Thank you! Your message has been sent. I'll get back to you soon."; form.reset(); }
+      if (r.ok && res.success) {
+        note.textContent = "Thank you! Your message has been sent. I'll get back to you soon. A copy is on its way to your inbox.";
+        sendCopy(d);                                                      // their copy, through EmailJS
+        form.reset();
+      }
       else throw new Error(res.message || "failed");
     } catch (err) {
       note.textContent = "Sorry, that didn't go through. Please try again in a moment.";
