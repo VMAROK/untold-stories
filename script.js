@@ -795,7 +795,7 @@ function stepRelease(d) {
 
 // --- player: SoundCloud tracks play through a hidden SoundCloud player; audio files play directly ---
 const IN_FRAME = window.self !== window.top;
-let scW = null, scFrame = null, scApi = null, scPos = 0;
+let scW = null, scFrame = null, scApi = null, scPos = 0, scDock = null, scWait = null;
 function scLoadApi() {
   if (!scApi) scApi = new Promise((ok, no) => {
     if (window.SC && SC.Widget) return ok();
@@ -805,20 +805,33 @@ function scLoadApi() {
   });
   return scApi;
 }
+// iPad / iPhone (and some browsers) only let SoundCloud start after a tap inside its own player,
+// so the real player pops up above the mini player. Once it's playing, it tucks itself away.
+const dockShow = () => scDock && scDock.classList.add("show");
+const dockHide = () => scDock && scDock.classList.remove("show");
 function scPlay(url) {
   scPos = 0;
-  if (scW) { scW.load(url, { auto_play: true, visual: false, callback: () => scW.play() }); return; }
-  const src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&auto_play=true&visual=false&show_comments=false`;
-  if (!scFrame) {
+  const src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&auto_play=true&visual=false&show_comments=false&show_reposts=false&hide_related=true&color=%238e2533`;
+  clearTimeout(scWait); scWait = setTimeout(dockShow, 1200);          // not playing on its own? show the player
+  if (scW) { scW.load(url, { auto_play: true, visual: false, show_comments: false, hide_related: true, color: "8e2533", callback: () => scW.play() }); return; }
+  if (!scDock) {
+    scDock = document.createElement("div");
+    scDock.className = "sc-dock";
+    scDock.innerHTML = `<div class="sc-dock-h"><span>Tap ▶ to start</span><button type="button" aria-label="Hide player">⌄</button></div>`;
+    scDock.querySelector("button").onclick = dockHide;
     scFrame = document.createElement("iframe");
-    scFrame.className = "sc-hidden"; scFrame.title = "SoundCloud player"; scFrame.allow = "autoplay";
-    scFrame.src = src; document.body.appendChild(scFrame);
+    scFrame.title = "SoundCloud player"; scFrame.allow = "autoplay; encrypted-media"; scFrame.src = src;
+    scDock.appendChild(scFrame); document.body.appendChild(scDock);
     scLoadApi().then(() => {
       scW = SC.Widget(scFrame);
-      scW.bind(SC.Widget.Events.READY, () => { if (MP.mode === "sc" && !MP.paused) scW.play(); });
+      scW.bind(SC.Widget.Events.READY, () => { if (MP.mode === "sc") scW.play(); });
+      scW.bind(SC.Widget.Events.PLAY, () => {
+        clearTimeout(scWait); MP.paused = false; syncPlayingUI(); setTimeout(dockHide, 500);
+      });
+      scW.bind(SC.Widget.Events.PAUSE, () => { MP.paused = true; syncPlayingUI(); });
       scW.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => (scPos = e.currentPosition / 1000));
       scW.bind(SC.Widget.Events.FINISH, () => nextTrack(1));
-    }).catch(() => {});
+    }).catch(() => dockShow());
   } else scFrame.src = src;
 }
 // --- placeholder tracks (no link or file) play a soft generated tone ---
@@ -847,6 +860,7 @@ function synthStart(seed) {
 function stopSound() {
   MP.audio.pause();
   if (scW && MP.mode === "sc") scW.pause();
+  clearTimeout(scWait); dockHide();
   if (MP.synth) { MP.synth.stop(); MP.synth = null; }
 }
 function playTrack(r, ti) {
@@ -857,7 +871,8 @@ function playTrack(r, ti) {
   stopSound();
   MP.r = r; MP.ti = ti; MP.paused = false;
   if (t[3] && !t[2]) {
-    MP.mode = "sc"; MP.dur = toSec(t[1]) || 0; scPlay(t[3]);
+    MP.mode = "sc"; MP.dur = toSec(t[1]) || 0; MP.paused = true;   // becomes "playing" once SoundCloud actually starts
+    scPlay(t[3]);
   } else if (t[2]) {
     MP.mode = "audio"; MP.audio.src = t[2]; MP.dur = toSec(t[1]) || 0;
     MP.audio.play().catch(() => {});
@@ -878,7 +893,11 @@ function togglePause() {
   if (!MP.r) return;
   MP.paused = !MP.paused;
   if (MP.mode === "audio") MP.paused ? MP.audio.pause() : MP.audio.play().catch(() => {});
-  else if (MP.mode === "sc") { if (scW) MP.paused ? scW.pause() : scW.play(); }
+  else if (MP.mode === "sc") {
+    if (!scW) return;
+    if (MP.paused) { scW.pause(); }
+    else { MP.paused = true; scW.play(); clearTimeout(scWait); scWait = setTimeout(dockShow, 1200); }   // "playing" again when SoundCloud confirms
+  }
   else if (MP.ctx) MP.paused ? MP.ctx.suspend() : MP.ctx.resume();
   syncPlayingUI();
 }
