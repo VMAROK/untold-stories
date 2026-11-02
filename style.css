@@ -2495,3 +2495,15 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   .gal-grid[data-medium="mix"] .gi.show .gi-cap h3 { font-size: 15px; }
   .gal-grid[data-medium="mix"] .gi.show .gi-cat { font-size: 7.5px; letter-spacing: 1.4px; }
 }
+
+/* collection carousels: shorts keep a portrait card */
+.car-track > .ang-btn.is-tall { grid-column: auto; }
+.loc-row-videos .car-track .ang-btn.is-tall .ang-tile { aspect-ratio: 9 / 16; }
+/* a row mixing shorts and wide videos: every card the same height, shorts portrait, videos 16:9 */
+.loc-row-videos .car-track:has(.is-tall) { display: flex; align-items: flex-start; --ch: 340px; }
+.loc-row-videos .car-track:has(.is-tall) > .ang-btn { flex: none; width: calc(var(--ch) * 16 / 9); max-width: 84vw; }
+.loc-row-videos .car-track:has(.is-tall) > .ang-btn.is-tall { width: calc(var(--ch) * 9 / 16); }
+.loc-row-videos .car-track:has(.is-tall) > .ang-btn .ang-tile { aspect-ratio: 16 / 9; }
+.loc-row-videos .car-track:has(.is-tall) > .ang-btn.is-tall .ang-tile { aspect-ratio: 9 / 16; }
+.coll-feature .loc-row:first-child { margin-top: 0; }
+@media (max-width: 640px) { .loc-row-videos .car-track:has(.is-tall) { --ch: 260px; } }

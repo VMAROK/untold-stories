@@ -559,6 +559,27 @@ function angleTile(a, label, cap) {
   b.querySelector("h4").textContent = a.dataset.title || label;
   return b;
 }
+// a titled, swipeable row of videos or photos (inside a location, or at the top of a collection)
+function carouselRow(name, set, world, where, base, W) {
+  const row = document.createElement("div");
+  row.className = "loc-row loc-row-" + name.toLowerCase();
+  row.innerHTML = `<div class="loc-row-h"><h4>${name}</h4><span>${set.length}</span>
+      <div class="car-nav"><button type="button" class="car-prev" aria-label="Previous">‹</button><button type="button" class="car-next" aria-label="Next">›</button></div></div>
+    <div class="car-track"></div>`;
+  const track = row.querySelector(".car-track");
+  const list = set.map((a, i) => anglePiece(a, i, set.length, world, where, base));
+  set.forEach((a, i) => {
+    const cap = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : "Still";
+    const t = angleTile(a, `${name === "Videos" ? "Video" : W.piece} ${pad2(i + 1)}`, cap);
+    if (a.dataset.orient === "tall") t.classList.add("is-tall");
+    t.addEventListener("click", () => openView(list, i, "coll"));
+    track.appendChild(t);
+  });
+  const step = (d) => track.scrollBy({ left: d * track.clientWidth * 0.8, behavior: "smooth" });
+  row.querySelector(".car-prev").addEventListener("click", () => step(-1));
+  row.querySelector(".car-next").addEventListener("click", () => step(1));
+  return row;
+}
 function collWords(item) {
   const d = item.dataset;
   return { unit: d.unit || "Location", units: d.units || "locations", piece: d.piece || "Angle", pieces: d.pieces || "angles" };
@@ -582,12 +603,17 @@ function openColl(item, push = true) {
   // featured piece(s) that sit outside any location
   const feat = $v("cl-feature"); feat.innerHTML = "";
   const loose = [...d.children].filter((el) => el.classList.contains("ang"));
-  loose.forEach((a, i) => {
-    const kindLbl = a.dataset.kind === "video" ? a.dataset.spec.replace(/^[^:]*:\s*/, "") : "Still";
+  // one wide piece: a big featured tile. Several (or shorts): a Videos / Photos carousel at the top
+  if (loose.length === 1 && loose[0].dataset.orient !== "tall") {
+    const a = loose[0];
+    const kindLbl = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : "Still";
     const t = angleTile(a, "Featured", kindLbl);
-    t.addEventListener("click", () => openView(loose.map((x, j) => anglePiece(x, j, loose.length, world, "", base)), i, "coll"));
+    t.addEventListener("click", () => openView([anglePiece(a, 0, 1, world, "", base)], 0, "coll"));
     feat.appendChild(t);
-  });
+  } else {
+    [["Videos", loose.filter((a) => a.dataset.kind === "video")], ["Photos", loose.filter((a) => a.dataset.kind !== "video")]]
+      .forEach(([name, set]) => set.length && feat.appendChild(carouselRow(name, set, world, "", base, W)));
+  }
   // locations
   const wrap = $v("cl-locs"); wrap.innerHTML = "";
   [...d.querySelectorAll(".loc")].forEach((loc, li) => {
@@ -626,26 +652,7 @@ function openColl(item, push = true) {
     // inside the drop-down: a Videos row, then a Photos row, each a swipeable carousel
     const body = sec.querySelector(".loc-body-in");
     [["Videos", angs.filter((a) => a.dataset.kind === "video")], ["Photos", angs.filter((a) => a.dataset.kind !== "video")]]
-      .forEach(([name, set]) => {
-        if (!set.length) return;
-        const row = document.createElement("div");
-        row.className = "loc-row loc-row-" + name.toLowerCase();
-        row.innerHTML = `<div class="loc-row-h"><h4>${name}</h4><span>${set.length}</span>
-            <div class="car-nav"><button type="button" class="car-prev" aria-label="Previous">‹</button><button type="button" class="car-next" aria-label="Next">›</button></div></div>
-          <div class="car-track"></div>`;
-        const track = row.querySelector(".car-track");
-        const list = set.map((a, i) => anglePiece(a, i, set.length, world, loc.dataset.name, base));
-        set.forEach((a, i) => {
-          const cap = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : "Still";
-          const t = angleTile(a, `${name === "Videos" ? "Video" : W.piece} ${pad2(i + 1)}`, cap);
-          t.addEventListener("click", () => openView(list, i, "coll"));
-          track.appendChild(t);
-        });
-        const step = (d) => track.scrollBy({ left: d * track.clientWidth * 0.8, behavior: "smooth" });
-        row.querySelector(".car-prev").addEventListener("click", () => step(-1));
-        row.querySelector(".car-next").addEventListener("click", () => step(1));
-        body.appendChild(row);
-      });
+      .forEach(([name, set]) => set.length && body.appendChild(carouselRow(name, set, world, loc.dataset.name, base, W)));
     wrap.appendChild(sec);
   });
   if (push) history.pushState({ folio: "animation", coll: item.dataset.coll }, "", "#animation");
@@ -1464,14 +1471,14 @@ function updateMuFilter() {
 (() => {
   if (!gal) return;
   fetch("data/youtube.json", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => {
-    // a hashtag that matches a collection location (#poolrooms -> "Pool Rooms") puts the video in that
-    // location's Videos row; otherwise liminal videos and untagged shorts go in the grid
+    // Liminal videos live inside the Level collections, never loose in the grid:
+    //   a location's name as a hashtag (#poolrooms)  -> that location's Videos row
+    //   #level0 / #level1 / #level2                   -> the top of that Level collection
+    //   any other #liminal video                      -> the top of Level 0
     const key = (t) => String(t).toLowerCase().replace(/[^a-z0-9]/g, "");
     const locs = [...gal.querySelectorAll(".coll-data section.loc")];
     const placed = new Set();
-    ((d && d.videos) || []).forEach((v) => {
-      const loc = locs.find((l) => (v.hashtags || []).includes(key(l.dataset.name)));
-      if (!loc) return;
+    const asAngle = (v) => {
       const a = document.createElement("div");
       a.className = "ang";
       Object.assign(a.dataset, {
@@ -1480,10 +1487,17 @@ function updateMuFilter() {
         spec: v.short ? "Format: Short" : "Format: Video",
       });
       a.textContent = v.description || "";
-      loc.prepend(a);                                         // newest first in the Videos row
-      placed.add(v.id);
+      return a;
+    };
+    ((d && d.videos) || []).forEach((v) => {
+      const tags = v.hashtags || [];
+      const loc = locs.find((l) => tags.includes(key(l.dataset.name)));
+      if (loc) { loc.prepend(asAngle(v)); placed.add(v.id); return; }
+      const lv = tags.map((t) => (t.match(/^level(\d+)$/) || [])[1]).find((n) => n != null);
+      const coll = gal.querySelector(`.gi-coll[data-coll="level-${lv != null ? lv : 0}"] .coll-data`);
+      if ((lv != null || v.section === "liminal") && coll) { coll.prepend(asAngle(v)); placed.add(v.id); }
     });
-    const vids = ((d && d.videos) || []).filter((v) => !placed.has(v.id) && (v.section === "liminal" || v.section === "general"));
+    const vids = ((d && d.videos) || []).filter((v) => !placed.has(v.id) && v.section === "general");
     if (!vids.length) { renderGallery(); return; }
     const grid = gal.querySelector(".gal-grid");
     const first = grid.querySelector('.gi[data-medium="film"]:not(.gi-ext)');
