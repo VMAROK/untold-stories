@@ -1346,7 +1346,7 @@ function updateMuFilter() {
 /* ---------- Live music from SoundCloud ----------
    On the published site, the track list comes straight from your SoundCloud profile every time the page opens:
    titles, lengths, artwork, release dates, genres, and the album name in each track's metadata.
-   Tracks with the same album name become one album; the rest are singles. New uploads appear by themselves.
+   Any track with an album name is shown on that album (even if it's the only one on SoundCloud so far); the rest are singles. New uploads appear by themselves.
    If SoundCloud can't be reached (like in the preview), the list saved in index.html is shown instead. */
 (() => {
   if (IN_FRAME || !musicEl) return;
@@ -1383,14 +1383,13 @@ function updateMuFilter() {
       else out.push(single(s));
     });
     albums.forEach((list, name) => {
-      if (list.length === 1) { out.push(single(list[0], name)); return; }
       list.sort((a, b) => when(a) - when(b));                  // album order: earliest first
       const last = when(list[list.length - 1]);
       out.push({
-        id: "a-" + slug(name), title: name, type: list.length <= 4 ? "EP" : "Album",
+        id: "a-" + slug(name), title: name, type: "Album",                        // SoundCloud says it's on an album, so it's shown as one
         year: last.getUTCFullYear(), date: nice(last), sortDate: +last,
         art: big(list.find((s) => s.artwork_url)?.artwork_url), cover: "mc-1", label: "#8e2533",
-        about: firstLine(list[0]) || `${list.length} tracks.`, tags: tagsOf(list[0]),
+        about: firstLine(list[0]) || savedFor(clean(list[0].title))?.about || `${list.length} track${list.length > 1 ? "s" : ""}.`, tags: tagsOf(list[0]),
         credits: [["Written & produced by", ARTIST]],
         links: { SoundCloud: list[0].permalink_url, Spotify: SPOTIFY },
         tracks: list.map((s) => [clean(s.title), dur(s.duration), "", s.permalink_url]),
