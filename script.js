@@ -827,7 +827,7 @@ function scPlay(url) {
       scW.bind(SC.Widget.Events.READY, () => { if (MP.mode === "sc") scW.play(); });
       scW.bind(SC.Widget.Events.PLAY, () => {
         clearTimeout(scWait); MP.paused = false; syncPlayingUI(); setTimeout(dockHide, 500);
-        window.onlyOne && onlyOne("player");
+        window.unloadListen && unloadListen();
       });
       scW.bind(SC.Widget.Events.PAUSE, () => { MP.paused = true; syncPlayingUI(); });
       scW.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => (scPos = e.currentPosition / 1000));
@@ -875,7 +875,7 @@ function playTrack(r, ti) {
     MP.mode = "sc"; MP.dur = toSec(t[1]) || 0; MP.paused = true;   // becomes "playing" once SoundCloud actually starts
     scPlay(t[3]);
   } else if (t[2]) {
-    window.onlyOne && onlyOne("player");
+    window.unloadListen && unloadListen();
     MP.mode = "audio"; MP.audio.src = t[2]; MP.dur = toSec(t[1]) || 0;
     MP.audio.play().catch(() => {});
   } else {
@@ -1002,14 +1002,37 @@ if (musicEl && MUSIC.length) {
 
 // Spotify / SoundCloud players: load them when the site runs on its own (hosted or Live Server).
 // Inside the preview viewer outside players are blocked, so the "Listen on" cards show instead.
-(function () {
+(() => {
+  // one at a time: Spotify OR SoundCloud is loaded; starting a track unloads it, so nothing overlaps
   const box = document.querySelector(".mu-embeds");
   if (!box) return;
   let framed = true;
   try { framed = window.self !== window.top; } catch (e) { framed = true; }
-  if (framed) return;
-  box.querySelectorAll("iframe[data-src]").forEach((f) => { f.src = f.dataset.src; f.hidden = false; });
+  if (framed) return;                                   // preview: show the link cards instead
   box.classList.add("live");
+  const frames = { sp: box.querySelector('[data-key="sp"]'), sc: box.querySelector('[data-key="sc"]') };
+  const NAME = { sp: "Spotify", sc: "SoundCloud" };
+  const tabs = [...box.querySelectorAll(".mu-src [data-src]")];
+  const loadBtn = box.querySelector(".mu-slot-load");
+  let tab = "sp";
+  const blank = () => Object.values(frames).forEach((f) => { f.removeAttribute("src"); f.hidden = true; });
+  const load = (k) => {
+    tab = k;
+    if (typeof MP !== "undefined" && MP.r) stopAll();   // the track player stops
+    blank();                                            // the other box stops
+    frames[k].src = frames[k].dataset.src; frames[k].hidden = false;
+    loadBtn.hidden = true;
+    tabs.forEach((t) => t.classList.toggle("on", t.dataset.src === k));
+  };
+  window.unloadListen = () => {
+    if (loadBtn.hidden === false) return;
+    blank();
+    loadBtn.querySelector(".t").textContent = `Open the ${NAME[tab]} player`;
+    loadBtn.hidden = false;
+  };
+  tabs.forEach((t) => t.addEventListener("click", () => load(t.dataset.src)));
+  loadBtn.addEventListener("click", () => load(tab));
+  load("sp");
 })();
 
 // ===== Modern Traces: dance =====
@@ -1241,37 +1264,3 @@ function muToast(title, url) {
   requestAnimationFrame(() => el.classList.add("show"));
   clearTimeout(muToast.t); muToast.t = setTimeout(() => el.classList.remove("show"), 7000);
 }
-
-/* ---------- One thing playing at a time: track player, SoundCloud box, Spotify box ---------- */
-(() => {
-  const box = document.querySelector(".mu-embeds");
-  if (!box) return;
-  const spF = box.querySelector('iframe[title*="Spotify"]');
-  const scF = box.querySelector('iframe[title*="SoundCloud"]');
-  let scBox = null, spOn = false;
-  const stopSpotify = () => { if (spF && spOn && spF.src) { spF.src = spF.dataset.src; spOn = false; } };   // reloading stops it
-  const stopSCBox = () => { if (scBox) scBox.pause(); };
-  const stopPlayer = () => { if (typeof MP !== "undefined" && MP.r) stopAll(); };
-  window.onlyOne = (who) => {
-    if (who !== "player") stopPlayer();
-    if (who !== "spotify") stopSpotify();
-    if (who !== "soundcloud") stopSCBox();
-  };
-  // SoundCloud box: its own player tells us when it starts
-  if (scF) {
-    const hook = () => {
-      if (!scF.src || scBox) return;
-      scLoadApi().then(() => {
-        scBox = SC.Widget(scF);
-        scBox.bind(SC.Widget.Events.PLAY, () => onlyOne("soundcloud"));
-      }).catch(() => {});
-    };
-    scF.addEventListener("load", hook); hook();
-  }
-  // Spotify box: it can't report playback, so a tap inside it counts as "playing"
-  window.addEventListener("blur", () => setTimeout(() => {
-    const a = document.activeElement;
-    if (a === spF) { spOn = true; onlyOne("spotify"); }
-    else if (a === scF) { stopPlayer(); stopSpotify(); }
-  }, 0));
-})();

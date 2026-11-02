@@ -933,11 +933,19 @@
           </div>
         </div>
         <div class="mu-embeds">
-          <!-- the real players load on your hosted site / Live Server; the cards show where outside players are blocked -->
-          <iframe title="VMAROK on Spotify" data-src="https://open.spotify.com/embed/artist/16kZEsy2rvo6h7gwWlDl0Z?theme=0" height="380"
-            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" hidden></iframe>
-          <iframe title="VMAROK on SoundCloud" height="380" allow="autoplay" loading="lazy" hidden
-            data-src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fvmarok&amp;color=%238e2533&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false"></iframe>
+          <!-- one player at a time: the tabs switch between Spotify and SoundCloud.
+               The real players load on your hosted site; the cards show where outside players are blocked -->
+          <div class="mu-src" role="tablist" aria-label="Choose a player">
+            <button type="button" role="tab" data-src="sp" class="on">Spotify</button>
+            <button type="button" role="tab" data-src="sc">SoundCloud</button>
+          </div>
+          <div class="mu-slot">
+            <iframe title="VMAROK on Spotify" data-key="sp" data-src="https://open.spotify.com/embed/artist/16kZEsy2rvo6h7gwWlDl0Z?theme=0" height="380"
+              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" hidden></iframe>
+            <iframe title="VMAROK on SoundCloud" data-key="sc" height="380" allow="autoplay" loading="lazy" hidden
+              data-src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fvmarok&amp;color=%238e2533&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false"></iframe>
+            <button type="button" class="mu-slot-load" hidden><span class="k">Player paused while a track plays</span><span class="t">Open the Spotify player</span></button>
+          </div>
           <a class="listen-card sp" href="https://open.spotify.com/artist/16kZEsy2rvo6h7gwWlDl0Z" target="_blank" rel="noopener">
             <span class="lc-k">Listen on</span><span class="lc-t">Spotify</span>
             <span class="lc-s">Follow VMAROK and play the latest releases</span><span class="lc-go">Open Spotify →</span>
