@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Untold Stories</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500;600&family=Manrope:wght@300;400;500&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- nav -->
+  <header class="nav">
+    <a class="logo" href="#home" aria-label="AMAROK, home"><img src="images/amarok-mark-nav.svg" alt="AMAROK" /></a>
+    <nav class="nav-links">
+      <a href="#home" class="active"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20h-5.5v-5.5h-6V20H3.5z"/></svg><span class="nt">Home</span></a>
+      <a href="#portfolio"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7"/><rect x="13.5" y="3.5" width="7" height="7"/><rect x="3.5" y="13.5" width="7" height="7"/><rect x="13.5" y="13.5" width="7" height="7"/></svg><span class="nt">Portfolio</span></a>
+      <a href="#about"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.4-3.9 4.2-5.8 7.5-5.8s6.1 1.9 7.5 5.8"/></svg><span class="nt">About</span></a>
+      <a href="#contact"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg><span class="nt">Contact</span></a>
+    </nav>
+    <div class="nav-tag">Art&nbsp;&nbsp;/&nbsp;&nbsp;Story&nbsp;&nbsp;/&nbsp;&nbsp;Motion</div>
+  </header>
+
+  <!-- =====================================================
+       SECTIONS 1 + 2 share one wallpaper (top-bg.png)
+       ===================================================== -->
+  <div class="wall wall-top" id="home">
+
+
+    <!-- ========== SECTION 1: HERO ========== -->
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Untold <span>Stories</span></h1>
+        <div class="rule"></div>
+        <p>
+          True stories no one dares to speak of. It is subliminal.<br />
+          Stories that were wiped from the name of history,<br />
+          but revealed to those who look further.
+        </p>
+      </div>
+
+      <div class="slide-index">
+        <span class="line"></span>
+        <span>01</span>
+      </div>
+    </section>
+
+    <!-- ========== SECTION 2: CARDS ========== -->
+    <section class="cards" id="portfolio">
+      <article class="card" data-open="screenplays">
+        <div class="card-img img-1"></div>
+        <a class="card-label" href="#screenplays">
+          <span class="num">01</span><span class="dash"></span>
+          <span class="title">Hidden Places</span><span class="arrow">→</span>
+        </a>
+      </article>
+
+      <article class="card" data-open="animation">
+        <div class="card-img img-2"></div>
+        <a class="card-label" href="#animation">
+          <span class="num">02</span><span class="dash"></span>
+          <span class="title">Forgotten Spaces</span><span class="arrow">→</span>
+        </a>
+      </article>
+
+      <article class="card" data-open="music">
+        <div class="card-img img-3"></div>
+        <a class="card-label" href="#music">
+          <span class="num">03</span><span class="dash"></span>
+          <span class="title">Unseen Perspectives</span><span class="arrow">→</span>
+        </a>
+      </article>
+
+      <article class="card" data-open="dance">
+        <div class="card-img img-4"></div>
+        <a class="card-label" href="#dance">
+          <span class="num">04</span><span class="dash"></span>
+          <span class="title">Modern Traces</span><span class="arrow">→</span>
+        </a>
+      </article>
+    </section>
+  </div>
+
+  <!-- ========== DIVIDER: dark band between the two wallpapers ========== -->
+  <div class="divider">
+    <p class="quote" id="quote">Dreams are realities <em>unspoken.</em></p>
+  </div>
+
+  <!-- =====================================================
+       SECTIONS 3 + 4 share one wallpaper (about-contact-bg.png)
+       ===================================================== -->
+  <div class="wall wall-bottom">
+  <div class="twinkles" aria-hidden="true"></div>  <!-- twinkling stars, filled by script.js -->
+
+  <!-- ========== SECTION 3: ABOUT ME ========== -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-photo">
+        <img src="images/about-portrait.png" alt="Self-portrait in a gas mask and hat, holding a camera" />
+      </div>
+
+      <div class="about-text">
+        <h2>About Me</h2>
+        <div class="rule"></div>
+        <h3>Screenwriter, 3D Artist, Musician, Dancer</h3>
+        <p>
+          With over a decade of experience in high-end boutique design, I specialize
+          in creating spaces that tell a story through texture and light. My approach
+          blends neo-classical editorial principles with organic minimalism, ensuring
+          every project is a curated masterpiece. I believe in the power of silence and
+          the beauty of the unpolished, transforming local heritage into timeless design
+          experiences.
+        </p>
+      </div>
+
+      <div class="waveform" aria-hidden="true"></div>
+
+      <ul class="disciplines">
+        <li>Film</li>
+        <li>3D Art</li>
+        <li>Music</li>
+        <li>Dance</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ========== SECTION 4: GET IN TOUCH ========== -->
+  <section class="contact" id="contact">
+    <div class="contact-inner">
+      <div class="contact-info">
+        <h2>Get in Touch</h2>
+        <div class="rule"></div>
+        <p>
+          Whether you have a project in mind or just want to say hello,
+          I'd love to hear from you. Reach out to discuss your vision
+          or simply drop a line about your latest project.
+        </p>
+
+        <ul class="contact-list">
+          <li>
+            <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 6l9 7 9-7"/></svg>
+            Email: hello@portfolio-showcase.com
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2z"/></svg>
+            Phone: +1 (555) 012-3456
+          </li>
+          <li>
+            <svg viewBox="0 0 24 24"><path d="M12 21s-7-6.5-7-12a7 7 0 0 1 14 0c0 5.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+            Studio: 123 Artisanal Way, Design District, NY
+          </li>
+        </ul>
+
+        <p class="script">Let's create<br /><span>something.</span></p>
+      </div>
+
+      <form class="contact-form" id="contactForm">
+        <div class="row">
+          <label>
+            <span>First Name *</span>
+            <input type="text" name="first" required />
+          </label>
+          <label>
+            <span>Last Name *</span>
+            <input type="text" name="last" required />
+          </label>
+        </div>
+        <label>
+          <span>Email Address *</span>
+          <input type="email" name="email" required />
+        </label>
+        <label>
+          <span>Subject</span>
+          <input type="text" name="subject" />
+        </label>
+        <label>
+          <span>Message *</span>
+          <textarea name="message" rows="5" required></textarea>
+        </label>
+        <button type="submit">Send <span class="arrow">→</span></button>
+        <p class="form-note" id="formNote" aria-live="polite"></p>
+      </form>
+
+      <div class="footer-tag">
+        <span class="line"></span>
+        <p>Creative minds build<br />different worlds</p>
+      </div>
+    </div>
+  </section>
+  </div>
+
+  <!-- ========== SITE FOOTER: also copied to the bottom of every portfolio page by script.js ========== -->
+  <footer class="site-foot" id="siteFoot">
+    <p class="sf-note"><span>This website was heavily assisted by ClaudeAI.</span> <span>While it does the work I hate, I can do the work I love.</span></p>
+    <p class="sf-copy">© <span class="sf-year">2026</span> AMAROK · Untold Stories</p>
+  </footer>
+
+  <!-- ========== PORTFOLIO NAVBAR: shows on top of every portfolio page ========== -->
+  <header class="nav pnav" id="pnav" aria-label="Site navigation" hidden>
+    <a class="logo" href="#home" data-leave="home" aria-label="AMAROK, home"><img src="images/amarok-mark-nav.svg" alt="AMAROK" /></a>
+    <nav class="nav-links">
+      <a href="#home" data-leave="home"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 10.5 12 3.5l8.5 7V20h-5.5v-5.5h-6V20H3.5z"/></svg><span class="nt">Home</span></a>
+      <div class="nav-drop">
+        <a href="#portfolio" data-leave="portfolio" class="active"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7"/><rect x="13.5" y="3.5" width="7" height="7"/><rect x="3.5" y="13.5" width="7" height="7"/><rect x="13.5" y="13.5" width="7" height="7"/></svg><span class="nt">Portfolio</span></a>
+        <div class="drop-menu" role="menu" aria-label="Portfolios">
+          <button type="button" role="menuitem" data-folio="screenplays"><span class="dn">01</span><span class="dt">Hidden Places</span><span class="dk">Screenplays</span></button>
+          <button type="button" role="menuitem" data-folio="animation"><span class="dn">02</span><span class="dt">Forgotten Spaces</span><span class="dk">3D Art &amp; Film</span></button>
+          <button type="button" role="menuitem" data-folio="music"><span class="dn">03</span><span class="dt">Unseen Perspectives</span><span class="dk">Music</span></button>
+          <button type="button" role="menuitem" data-folio="dance"><span class="dn">04</span><span class="dt">Modern Traces</span><span class="dk">Dance</span></button>
+        </div>
+      </div>
+      <a href="#about" data-leave="about"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4.5 20.5c1.4-3.9 4.2-5.8 7.5-5.8s6.1 1.9 7.5 5.8"/></svg><span class="nt">About</span></a>
+      <a href="#contact" data-leave="contact"><svg class="ni" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13"/><path d="m3.5 6.5 8.5 6.5 8.5-6.5"/></svg><span class="nt">Contact</span></a>
+    </nav>
+    <div class="nav-tag">Art&nbsp;&nbsp;/&nbsp;&nbsp;Story&nbsp;&nbsp;/&nbsp;&nbsp;Motion</div>
+  </header>
+
+  <!-- ========== PORTFOLIO VIEW: HIDDEN PLACES = SCREENPLAYS ==========
+       Placeholder scripts: swap titles, loglines and links for your own.
+       Put each script's PDF in /scripts and set its href, e.g. href="scripts/the-quiet-archive.pdf" -->
+  <section class="folio" id="screenplays" role="dialog" aria-modal="true" aria-label="Screenplays" hidden>
+    <div class="folio-inner">
+      <button class="folio-close" type="button" data-close><span>←</span> Back</button>
+
+      <header class="folio-head">
+        <p class="folio-kicker"><span>01</span><span class="dash"></span>Hidden Places</p>
+        <h2>Screenplays</h2>
+        <div class="rule"></div>
+        <p class="folio-intro">Stories written for the screen: features, shorts and pilots.
+          Each one begins in a place no one thought to look.</p>
+        <div class="folio-filter" role="group" aria-label="Filter by format">
+          <button type="button" class="on" data-filter="all">All</button>
+          <button type="button" data-filter="feature">Features</button>
+          <button type="button" data-filter="short">Shorts</button>
+          <button type="button" data-filter="pilot">Pilots</button>
+        </div>
+      </header>
+
+      <ol class="sp-list">
+        <li class="sp" data-format="feature">
+          <a class="sp-cover" href="#" aria-label="Read The Quiet Archive">
+            <span class="brad"></span><span class="brad"></span>
+            <span class="cv-title">THE QUIET ARCHIVE</span>
+            <span class="cv-by">Written by</span>
+            <span class="cv-name">AMAROK</span>
+            <span class="cv-draft">Draft 3 · 2026</span>
+          </a>
+          <div class="sp-info">
+            <p class="sp-num">01</p>
+            <h3>The Quiet Archive</h3>
+            <ul class="sp-meta"><li>Feature</li><li>Psychological thriller</li><li>104 pages</li></ul>
+            <p class="sp-log">A night archivist discovers the city's erased records are still being written, and that tomorrow's entry has her name on it.</p>
+            <div class="sp-foot">
+              <span class="sp-status dev"><i></i>In development</span>
+              <a class="sp-read" href="#">Read script <span>→</span></a>
+            </div>
+          </div>
+          <!-- shown when this screenplay is opened -->
+          <div class="sp-detail" hidden>
+            <p class="sp-syn">Mara Voss has catalogued the city's records alone, at night, for eleven years. When a ledger appears with tomorrow's date and her name in fresh ink, she follows the entries backwards through decades of erased lives, and finds that every person who was written into the archive's last page disappeared the following day.</p>
+            <div class="sp-excerpt">
+              <p class="tr">FADE IN:</p>
+              <p class="sc">INT. CITY HALL ARCHIVE - BASEMENT - NIGHT</p>
+              <p class="ac">Endless shelves. A single green lamp. Dust hangs in the light like it has nowhere else to be.</p>
+              <p class="ac">MARA VOSS (30s), cardigan over a security badge, wheels a cart of ledgers between the stacks. She stops. A drawer is open that wasn't a minute ago.</p>
+              <p class="ac">She slides it closed. Somewhere deeper in the dark, another drawer slides open.</p>
+              <p class="ch">MARA</p>
+              <p class="pa">(quietly)</p>
+              <p class="di">Hello?</p>
+              <p class="ac">Nothing. She pulls a ledger from the open drawer. The ink on the last page is still wet.</p>
+              <p class="sc">INSERT - THE LEDGER</p>
+              <p class="ac">Tomorrow's date. And beneath it, in careful handwriting: MARA VOSS.</p>
+            </div>
+          </div>
+        </li>
+        <li class="sp" data-format="short">
+          <a class="sp-cover" href="#" aria-label="Read Salt &amp; Static">
+            <span class="brad"></span><span class="brad"></span>
+            <span class="cv-title">SALT &AMP; STATIC</span>
+            <span class="cv-by">Written by</span>
+            <span class="cv-name">AMAROK</span>
+            <span class="cv-draft">Final draft · 2025</span>
+          </a>
+          <div class="sp-info">
+            <p class="sp-num">02</p>
+            <h3>Salt &amp; Static</h3>
+            <ul class="sp-meta"><li>Short</li><li>Drama</li><li>14 pages</li></ul>
+            <p class="sp-log">Two estranged brothers rebuild their late father's pirate radio station, broadcasting the one song he never let them hear.</p>
+            <div class="sp-foot">
+              <span class="sp-status done"><i></i>Completed</span>
+              <a class="sp-read" href="#">Read script <span>→</span></a>
+            </div>
+          </div>
+          <!-- shown when this screenplay is opened -->
+          <div class="sp-detail" hidden>
+            <p class="sp-syn">Eight years after walking out, Noah comes home for his father's funeral and finds his younger brother Eli restoring the pirate radio station their father ran from a cliffside shack. To finish it, they have to play the tapes he left behind, including the one song he swore they would never hear.</p>
+            <div class="sp-excerpt">
+              <p class="sc">EXT. CLIFFSIDE SHACK - DAWN</p>
+              <p class="ac">A rusted antenna leans into the wind above a shack held together by tarp and stubbornness.</p>
+              <p class="sc">INT. SHACK - CONTINUOUS</p>
+              <p class="ac">Dust sheets over everything. ELI (20s) pulls one off: a homemade radio desk, every dial taped and labelled in a father's handwriting.</p>
+              <p class="ac">NOAH (30s) lingers in the doorway. He hasn't crossed a threshold in this house in eight years.</p>
+              <p class="ch">NOAH</p>
+              <p class="di">He kept all of it.</p>
+              <p class="ch">ELI</p>
+              <p class="di">He kept everything. Except us.</p>
+              <p class="ac">Eli flips a switch. The desk hums. A small red light blinks: ON AIR.</p>
+            </div>
+          </div>
+        </li>
+        <li class="sp" data-format="pilot">
+          <a class="sp-cover" href="#" aria-label="Read Ghost Light">
+            <span class="brad"></span><span class="brad"></span>
+            <span class="cv-title">GHOST LIGHT</span>
+            <span class="cv-by">Written by</span>
+            <span class="cv-name">AMAROK</span>
+            <span class="cv-draft">Draft 2 · 2026</span>
+          </a>
+          <div class="sp-info">
+            <p class="sp-num">03</p>
+            <h3>Ghost Light</h3>
+            <ul class="sp-meta"><li>Pilot</li><li>Mystery / horror</li><li>58 pages</li></ul>
+            <p class="sp-log">When a shuttered theatre reopens, its stage manager realises the lamp left burning each night was never meant to keep the ghosts away.</p>
+            <div class="sp-foot">
+              <span class="sp-status dev"><i></i>In development</span>
+              <a class="sp-read" href="#">Read script <span>→</span></a>
+            </div>
+          </div>
+          <!-- shown when this screenplay is opened -->
+          <div class="sp-detail" hidden>
+            <p class="sp-syn">The Meridian Theatre has been dark for thirty years. Stage manager June Okafor is hired to bring it back to life, and the first rule she's given is the oldest one in theatre: never let the ghost light go out. Over one season, she learns who the light was really keeping in.</p>
+            <div class="sp-excerpt">
+              <p class="sc">INT. THE MERIDIAN THEATRE - STAGE - NIGHT</p>
+              <p class="ac">Rows of empty velvet seats. On the bare stage stands a single caged bulb on a pole: the ghost light.</p>
+              <p class="ac">JUNE OKAFOR (40s), stage manager, keys on a lanyard, checks the bulb. Warm. Steady.</p>
+              <p class="ac">She turns to leave. Behind her, the bulb DIMS.</p>
+              <p class="ch">JUNE</p>
+              <p class="pa">(without turning)</p>
+              <p class="di">Not tonight.</p>
+              <p class="ac">The light steadies.</p>
+              <p class="ac">From the back of the house: slow applause. One pair of hands.</p>
+              <p class="tr">CUT TO BLACK.</p>
+            </div>
+          </div>
+        </li>
+        <li class="sp" data-format="feature">
+          <a class="sp-cover" href="#" aria-label="Read What the River Kept">
+            <span class="brad"></span><span class="brad"></span>
+            <span class="cv-title">WHAT THE RIVER KEPT</span>
+            <span class="cv-by">Written by</span>
+            <span class="cv-name">AMAROK</span>
+            <span class="cv-draft">Draft 1 · 2026</span>
+          </a>
+          <div class="sp-info">
+            <p class="sp-num">04</p>
+            <h3>What the River Kept</h3>
+            <ul class="sp-meta"><li>Feature</li><li>Coming of age</li><li>96 pages</li></ul>
+            <p class="sp-log">The summer the river dries up, a boy finds the town's buried history on its bed, and a reason everyone wanted it drowned.</p>
+            <div class="sp-foot">
+              <span class="sp-status write"><i></i>Writing</span>
+              <a class="sp-read" href="#">Read script <span>→</span></a>
+            </div>
+          </div>
+          <!-- shown when this screenplay is opened -->
+          <div class="sp-detail" hidden>
+            <p class="sp-syn">In the driest summer on record, the river through Miller's Bend disappears, and twelve-year-old Tommy starts finding things on its bed that the town spent fifty years pretending never happened. With his best friend Callie, he digs up the truth the adults drowned, one object at a time.</p>
+            <div class="sp-excerpt">
+              <p class="sc">EXT. MILLER'S BEND - RIVERBED - DAY</p>
+              <p class="ac">Cracked mud stretches where the river used to be. Fish bones. A bicycle wheel. A church bell, half buried, green with age.</p>
+              <p class="ac">TOMMY (12) crouches and digs at something with a stick. A wooden box. Lead-sealed.</p>
+              <p class="ac">CALLIE (12) skids down the bank behind him.</p>
+              <p class="ch">CALLIE</p>
+              <p class="di">My dad says don't touch anything down here.</p>
+              <p class="ch">TOMMY</p>
+              <p class="di">Why?</p>
+              <p class="ch">CALLIE</p>
+              <p class="di">He didn't say. He just said it like he meant it.</p>
+            </div>
+          </div>
+        </li>
+        <li class="sp" data-format="short">
+          <a class="sp-cover" href="#" aria-label="Read Room 9">
+            <span class="brad"></span><span class="brad"></span>
+            <span class="cv-title">ROOM 9</span>
+            <span class="cv-by">Written by</span>
+            <span class="cv-name">AMAROK</span>
+            <span class="cv-draft">Final draft · 2024</span>
+          </a>
+          <div class="sp-info">
+            <p class="sp-num">05</p>
+            <h3>Room 9</h3>
+            <ul class="sp-meta"><li>Short</li><li>Surreal drama</li><li>5 pages</li></ul>
+            <p class="sp-log">A hotel housekeeper who hasn't spoken in forty years slips a note under the one door no guest may open, and gets an answer in her missing sister's handwriting.</p>
+            <div class="sp-foot">
+              <span class="sp-status done"><i></i>Completed</span>
+              <a class="sp-read" href="#">Read script <span>→</span></a>
+            </div>
+          </div>
+          <!-- shown when this screenplay is opened -->
+          <div class="sp-detail" hidden>
+            <p class="sp-syn">Ada has cleaned the third floor of the Grand Alder Hotel for decades without saying a word. When she slips a note under the door of Room 9, the room no guest may book, the replies come back in the handwriting of June, the sister who vanished from this hotel in 1984, writing as if it's still the night before she disappeared. Ada has one chance to find her voice and ask June to stay.</p>
+            <div class="sp-excerpt">
+              <p class="sc">INT. GRAND ALDER HOTEL - THIRD FLOOR CORRIDOR - NIGHT</p>
+              <p class="ac">A housekeeping cart rolls over patterned carpet. ADA (50s) pushes it without a sound.</p>
+              <p class="ac">She passes Rooms 7 and 8. Room 9 has no number on the door. Just the faint shadow where one used to be.</p>
+              <p class="ac">Ada stops. Takes a folded note from her apron. Slides it under the door.</p>
+              <p class="ac">She waits.</p>
+              <p class="ac">The note slides back out. Unfolded. Something new is written beneath hers.</p>
+            </div>
+            <!-- the complete screenplay: shown by "Read the full script" -->
+            <template class="sp-full">
+              <p class="tr">FADE IN:</p>
+              <p class="sc">INT. GRAND ALDER HOTEL - THIRD FLOOR CORRIDOR - NIGHT</p>
+              <p class="ac">A housekeeping cart rolls over patterned carpet. ADA (50s), grey uniform, hair pinned tight, pushes it without a sound.</p>
+              <p class="ac">She passes Rooms 7 and 8. Room 9 has no number on the door. Just the faint shadow where one used to be.</p>
+              <p class="ac">Ada stops. Takes a folded note from her apron. Slides it under the door.</p>
+              <p class="ac">She waits.</p>
+              <p class="ac">The note slides back out. Unfolded. Beneath her neat print, new handwriting loops across the page:</p>
+              <p class="ins">"WHO'S THERE?"</p>
+              <p class="ac">Ada steps back from the door as if it's warm.</p>
+              <p class="sc">INT. GRAND ALDER HOTEL - STAFF ROOM - NIGHT</p>
+              <p class="ac">Lockers. A humming fridge. A clock that runs four minutes slow.</p>
+              <p class="ac">Ada opens her locker. Taped inside the door: a faded photograph of two teenage girls on a pier, squinting into the sun. Written along the bottom: "A + J, summer '83."</p>
+              <p class="ac">MR. HALLORAN (60s), night manager, leans in the doorway with a clipboard.</p>
+              <p class="ch">HALLORAN</p>
+              <p class="di">Third floor done?</p>
+              <p class="ac">Ada nods.</p>
+              <p class="ch">HALLORAN</p>
+              <p class="di">And you stayed clear of nine.</p>
+              <p class="ac">A beat. She nods again.</p>
+              <p class="ch">HALLORAN</p>
+              <p class="di">Nobody's booked that room since before my time. Owner's orders. Doesn't even have a key anymore.</p>
+              <p class="ac">He taps the clipboard against the frame and goes.</p>
+              <p class="ac">Ada looks at the photograph. At the girl on the right, laughing at something outside the frame.</p>
+              <p class="sc">INT. THIRD FLOOR CORRIDOR - NIGHT (LATER)</p>
+              <p class="ac">Ada kneels at Room 9. Writes on a fresh page, pressing hard:</p>
+              <p class="ins">"WHO ARE YOU?"</p>
+              <p class="ac">She slides it under. The answer comes faster this time.</p>
+              <p class="ins">"JUNE. ROOM 9. WHO ARE YOU, LEAVING NOTES AT 3 A.M.? THIS PLACE IS CREEPY ENOUGH."</p>
+              <p class="ac">Ada's hand finds the wall. In the corner of the page, June has written the date out of habit:</p>
+              <p class="ins">OCTOBER 14, 1984.</p>
+              <p class="sc">INT. THIRD FLOOR CORRIDOR - SERIES OF NIGHTS</p>
+              <p class="ac">-- Notes slide back and forth under the door. Ada's print, small and careful. June's handwriting, big and impatient.</p>
+              <p class="ac">-- June writes about a boy named CAL. A guitarist. A van with a mattress in the back. The coast.</p>
+              <p class="ins">"WE LEAVE TOMORROW NIGHT. DON'T TELL MY MOTHER. ACTUALLY, YOU DON'T EVEN KNOW MY MOTHER. HA."</p>
+              <p class="ac">-- Ada writes two words. Crosses them out. Writes them again.</p>
+              <p class="ins">"DON'T GO."</p>
+              <p class="ac">-- The reply takes a long time.</p>
+              <p class="ins">"YOU SOUND LIKE MY SISTER."</p>
+              <p class="ac">Ada presses the note flat against her chest.</p>
+              <p class="sc">INT. STAFF ROOM - DAWN</p>
+              <p class="ac">Ada peels back the photograph in her locker. Underneath it, folded small: a newspaper clipping, brittle and brown.</p>
+              <p class="ins">LOCAL GIRL, 17, MISSING. LAST SEEN AT GRAND ALDER HOTEL. OCTOBER 15, 1984.</p>
+              <p class="ac">A school portrait of JUNE beneath the headline. The same laugh as the girl on the pier.</p>
+              <p class="ac">Ada closes the locker. Holds the door shut with both hands.</p>
+              <p class="sc">INT. THIRD FLOOR CORRIDOR - NIGHT</p>
+              <p class="ac">The last night. Ada stands at Room 9 with a blank page. She tries to write. The pen won't move.</p>
+              <p class="ac">She sets the pen down. Kneels. Puts her mouth to the gap beneath the door.</p>
+              <p class="ac">Her voice, when it comes, is cracked from forty years of disuse.</p>
+              <p class="ch">ADA</p>
+              <p class="di">June.</p>
+              <p class="ac">Silence on the other side.</p>
+              <p class="ch">ADA</p>
+              <p class="pa">(barely)</p>
+              <p class="di">It's Ada. Please. Stay.</p>
+              <p class="ac">Nothing. The corridor lights hum.</p>
+              <p class="ac">Then: three soft knocks from inside the door. Two quick, one slow.</p>
+              <p class="ac">Ada covers her mouth. She knows that knock. She taught it to her.</p>
+              <p class="sc">INT. ROOM 9 - DAWN</p>
+              <p class="ac">The door stands ajar. Ada pushes it open.</p>
+              <p class="ac">An ordinary hotel room. Bed made. Curtains open. Pale morning light across the carpet. No dust. No ghost.</p>
+              <p class="ac">On the pillow, a folded note.</p>
+              <p class="ac">Ada opens it. June's handwriting, one last time:</p>
+              <p class="ins">"I STAYED. -- J."</p>
+              <p class="sc">INT. GRAND ALDER HOTEL - LOBBY - MORNING</p>
+              <p class="ac">Day staff arriving. Coffee. Ringing phones. Ada crosses the lobby with her coat on.</p>
+              <p class="ac">She passes the wall of framed staff photos. Stops at one: STAFF, 1985.</p>
+              <p class="ac">Second row, third from the left, in a crisp uniform and a crooked smile: June. Eighteen years old. Alive.</p>
+              <p class="ac">Ada touches the glass.</p>
+              <p class="ch">HALLORAN (O.S.)</p>
+              <p class="di">Ada.</p>
+              <p class="ac">She turns. Halloran holds a phone receiver against his chest.</p>
+              <p class="ch">HALLORAN</p>
+              <p class="di">Your sister's on the line. Says you're late for Sunday dinner. Again.</p>
+              <p class="ac">Ada looks at the receiver for a long moment. Then, for the first time, she smiles.</p>
+              <p class="ch">ADA</p>
+              <p class="di">Tell her I'm on my way.</p>
+              <p class="ac">She walks out through the revolving doors into the morning.</p>
+              <p class="tr">FADE OUT.</p>
+              <p class="end">THE END</p>
+            </template>
+          </div>
+        </li>
+      </ol>
+      <nav class="folio-pages" aria-label="Screenplay pages" hidden></nav>
+    </div>
+  </section>
+
+  <!-- ========== PORTFOLIO VIEW: FORGOTTEN SPACES = 3D ART + FILM ==========
+       Placeholder pieces: swap titles, text and add your own images/videos (see the notes on each item). -->
+  <section class="folio gallery" id="animation" role="dialog" aria-modal="true" aria-label="3D art and film" hidden>
+    <div class="folio-inner gal-inner">
+      <button class="folio-close" type="button" data-close><span>←</span> Back</button>
+
+      <header class="folio-head">
+        <p class="folio-kicker"><span>02</span><span class="dash"></span>Forgotten Spaces</p>
+        <h2>3D Art &amp; Film</h2>
+        <div class="rule"></div>
+        <p class="folio-intro">Animated shorts, liminal spaces, light, architecture and colour:
+          rooms and moments that feel half-remembered.</p>
+
+        <div class="gal-tabs" role="tablist" aria-label="Medium">
+          <button type="button" role="tab" class="on" data-medium="film" aria-selected="true">Film</button>
+          <button type="button" role="tab" data-medium="art" aria-selected="false">3D Art</button>
+        </div>
+        <div class="gal-chips" data-for="film" role="group" aria-label="Film categories">
+          <button type="button" class="on" data-cat="all">All</button>
+          <button type="button" data-cat="short">Short films</button>
+          <button type="button" data-cat="liminal">Liminal</button>
+          <button type="button" data-cat="psy">Psychedelic</button>
+        </div>
+        <div class="gal-chips" data-for="art" role="group" aria-label="3D art categories" hidden>
+          <button type="button" class="on" data-cat="all">All</button>
+          <button type="button" data-cat="liminal">Liminal spaces</button>
+          <button type="button" data-cat="light">Character &amp; lighting</button>
+          <button type="button" data-cat="arch">Interiors &amp; architecture</button>
+          <button type="button" data-cat="psy">Psychedelic</button>
+        </div>
+      </header>
+
+      <ul class="gal-grid" data-medium="film">
+        <li class="gi" data-medium="film" data-cat="short" data-kind="video" data-orient="wide"
+            data-tools="Blender · Cycles · DaVinci Resolve" data-spec="Length: 4:12" data-year="2025">
+          <!-- your work: add data-src="images/your-render.jpg" for a still,
+               or data-video="videos/your-film.mp4" (or a YouTube/Vimeo link) for a film -->
+          <button type="button" class="gi-media ph ph-film" aria-label="Open Last Train to Nowhere"><span class="gi-play" aria-hidden="true"></span><span class="gi-dur">4:12</span></button>
+          <div class="gi-cap">
+            <p class="gi-cat">Short film · Thriller</p>
+            <h3>Last Train to Nowhere</h3>
+          </div>
+          <p class="gi-desc" hidden>A commuter falls asleep on the last train home and wakes in a carriage that keeps adding stations that were never on the map. A fully animated short thriller.</p>
+        </li>
+        <li class="gi" data-medium="film" data-cat="short" data-kind="video" data-orient="wide"
+            data-tools="Blender · Eevee · After Effects" data-spec="Length: 2:48" data-year="2024">
+          <!-- your work: add data-src="images/your-render.jpg" for a still,
+               or data-video="videos/your-film.mp4" (or a YouTube/Vimeo link) for a film -->
+          <button type="button" class="gi-media ph ph-film2" aria-label="Open The Night Shift"><span class="gi-play" aria-hidden="true"></span><span class="gi-dur">2:48</span></button>
+          <div class="gi-cap">
+            <p class="gi-cat">Short film · Thriller</p>
+            <h3>The Night Shift</h3>
+          </div>
+          <p class="gi-desc" hidden>A security guard watches a camera feed of the room he's standing in, three seconds into the future.</p>
+        </li>
+        <!-- COLLECTION: one world, split into locations, each with several angles.
+             For each angle add data-src="images/your-render.jpg" (still) or data-video="YouTube/Vimeo link" (film). -->
+        <li class="gi gi-coll" data-medium="film art" data-cat="liminal" data-kind="collection" data-orient="wide"
+            data-coll="level-0" data-year="2025" data-tools="Blender · Cycles">
+          <button type="button" class="gi-media ph ph-liminal" aria-label="Open the Level 0 collection">
+            <span class="gi-stack" aria-hidden="true"></span>
+            <span class="gi-collbadge"></span>
+          </button>
+          <div class="gi-cap">
+            <p class="gi-cat">Liminal space · Collection</p>
+            <h3>Level 0</h3>
+          </div>
+          <p class="gi-desc" hidden>Empty pools, endless grass hills and a home that isn't quite yours. Explore it location by location, from every angle.</p>
+          <div class="coll-data" hidden>
+            <!-- featured walkthrough shown at the top of the collection -->
+              <div class="ang" data-kind="video" data-ph="ph-liminal" data-orient="wide" data-title="Full walkthrough" data-spec="Length: 6:30">A single unbroken walk through every location in Level 0: from the pool rooms, over the grass hills, and home.</div>
+            <section class="loc" data-name="Pool Rooms" data-note="Tiled halls flooded with still, glowing water. Clean, bright and completely wrong.">
+              <div class="ang" data-kind="still" data-ph="ph-pool-a" data-orient="wide" data-title="Shallow end" data-spec="Resolution: 4K">Looking down the length of the main pool, lit for a crowd that never arrives.</div>
+              <div class="ang" data-kind="still" data-ph="ph-pool-b" data-orient="tall" data-title="Tiled corridor" data-spec="Resolution: 4K">A narrow tiled passage where the water runs under the walls.</div>
+              <div class="ang" data-kind="video" data-ph="ph-pool-c" data-orient="wide" data-title="Slow drift" data-spec="Length: 0:48">The camera floats just above the surface, through three connected rooms.</div>
+              <div class="ang" data-kind="still" data-ph="ph-liminal2" data-orient="wide" data-title="Overflow" data-spec="Resolution: 4K">The pool spilling silently into a room with no drain.</div>
+              <div class="ang" data-kind="still" data-ph="ph-pool-a" data-orient="square" data-title="Ladder" data-spec="Resolution: 4K">A chrome ladder leading down into water too clear to judge.</div>
+            </section>
+            <section class="loc" data-name="Grass Hills" data-note="Soft green hills under a flat, perfect sky. Wind with no sound. No paths, no trees, no end.">
+              <div class="ang" data-kind="still" data-ph="ph-hills-a" data-orient="wide" data-title="First hill" data-spec="Resolution: 4K">The view the moment you arrive: one gentle slope and a sky that doesn't move.</div>
+              <div class="ang" data-kind="still" data-ph="ph-hills-b" data-orient="tall" data-title="Lone door" data-spec="Resolution: 4K">A single white door standing in the grass, closed from both sides.</div>
+              <div class="ang" data-kind="video" data-ph="ph-hills-a" data-orient="wide" data-title="Wind" data-spec="Length: 0:45">Grass leaning in a wind you can't hear.</div>
+              <div class="ang" data-kind="still" data-ph="ph-hills-c" data-orient="wide" data-title="Overcast" data-spec="Resolution: 4K">The same hills under a grey sky, somehow lonelier.</div>
+            </section>
+            <section class="loc" data-name="Home" data-note="A house that feels like yours from childhood, rebuilt from memory and slightly wrong. Every room is lit; no one is home.">
+              <div class="ang" data-kind="still" data-ph="ph-home-a" data-orient="wide" data-title="Living room" data-spec="Resolution: 4K">Beige carpet, one lamp on, the TV glowing with nothing playing.</div>
+              <div class="ang" data-kind="still" data-ph="ph-home-b" data-orient="tall" data-title="Hallway" data-spec="Resolution: 4K">A hallway with one door too many.</div>
+              <div class="ang" data-kind="video" data-ph="ph-home-a" data-orient="wide" data-title="Late night" data-spec="Length: 0:38">The camera waits in the living room. A light in the kitchen turns off by itself.</div>
+              <div class="ang" data-kind="still" data-ph="ph-home-c" data-orient="square" data-title="Kitchen, 3 A.M." data-spec="Resolution: 4K">The fridge hums. The clock on the oven blinks 12:00.</div>
+            </section>
+          </div>
+        </li>
+        <li class="gi" data-medium="art" data-cat="liminal" data-kind="still" data-orient="tall"
+            data-tools="Blender · Cycles" data-spec="Resolution: 4K" data-year="2025">
+          <!-- your work: add data-src="images/your-render.jpg" for a still,
+               or data-video="videos/your-film.mp4" (or a YouTube/Vimeo link) for a film -->
+          <button type="button" class="gi-media ph ph-liminal" aria-label="Open The Waiting Room"><span class="gi-still" aria-hidden="true">Still</span></button>
+          <div class="gi-cap">
+            <p class="gi-cat">Liminal space · Still</p>
+            <h3>The Waiting Room</h3>
+          </div>
+          <p class="gi-desc" hidden>Rows of empty chairs under a buzzing light, waiting for a name that will never be called.</p>
+        </li>
+        <li class="gi" data-medium="art" data-cat="light" data-kind="still" data-orient="square"
+            data-tools="Blender · Cycles" data-spec="Resolution: 4K" data-year="2025">
+          <!-- your work: add data-src="images/your-render.jpg" for a still,
+               or data-video="videos/your-film.mp4" (or a YouTube/Vimeo link) for a film -->
+          <button type="button" class="gi-media ph ph-light" aria-label="Open Spotlight Study No. 3"><span class="gi-still" aria-hidden="true">Still</span></button>
+          <div class="gi-cap">
+            <p class="gi-cat">Character & lighting · Still</p>
+            <h3>Spotlight Study No. 3</h3>
+          </div>
+          <p class="gi-desc" hidden>A single hard key light and the shapes it carves out of the dark.</p>
+        </li>
+        <li class="gi" data-medium="art" data-cat="arch" data-kind="still" data-orient="wide"
+            data-tools="Blender · Cycles" data-spec="Resolution: 5K" data-year="2025">
+          <!-- your work: add data-src="images/your-render.jpg" for a still,
+               or data-video="videos/your-film.mp4" (or a YouTube/Vimeo link) for a film -->
+          <button type="button" class="gi-media ph ph-arch" aria-label="Open Concrete Sanctuary"><span class="gi-still" aria-hidden="true">Still</span></button>
+          <div class="gi-cap">
+            <p class="gi-cat">Interiors & architecture · Still</p>
+            <h3>Concrete Sanctuary</h3>
+          </div>
+          <p class="gi-desc" hidden>A quiet brutalist living room built around one slice of afternoon sun.</p>
+        </li>
+        <li class="gi" data-medium="art" data-cat="light" data-kind="still" data-orient="tall"
+            data-tools="Blender · Cycles" data-spec="Resolution: 4K" data-year="2024">
+          <!-- your work: add data-src="images/your-render.jpg" for a still,
+               or data-video="videos/your-film.mp4" (or a YouTube/Vimeo link) for a film -->
+          <button type="button" class="gi-media ph ph-light2" aria-label="Open Pose: The Reach"><span class="gi-still" aria-hidden="true">Still</span></button>
+          <div class="gi-cap">
+            <p class="gi-cat">Character & lighting · Still</p>
+            <h3>Pose: The Reach</h3>
+          </div>
+          <p class="gi-desc" hidden>A figure caught mid-reach under a cold rim light. A study of tension and silhouette.</p>
+        </li>
+        <li class="gi" data-medium="art" data-cat="arch" data-kind="still" data-orient="tall"
+            data-tools="Blender · Cycles" data-spec="Resolution: 4K" data-year="2024">
+          <!-- your work: add data-src="images/your-render.jpg" for a still,
+               or data-video="videos/your-film.mp4" (or a YouTube/Vimeo link) for a film -->
+          <button type="button" class="gi-media ph ph-arch2" aria-label="Open Atrium at Dusk"><span class="gi-still" aria-hidden="true">Still</span></button>
+          <div class="gi-cap">
+            <p class="gi-cat">Interiors & architecture · Still</p>
+            <h3>Atrium at Dusk</h3>
+          </div>
+          <p class="gi-desc" hidden>A double-height stairwell where the last daylight meets the first lamps.</p>
+        </li>
+        <li class="gi" data-medium="art" data-cat="liminal" data-kind="still" data-orient="wide"
+            data-tools="Blender · Cycles" data-spec="Resolution: 4K" data-year="2024">
+          <!-- your work: add data-src="images/your-render.jpg" for a still,
+               or data-video="videos/your-film.mp4" (or a YouTube/Vimeo link) for a film -->
+          <button type="button" class="gi-media ph ph-liminal2" aria-label="Open Pool Hall 3 A.M."><span class="gi-still" aria-hidden="true">Still</span></button>
+          <div class="gi-cap">
+            <p class="gi-cat">Liminal space · Still</p>
+            <h3>Pool Hall 3 A.M.</h3>
+          </div>
+          <p class="gi-desc" hidden>An indoor pool, perfectly still, lit for a crowd that never arrives.</p>
+        </li>
+        <!-- STYLE COLLECTION: Chromatic Drift. Each series holds pieces; add data-src / data-video to each piece. -->
+        <li class="gi gi-coll" data-medium="film art" data-cat="psy" data-kind="collection" data-orient="wide"
+            data-coll="chromatic-drift" data-year="2025" data-tools="Blender · Geometry Nodes"
+            data-unit="Series" data-units="series" data-piece="Piece" data-pieces="pieces">
+          <button type="button" class="gi-media ph ph-psy" aria-label="Open the Chromatic Drift collection">
+            <span class="gi-stack" aria-hidden="true"></span>
+            <span class="gi-collbadge"></span>
+          </button>
+          <div class="gi-cap">
+            <p class="gi-cat">Psychedelic · Style</p>
+            <h3>Chromatic Drift</h3>
+          </div>
+          <p class="gi-desc" hidden>Colour that moves like liquid: folding spectra, prisms and slow oil-slick drift.</p>
+          <div class="coll-data" hidden>
+              <div class="ang" data-kind="video" data-ph="ph-psy" data-orient="wide" data-title="Chromatic Drift (loop)" data-spec="Length: 1:00 loop">A seamless loop of folding colour and light, built for projection and visualizers.</div>
+            <section class="loc" data-name="Prism Tide" data-note="Light split into bands that roll and fold like slow waves.">
+              <div class="ang" data-kind="still" data-ph="ph-chroma-a" data-orient="wide" data-title="Prism Tide I" data-spec="Resolution: 4K">The first fold, where white light breaks apart.</div>
+              <div class="ang" data-kind="still" data-ph="ph-chroma-b" data-orient="tall" data-title="Prism Tide II" data-spec="Resolution: 4K">Bands of colour stacked like sediment.</div>
+              <div class="ang" data-kind="video" data-ph="ph-psy" data-orient="wide" data-title="Undertow" data-spec="Length: 0:40">The spectrum pulled under itself, again and again.</div>
+              <div class="ang" data-kind="still" data-ph="ph-chroma-a" data-orient="square" data-title="Spectrum" data-spec="Resolution: 4K">Every colour at once, perfectly still.</div>
+            </section>
+            <section class="loc" data-name="Oil & Light" data-note="Iridescent surfaces: petrol on water, soap film, beetle shell.">
+              <div class="ang" data-kind="still" data-ph="ph-chroma-c" data-orient="wide" data-title="Slick" data-spec="Resolution: 4K">A rainbow sheen sliding over black water.</div>
+              <div class="ang" data-kind="video" data-ph="ph-chroma-c" data-orient="wide" data-title="Pour" data-spec="Length: 0:30">Liquid colour poured in slow motion.</div>
+              <div class="ang" data-kind="still" data-ph="ph-chroma-b" data-orient="square" data-title="Iris" data-spec="Resolution: 4K">An eye made of oil and light.</div>
+            </section>
+          </div>
+        </li>
+        <!-- STYLE COLLECTION: Abstract. Each series holds pieces; add data-src / data-video to each piece. -->
+        <li class="gi gi-coll" data-medium="film art" data-cat="psy" data-kind="collection" data-orient="wide"
+            data-coll="abstract" data-year="2025" data-tools="Blender · Geometry Nodes"
+            data-unit="Series" data-units="series" data-piece="Piece" data-pieces="pieces">
+          <button type="button" class="gi-media ph ph-abs-a" aria-label="Open the Abstract collection">
+            <span class="gi-stack" aria-hidden="true"></span>
+            <span class="gi-collbadge"></span>
+          </button>
+          <div class="gi-cap">
+            <p class="gi-cat">Psychedelic · Style</p>
+            <h3>Abstract</h3>
+          </div>
+          <p class="gi-desc" hidden>Form, rhythm and texture with no subject at all: shapes left to speak for themselves.</p>
+          <div class="coll-data" hidden>
+              <div class="ang" data-kind="video" data-ph="ph-abs-a" data-orient="wide" data-title="Abstract (loop)" data-spec="Length: 0:50 loop">Shapes assembling and dissolving in a slow, looping rhythm.</div>
+            <section class="loc" data-name="Monoliths" data-note="Heavy, simple forms under soft light.">
+              <div class="ang" data-kind="still" data-ph="ph-abs-a" data-orient="tall" data-title="Monolith I" data-spec="Resolution: 4K">A single slab balancing on its edge.</div>
+              <div class="ang" data-kind="still" data-ph="ph-abs-b" data-orient="wide" data-title="Monolith II" data-spec="Resolution: 4K">Two forms that almost touch.</div>
+              <div class="ang" data-kind="video" data-ph="ph-abs-a" data-orient="wide" data-title="Orbit" data-spec="Length: 0:35">A sphere circling a column that never moves.</div>
+            </section>
+            <section class="loc" data-name="Fractures" data-note="Surfaces breaking into pattern.">
+              <div class="ang" data-kind="still" data-ph="ph-abs-c" data-orient="wide" data-title="Shatter" data-spec="Resolution: 4K">Glass caught a moment after impact.</div>
+              <div class="ang" data-kind="still" data-ph="ph-abs-b" data-orient="square" data-title="Fault line" data-spec="Resolution: 4K">A crack that becomes a horizon.</div>
+              <div class="ang" data-kind="video" data-ph="ph-abs-c" data-orient="wide" data-title="Split" data-spec="Length: 0:28">One shape dividing, over and over.</div>
+            </section>
+          </div>
+        </li>
+        <!-- STYLE COLLECTION: Glow &amp; Smoke. Each series holds pieces; add data-src / data-video to each piece. -->
+        <li class="gi gi-coll" data-medium="film art" data-cat="psy" data-kind="collection" data-orient="wide"
+            data-coll="glow-smoke" data-year="2025" data-tools="Blender · Geometry Nodes"
+            data-unit="Series" data-units="series" data-piece="Piece" data-pieces="pieces">
+          <button type="button" class="gi-media ph ph-glow-a" aria-label="Open the Glow &amp; Smoke collection">
+            <span class="gi-stack" aria-hidden="true"></span>
+            <span class="gi-collbadge"></span>
+          </button>
+          <div class="gi-cap">
+            <p class="gi-cat">Psychedelic · Style</p>
+            <h3>Glow &amp; Smoke</h3>
+          </div>
+          <p class="gi-desc" hidden>Light caught in haze: neon bleeding through smoke, embers drifting, fog that glows from the inside.</p>
+          <div class="coll-data" hidden>
+              <div class="ang" data-kind="video" data-ph="ph-glow-a" data-orient="wide" data-title="Glow &amp; Smoke (loop)" data-spec="Length: 1:10 loop">Coloured light rolling through slow smoke.</div>
+            <section class="loc" data-name="Neon Haze" data-note="Neon light diffused through thick fog.">
+              <div class="ang" data-kind="still" data-ph="ph-glow-a" data-orient="wide" data-title="Pink Haze" data-spec="Resolution: 4K">A single neon tube lost in fog.</div>
+              <div class="ang" data-kind="still" data-ph="ph-glow-b" data-orient="tall" data-title="Blue Hour" data-spec="Resolution: 4K">Cold light pooling in smoke.</div>
+              <div class="ang" data-kind="video" data-ph="ph-glow-a" data-orient="wide" data-title="Exhale" data-spec="Length: 0:45">Smoke curling through a beam of magenta light.</div>
+              <div class="ang" data-kind="still" data-ph="ph-glow-b" data-orient="square" data-title="Afterglow" data-spec="Resolution: 4K">What's left after the light switches off.</div>
+            </section>
+            <section class="loc" data-name="Embers" data-note="Warm sparks drifting up into the dark.">
+              <div class="ang" data-kind="still" data-ph="ph-glow-c" data-orient="tall" data-title="Rise" data-spec="Resolution: 4K">Embers climbing a column of heat.</div>
+              <div class="ang" data-kind="video" data-ph="ph-glow-c" data-orient="wide" data-title="Drift" data-spec="Length: 0:38">Sparks floating upward and fading out.</div>
+              <div class="ang" data-kind="still" data-ph="ph-glow-c" data-orient="wide" data-title="Ash" data-spec="Resolution: 4K">The moment an ember goes grey.</div>
+            </section>
+          </div>
+        </li>
+        <!-- STYLE COLLECTION: The 5th Dimension. Each series holds pieces; add data-src / data-video to each piece. -->
+        <li class="gi gi-coll" data-medium="film art" data-cat="psy" data-kind="collection" data-orient="wide"
+            data-coll="fifth-dimension" data-year="2025" data-tools="Blender · Geometry Nodes"
+            data-unit="Series" data-units="series" data-piece="Piece" data-pieces="pieces">
+          <button type="button" class="gi-media ph ph-5d-a" aria-label="Open the The 5th Dimension collection">
+            <span class="gi-stack" aria-hidden="true"></span>
+            <span class="gi-collbadge"></span>
+          </button>
+          <div class="gi-cap">
+            <p class="gi-cat">Psychedelic · Style</p>
+            <h3>The 5th Dimension</h3>
+          </div>
+          <p class="gi-desc" hidden>Impossible geometry: tesseracts, rooms folded into themselves, space turned inside out.</p>
+          <div class="coll-data" hidden>
+              <div class="ang" data-kind="video" data-ph="ph-5d-a" data-orient="wide" data-title="The 5th Dimension (loop)" data-spec="Length: 0:55 loop">A tesseract unfolding through itself in an endless loop.</div>
+            <section class="loc" data-name="Tesseract" data-note="Four-dimensional cubes, seen from the third.">
+              <div class="ang" data-kind="still" data-ph="ph-5d-a" data-orient="square" data-title="Hypercube" data-spec="Resolution: 4K">A cube inside a cube inside a cube.</div>
+              <div class="ang" data-kind="video" data-ph="ph-5d-a" data-orient="wide" data-title="Rotation" data-spec="Length: 0:40">A tesseract turning through a direction you can't point to.</div>
+              <div class="ang" data-kind="still" data-ph="ph-5d-b" data-orient="wide" data-title="Shadow" data-spec="Resolution: 4K">The 3D shadow of a 4D object.</div>
+            </section>
+            <section class="loc" data-name="Folded Rooms" data-note="Architecture that bends back on itself.">
+              <div class="ang" data-kind="still" data-ph="ph-5d-b" data-orient="tall" data-title="Infinite Hall" data-spec="Resolution: 4K">A corridor that ends where it begins.</div>
+              <div class="ang" data-kind="still" data-ph="ph-5d-c" data-orient="wide" data-title="Stairwell" data-spec="Resolution: 4K">Stairs that only go up, in every direction.</div>
+              <div class="ang" data-kind="video" data-ph="ph-5d-c" data-orient="wide" data-title="Unfold" data-spec="Length: 0:33">A room opening like paper.</div>
+            </section>
+          </div>
+        </li>
+      </ul>
+      <nav class="gal-pages" aria-label="Gallery pages" hidden></nav>
+    </div>
+  </section>
+
+  <!-- ========== COLLECTION PAGE: a world, its locations and their angles ========== -->
+  <section class="coll" id="coll" role="dialog" aria-modal="true" aria-labelledby="cl-title" hidden>
+    <button class="folio-close coll-close" type="button" data-coll-close><span>←</span> Gallery</button>
+    <div class="coll-inner">
+      <header class="coll-head">
+        <p class="folio-kicker"><span class="dash"></span><span id="cl-kicker"></span></p>
+        <h2 id="cl-title"></h2>
+        <div class="rule"></div>
+        <p class="folio-intro" id="cl-intro"></p>
+        <p class="coll-stats" id="cl-stats"></p>
+      </header>
+      <div class="coll-feature" id="cl-feature"></div>
+      <div class="coll-locs" id="cl-locs"></div>
+    </div>
+  </section>
+
+  <!-- ========== VIEWER: opens a film or still from the gallery ========== -->
+  <section class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="vw-title" hidden>
+    <button class="folio-close viewer-close" type="button" data-viewer-close><span>←</span> Gallery</button>
+    <div class="vw-stage">
+      <button type="button" class="vw-arrow prev" id="vw-prev" aria-label="Previous piece">‹</button>
+      <div class="vw-media" id="vw-media"></div>
+      <button type="button" class="vw-arrow next" id="vw-next" aria-label="Next piece">›</button>
+    </div>
+    <div class="vw-info">
+      <div class="vw-main">
+        <p class="gi-cat" id="vw-cat"></p>
+        <h2 id="vw-title"></h2>
+        <p class="vw-desc" id="vw-desc"></p>
+      </div>
+      <dl class="vw-facts">
+        <div><dt>Year</dt><dd id="vw-year"></dd></div>
+        <div><dt id="vw-spec-k"></dt><dd id="vw-spec"></dd></div>
+        <div><dt>Made with</dt><dd id="vw-tools"></dd></div>
+      </dl>
+    </div>
+    <p class="vw-count" id="vw-count"></p>
+  </section>
+
+  <!-- ========== PORTFOLIO VIEW: MODERN TRACES = DANCE ==========
+       Placeholder clips: add data-video="YouTube/Vimeo/Instagram-free link or file" or data-src="images/photo.jpg" to each item. -->
+  <section class="folio dance" id="dance" role="dialog" aria-modal="true" aria-label="Dance" hidden>
+    <div class="folio-inner dn-inner">
+      <button class="folio-close" type="button" data-close><span>←</span> Back</button>
+      <header class="folio-head">
+        <p class="folio-kicker"><span>04</span><span class="dash"></span>Modern Traces</p>
+        <h2>Movement</h2>
+        <div class="rule"></div>
+        <p class="folio-intro">Fire spinning and belly dance: flow, control and rhythm.
+          Watch how I move, and if you want that movement in your project, let's talk.</p>
+      </header>
+
+      <!-- showreel: add data-video to play your reel -->
+      <div class="dn-reel" data-kind="video" data-ph="ph-fire-a" data-title="Movement Reel 2025" data-spec="Length: 1:30" data-year="2025"
+           data-desc="Fire spinning and belly dance highlights from the last year: one minute and a half of the best moments.">
+        <button type="button" class="dn-reel-btn" aria-label="Play the showreel">
+          <span class="gi-play" aria-hidden="true"></span>
+          <span class="dn-reel-tag">Showreel · 1:30</span>
+        </button>
+      </div>
+
+      <div class="dn-tabs-wrap">
+        <div class="gal-tabs dn-tabs" role="tablist" aria-label="Discipline">
+          <button type="button" role="tab" class="on" data-disc="fire" aria-selected="true">Fire Spinning</button>
+          <button type="button" role="tab" data-disc="belly" aria-selected="false">Belly Dance</button>
+        </div>
+        <p class="dn-blurb" data-for="fire">Poi, staff, fans and hoop: flow arts with real flame, choreographed or freestyle.</p>
+        <p class="dn-blurb" data-for="belly" hidden>Classic and fusion belly dance: isolations, shimmies, veil work and drum solos.</p>
+        <div class="gal-chips dn-chips" data-for="fire" role="group" aria-label="Fire props">
+          <button type="button" class="on" data-prop="all">All</button>
+          <button type="button" data-prop="poi">Poi</button>
+          <button type="button" data-prop="staff">Staff</button>
+          <button type="button" data-prop="fans">Fans</button>
+          <button type="button" data-prop="hoop">Hoop</button>
+        </div>
+        <div class="gal-chips dn-chips" data-for="belly" role="group" aria-label="Belly dance styles" hidden>
+          <button type="button" class="on" data-prop="all">All</button>
+          <button type="button" data-prop="classic">Classic</button>
+          <button type="button" data-prop="fusion">Fusion</button>
+          <button type="button" data-prop="veil">Veil</button>
+          <button type="button" data-prop="drum">Drum solo</button>
+        </div>
+      </div>
+
+      <ul class="dn-grid" id="dn-grid">
+          <li class="dc" data-disc="fire" data-prop="poi" data-kind="video" data-orient="tall" data-ph="ph-fire-a"
+              data-title="Poi Flow" data-spec="Length: 0:48" data-year="2025">Weaves, buzzsaws and wall plane flow with fire poi, filmed in one take.</li>
+          <li class="dc" data-disc="fire" data-prop="staff" data-kind="video" data-orient="tall" data-ph="ph-fire-b"
+              data-title="Contact Staff" data-spec="Length: 1:02" data-year="2025">Rolling the staff across shoulders and arms without letting it drop.</li>
+          <li class="dc" data-disc="fire" data-prop="fans" data-kind="still" data-orient="tall" data-ph="ph-fire-c"
+              data-title="Fire Fans at Dusk" data-spec="Photo" data-year="2025">Two fire fans open against the last of the light.</li>
+          <li class="dc" data-disc="fire" data-prop="hoop" data-kind="video" data-orient="tall" data-ph="ph-fire-d"
+              data-title="Hoop Orbit" data-spec="Length: 0:35" data-year="2025">A fire hoop circling the body, isolations and escalators.</li>
+          <li class="dc" data-disc="fire" data-prop="poi" data-kind="still" data-orient="tall" data-ph="ph-fire-e"
+              data-title="Long Exposure" data-spec="Photo" data-year="2025">A long-exposure photo: the trails the poi leave behind.</li>
+          <li class="dc" data-disc="fire" data-prop="staff" data-kind="video" data-orient="tall" data-ph="ph-fire-b"
+              data-title="Double Staff" data-spec="Length: 0:55" data-year="2025">Two staffs, mirrored spins and a final throw.</li>
+          <li class="dc" data-disc="belly" data-prop="drum" data-kind="video" data-orient="tall" data-ph="ph-belly-a"
+              data-title="Drum Solo" data-spec="Length: 1:20" data-year="2025">Sharp hip accents and shimmies locked to a live darbuka rhythm.</li>
+          <li class="dc" data-disc="belly" data-prop="veil" data-kind="video" data-orient="tall" data-ph="ph-belly-b"
+              data-title="Veil Entrance" data-spec="Length: 0:58" data-year="2025">An opening with a silk veil: spins, floats and a slow reveal.</li>
+          <li class="dc" data-disc="belly" data-prop="fusion" data-kind="video" data-orient="tall" data-ph="ph-belly-c"
+              data-title="Tribal Fusion Combo" data-spec="Length: 1:05" data-year="2025">Slow, controlled isolations mixed with popping and waves.</li>
+          <li class="dc" data-disc="belly" data-prop="classic" data-kind="video" data-orient="tall" data-ph="ph-belly-a"
+              data-title="Shimmy Study" data-spec="Length: 0:40" data-year="2025">Layered shimmies, from soft to full power.</li>
+          <li class="dc" data-disc="belly" data-prop="classic" data-kind="still" data-orient="tall" data-ph="ph-belly-d"
+              data-title="Gold Hour" data-spec="Photo" data-year="2025">Costume and coins catching warm stage light.</li>
+          <li class="dc" data-disc="belly" data-prop="fusion" data-kind="still" data-orient="tall" data-ph="ph-belly-c"
+              data-title="Isolations" data-spec="Photo" data-year="2025">A still from a fusion piece: one body, every part moving separately.</li>
+      </ul>
+
+      <section class="dn-book">
+        <p class="folio-kicker"><span class="dash"></span>Work with me</p>
+        <h3>Want this movement in your project?</h3>
+        <p class="folio-intro">Available for choreography, live performance and collaborations.</p>
+        <div class="dn-book-grid">
+          <a class="dn-card" href="#contact" data-book="Choreography enquiry">
+            <span class="dc-n">01</span><h4>Choreography</h4><p>Routines built for your music, music video or stage show.</p><span class="dc-go">Enquire →</span>
+          </a>
+          <a class="dn-card" href="#contact" data-book="Performance booking">
+            <span class="dc-n">02</span><h4>Performance</h4><p>Fire and belly dance sets for events, shows and festivals.</p><span class="dc-go">Enquire →</span>
+          </a>
+          <a class="dn-card" href="#contact" data-book="Collaboration idea">
+            <span class="dc-n">03</span><h4>Collaborations</h4><p>Music videos, films and visual projects that need movement.</p><span class="dc-go">Enquire →</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ========== PORTFOLIO VIEW: UNSEEN PERSPECTIVES = MUSIC ========== -->
+  <section class="folio music" id="music" role="dialog" aria-modal="true" aria-label="Music" hidden>
+    <div class="folio-inner mu-inner">
+      <button class="folio-close" type="button" data-close><span>←</span> Back</button>
+      <header class="folio-head">
+        <p class="folio-kicker"><span>03</span><span class="dash"></span>Unseen Perspectives</p>
+        <h2>Music</h2>
+        <div class="rule"></div>
+        <p class="folio-intro">Electronic and orchestral: deep dubstep, atmospheric chillstep and piano, released as VMAROK.</p>
+      </header>
+      <div class="mu-feature" id="mu-feature"></div>
+      <section class="mu-all" id="mu-all" aria-label="All tracks"></section>
+      <div class="mu-head">
+        <h3>Discography</h3>
+        <div class="mu-filter" role="group" aria-label="Filter releases">
+          <button type="button" class="on" data-type="all">All</button>
+          <button type="button" data-type="Album">Albums</button>
+          <button type="button" data-type="EP">EPs</button>
+          <button type="button" data-type="Single">Singles</button>
+        </div>
+      </div>
+      <ul class="mu-grid" id="mu-grid"></ul>
+      <nav class="gal-pages mu-pages" id="mu-pages" aria-label="Discography pages" hidden></nav>
+      <section class="mu-listen" aria-label="Listen">
+        <div class="mu-listen-head">
+          <h3>Listen</h3>
+          <div class="mu-links">
+            <a href="https://open.spotify.com/artist/16kZEsy2rvo6h7gwWlDl0Z" target="_blank" rel="noopener">Spotify</a>
+            <a href="https://soundcloud.com/vmarok" target="_blank" rel="noopener">SoundCloud</a>
+          </div>
+        </div>
+        <div class="mu-embeds">
+          <!-- the real players load on your hosted site / Live Server; the cards show where outside players are blocked -->
+          <iframe title="VMAROK on Spotify" data-src="https://open.spotify.com/embed/artist/16kZEsy2rvo6h7gwWlDl0Z?theme=0" height="380"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" hidden></iframe>
+          <iframe title="VMAROK on SoundCloud" height="380" allow="autoplay" loading="lazy" hidden
+            data-src="https://w.soundcloud.com/player/?url=https%3A%2F%2Fsoundcloud.com%2Fvmarok&amp;color=%238e2533&amp;auto_play=false&amp;hide_related=true&amp;show_comments=false&amp;show_user=true&amp;show_reposts=false&amp;visual=false"></iframe>
+          <a class="listen-card sp" href="https://open.spotify.com/artist/16kZEsy2rvo6h7gwWlDl0Z" target="_blank" rel="noopener">
+            <span class="lc-k">Listen on</span><span class="lc-t">Spotify</span>
+            <span class="lc-s">Follow VMAROK and play the latest releases</span><span class="lc-go">Open Spotify →</span>
+          </a>
+          <a class="listen-card sc" href="https://soundcloud.com/vmarok" target="_blank" rel="noopener">
+            <span class="lc-k">Listen on</span><span class="lc-t">SoundCloud</span>
+            <span class="lc-s">Demos, works in progress and everything in between</span><span class="lc-go">Open SoundCloud →</span>
+          </a>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <!-- ========== RELEASE PAGE: one album / EP / single ========== -->
+  <section class="release" id="release" role="dialog" aria-modal="true" aria-labelledby="rl-title" hidden>
+    <button class="folio-close release-close" type="button" data-release-close><span>←</span> Music</button>
+    <div class="release-inner" id="release-inner"></div>
+    <nav class="rd-nav" aria-label="Other releases">
+      <button type="button" id="rl-prev"><span class="ar">←</span><span class="lb">Previous</span><span class="t"></span></button>
+      <button type="button" id="rl-next"><span class="lb">Next</span><span class="t"></span><span class="ar">→</span></button>
+    </nav>
+  </section>
+
+  <!-- ========== MINI PLAYER: stays at the bottom while music plays ========== -->
+  <div class="mini" id="mini" hidden>
+    <div class="mini-art" id="mini-art"></div>
+    <div class="mini-text"><p class="mini-title" id="mini-title"></p><p class="mini-sub" id="mini-sub"></p></div>
+    <div class="mini-ctrl">
+      <button type="button" id="mini-prev" aria-label="Previous track">⏮</button>
+      <button type="button" id="mini-play" class="big" aria-label="Pause"></button>
+      <button type="button" id="mini-next" aria-label="Next track">⏭</button>
+    </div>
+    <div class="mini-bar"><span class="mini-time" id="mini-cur">0:00</span><div class="mini-track" id="mini-track"><i id="mini-fill"></i></div><span class="mini-time" id="mini-dur">0:00</span></div>
+    <button type="button" class="mini-x" id="mini-x" aria-label="Stop and close player">×</button>
+  </div>
+
+  <!-- ========== YOUR MUSIC ==========
+       One entry per release. For each:
+       - type: "Album", "EP" or "Single"
+       - cover: an image path like "images/static-bloom.jpg" (or leave a placeholder name like "mc-1")
+       - tracks: ["Title", "3:12", "audio/your-track.mp3"]  (the 3rd item is optional: a real audio file to play)
+       - links: streaming pages (Spotify, Apple Music, SoundCloud, YouTube, Bandcamp...). Remove ones you don't use.
+       - embed (optional): a Spotify / SoundCloud / YouTube link to show that platform's player on the release page
+       The first release is shown as the featured "Latest release". -->
+  <script type="application/json" id="music-data">
+[
+  {
+    "id": "concentration-64",
+    "title": "Concentration 64",
+    "type": "Single",
+    "year": 2022,
+    "date": "Jul 7, 2022",
+    "cover": "mc-5",
+    "art": "https://i1.sndcdn.com/artworks-1oCzOYtmZrtw1nF3-TSySUA-t500x500.jpg",
+    "label": "#35d4ff",
+    "about": "Atmospheric chillstep with deep dubstep weight underneath. From the Autonomous project.",
+    "tags": "Chillstep · Deep dubstep · Atmospheric",
+    "credits": [
+      [
+        "Written & produced by",
+        "VMAROK"
+      ]
+    ],
+    "links": {
+      "SoundCloud": "https://soundcloud.com/vmarok/concentration-64"
+    },
+    "tracks": [
+      [
+        "Concentration 64",
+        "5:10",
+        "",
+        "https://soundcloud.com/vmarok/concentration-64"
+      ]
+    ]
+  },
+  {
+    "id": "reborn",
+    "title": "Reborn",
+    "type": "Single",
+    "year": 2022,
+    "date": "May 20, 2022",
+    "cover": "mc-1",
+    "art": "https://i1.sndcdn.com/artworks-WdNfrZr7CiBLzhKU-qHSW9w-t500x500.jpg",
+    "label": "#8e2533",
+    "about": "Dark, deep dubstep.",
+    "tags": "Dubstep · Dark · Deep",
+    "credits": [
+      [
+        "Written & produced by",
+        "VMAROK"
+      ]
+    ],
+    "links": {
+      "SoundCloud": "https://soundcloud.com/vmarok/reborn"
+    },
+    "tracks": [
+      [
+        "Reborn",
+        "5:55",
+        "",
+        "https://soundcloud.com/vmarok/reborn"
+      ]
+    ]
+  },
+  {
+    "id": "triple-3",
+    "title": "Triple 3",
+    "type": "Single",
+    "year": 2022,
+    "date": "Apr 11, 2022",
+    "cover": "mc-3",
+    "art": "",
+    "label": "#c94a2f",
+    "about": "Dark, deep dubstep.",
+    "tags": "Dubstep · Dark · Deep",
+    "credits": [
+      [
+        "Written & produced by",
+        "VMAROK"
+      ]
+    ],
+    "links": {
+      "SoundCloud": "https://soundcloud.com/vmarok/triple-3"
+    },
+    "tracks": [
+      [
+        "Triple 3",
+        "3:33",
+        "",
+        "https://soundcloud.com/vmarok/triple-3"
+      ]
+    ]
+  },
+  {
+    "id": "awakening",
+    "title": "Awakening",
+    "type": "Single",
+    "year": 2021,
+    "date": "Dec 12, 2021",
+    "cover": "mc-4",
+    "art": "https://i1.sndcdn.com/artworks-gUmNYo4C2DXzC9ya-ffIlhg-t500x500.jpg",
+    "label": "#6b8fa8",
+    "about": "Seven minutes of deep, dark dubstep. Also out on Spotify.",
+    "tags": "Dubstep · Dark · Deep",
+    "credits": [
+      [
+        "Written & produced by",
+        "VMAROK"
+      ]
+    ],
+    "links": {
+      "SoundCloud": "https://soundcloud.com/vmarok/awakening",
+      "Spotify": "https://open.spotify.com/artist/16kZEsy2rvo6h7gwWlDl0Z"
+    },
+    "tracks": [
+      [
+        "Awakening",
+        "7:00",
+        "",
+        "https://soundcloud.com/vmarok/awakening"
+      ]
+    ]
+  },
+  {
+    "id": "simple",
+    "title": "Simple (Draft)",
+    "type": "Single",
+    "year": 2021,
+    "date": "May 24, 2021",
+    "cover": "mc-6",
+    "art": "https://i1.sndcdn.com/artworks-wLfYsGsB6uIq0RhB-RkmAmQ-t500x500.jpg",
+    "label": "#7d4bff",
+    "about": "A short electronic sketch, shared as a draft.",
+    "tags": "Electronic · Draft",
+    "credits": [
+      [
+        "Written & produced by",
+        "VMAROK"
+      ]
+    ],
+    "links": {
+      "SoundCloud": "https://soundcloud.com/vmarok/simple"
+    },
+    "tracks": [
+      [
+        "Simple (Draft)",
+        "1:34",
+        "",
+        "https://soundcloud.com/vmarok/simple"
+      ]
+    ]
+  },
+  {
+    "id": "matrix",
+    "title": "Matrix",
+    "type": "Single",
+    "year": 2021,
+    "date": "Jan 25, 2021",
+    "cover": "mc-2",
+    "art": "https://i1.sndcdn.com/artworks-wLfYsGsB6uIq0RhB-RkmAmQ-t500x500.jpg",
+    "label": "#c9b45a",
+    "about": "Electronic, with a techno pulse.",
+    "tags": "EDM · Techno",
+    "credits": [
+      [
+        "Written & produced by",
+        "VMAROK"
+      ]
+    ],
+    "links": {
+      "SoundCloud": "https://soundcloud.com/vmarok/matrix"
+    },
+    "tracks": [
+      [
+        "Matrix",
+        "3:33",
+        "",
+        "https://soundcloud.com/vmarok/matrix"
+      ]
+    ]
+  },
+  {
+    "id": "order-piano",
+    "title": "Order (Piano Version)",
+    "type": "Single",
+    "year": 2017,
+    "date": "Apr 25, 2017",
+    "cover": "mc-1",
+    "art": "https://i1.sndcdn.com/artworks-3ZuOlx6cPlzpbiWT-SHwjiQ-t500x500.jpg",
+    "label": "#f2ede6",
+    "about": "A solo piano version of Order.",
+    "tags": "Piano",
+    "credits": [
+      [
+        "Written & produced by",
+        "VMAROK"
+      ]
+    ],
+    "links": {
+      "SoundCloud": "https://soundcloud.com/vmarok/order-piano"
+    },
+    "tracks": [
+      [
+        "Order (Piano Version)",
+        "2:21",
+        "",
+        "https://soundcloud.com/vmarok/order-piano"
+      ]
+    ]
+  }
+]
+  </script>
+
+  <!-- ========== SCRIPT READER: opens when you tap a screenplay ========== -->
+  <section class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="rd-title" hidden>
+    <button class="folio-close reader-close" type="button" data-reader-close><span>←</span> Screenplays</button>
+    <div class="reader-inner">
+      <aside class="rd-info">
+        <p class="sp-num" id="rd-num"></p>
+        <h2 id="rd-title"></h2>
+        <ul class="sp-meta" id="rd-meta"></ul>
+        <div class="rule"></div>
+        <h4>Logline</h4>
+        <p class="rd-log" id="rd-log"></p>
+        <h4>Synopsis</h4>
+        <p class="rd-syn" id="rd-syn"></p>
+        <dl class="rd-facts">
+          <div><dt>Status</dt><dd id="rd-status"></dd></div>
+          <div><dt>Draft</dt><dd id="rd-draft"></dd></div>
+        </dl>
+        <a class="rd-cta" id="rd-cta" href="#">Read the full script <span>→</span></a>
+      </aside>
+
+      <div class="rd-paper-wrap">
+        <p class="rd-label"><span class="dash"></span>Opening pages</p>
+        <article class="rd-paper">
+          <span class="brad"></span><span class="brad"></span><span class="brad"></span>
+          <span class="rd-pg">1.</span>
+          <div class="rd-script" id="rd-script"></div>
+          <p class="rd-cont">(CONTINUED)</p>
+        </article>
+      </div>
+    </div>
+
+    <nav class="rd-nav" aria-label="Other screenplays">
+      <button type="button" id="rd-prev"><span class="ar">←</span><span class="lb">Previous</span><span class="t"></span></button>
+      <button type="button" id="rd-next"><span class="lb">Next</span><span class="t"></span><span class="ar">→</span></button>
+    </nav>
+  </section>
+
+  <!-- ========== FULL SCRIPT: the complete screenplay, page by page ========== -->
+  <section class="fullscript" id="fullscript" role="dialog" aria-modal="true" aria-label="Full screenplay" hidden>
+    <header class="fs-bar">
+      <button type="button" class="fs-back" data-full-close><span>←</span> Back</button>
+      <p class="fs-title" id="fs-title"></p>
+      <p class="fs-count" id="fs-count"></p>
+    </header>
+    <div class="fs-pages" id="fs-pages"></div>
+  </section>
+
+  <script src="script.js"></script>
+</body>
+</html>

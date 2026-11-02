@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="136 119 830 362" width="830" height="362">
+  <!-- AMAROK letter mark: geometric construction, all strokes 9 units -->
+  <defs>
+    <clipPath id="inO"><circle cx="536" cy="300" r="168"/></clipPath>
+    <clipPath id="cap"><rect x="0" y="200" width="2000" height="200"/></clipPath>
+    <clipPath id="kArms"><rect x="814.5" y="200" width="300" height="200"/></clipPath>
+  </defs>
+  <g fill="none" stroke="#eee7dc" stroke-width="14" stroke-linecap="butt" stroke-linejoin="miter" stroke-miterlimit="12">
+    <!-- R -->
+    <g clip-path="url(#cap)">
+      <path d="M150 196 V404"/>
+      <path d="M145.5 204.5 H195 A49.75 49.75 0 0 1 195 304 H150"/>
+      <path d="M190 304 L264 404"/>
+    </g>
+    <!-- O -->
+    <circle cx="536" cy="300" r="175"/>
+    <!-- A + M + A, mirror-symmetric, clipped to the inside of the O -->
+    <g clip-path="url(#inO)">
+      <path d="M398 520 L536 125 L674 520"/>                          <!-- A -->
+      <path d="M340 190 L481 419 L536 300 L591 419 L732 190"/>          <!-- M (the outer arms form the second A) -->
+    </g>
+    <!-- K -->
+    <g clip-path="url(#cap)">
+      <path d="M814.5 196 V404"/>
+      <g clip-path="url(#kArms)">
+        <path d="M806 332 L935 190"/>
+        <path d="M864 271 L960 404"/>
+      </g>
+    </g>
+  </g>
+</svg>
