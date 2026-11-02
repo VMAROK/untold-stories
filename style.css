@@ -1177,12 +1177,12 @@ body.folio-open { overflow: hidden; }
 .gi-cap h3 { font-family: var(--serif-2); font-weight: 400; font-size: 25px; line-height: 1.15; margin-top: 6px; }
 
 /* 3D art: gallery wall of mixed shapes */
-.gal-grid[data-medium="art"] { display: block; columns: 3; column-gap: 26px; }
-.gal-grid[data-medium="art"] .gi.show { break-inside: avoid; margin-bottom: 34px; display: inline-block; width: 100%; }
-.gal-grid[data-medium="art"] .gi[data-orient="tall"] .gi-media   { aspect-ratio: 4 / 5; }
-.gal-grid[data-medium="art"] .gi[data-orient="square"] .gi-media { aspect-ratio: 1 / 1; }
-.gal-grid[data-medium="art"] .gi[data-orient="wide"] .gi-media   { aspect-ratio: 3 / 2; }
-.gal-grid[data-medium="art"] .gi-cap h3 { font-size: 21px; }
+.gal-grid:is([data-medium="art"], [data-medium="mix"]) { display: block; columns: 3; column-gap: 26px; }
+.gal-grid:is([data-medium="art"], [data-medium="mix"]) .gi.show { break-inside: avoid; margin-bottom: 34px; display: inline-block; width: 100%; }
+.gal-grid:is([data-medium="art"], [data-medium="mix"]) .gi[data-orient="tall"] .gi-media   { aspect-ratio: 4 / 5; }
+.gal-grid:is([data-medium="art"], [data-medium="mix"]) .gi[data-orient="square"] .gi-media { aspect-ratio: 1 / 1; }
+.gal-grid:is([data-medium="art"], [data-medium="mix"]) .gi[data-orient="wide"] .gi-media   { aspect-ratio: 3 / 2; }
+.gal-grid:is([data-medium="art"], [data-medium="mix"]) .gi-cap h3 { font-size: 21px; }
 
 .gal-pages { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 30px; flex-wrap: wrap; }
 .gal-pages[hidden] { display: none; }
@@ -1311,7 +1311,7 @@ body.folio-open { overflow: hidden; }
 .vw-count { max-width: 1180px; margin: 26px auto 0; text-align: right; font-family: var(--body); font-size: 10.5px; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); }
 
 @media (max-width: 1100px) {
-  .gal-grid[data-medium="art"] { columns: 2; }
+  .gal-grid:is([data-medium="art"], [data-medium="mix"]) { columns: 2; }
   .viewer { padding: 86px 32px 40px; }
   .vw-arrow.prev { left: 10px; } .vw-arrow.next { right: 10px; }
   .vw-info { grid-template-columns: 1fr; gap: 26px; }
@@ -1323,10 +1323,10 @@ body.folio-open { overflow: hidden; }
   .gal-chips { gap: 4px 16px; }
   .gal-chips button { font-size: 9.5px; letter-spacing: 2px; }
   .gal-grid { grid-template-columns: 1fr; gap: 34px; }
-  .gal-grid[data-medium="art"] { columns: 2; column-gap: 12px; }
-  .gal-grid[data-medium="art"] .gi.show { margin-bottom: 22px; }
-  .gal-grid[data-medium="art"] .gi-cap h3 { font-size: 16px; }
-  .gal-grid[data-medium="art"] .gi-cat { font-size: 8.5px; letter-spacing: 1.6px; }
+  .gal-grid:is([data-medium="art"], [data-medium="mix"]) { columns: 2; column-gap: 12px; }
+  .gal-grid:is([data-medium="art"], [data-medium="mix"]) .gi.show { margin-bottom: 22px; }
+  .gal-grid:is([data-medium="art"], [data-medium="mix"]) .gi-cap h3 { font-size: 16px; }
+  .gal-grid:is([data-medium="art"], [data-medium="mix"]) .gi-cat { font-size: 8.5px; letter-spacing: 1.6px; }
   .viewer { padding: 76px 14px 34px; }
   .vw-arrow { width: 40px; height: 40px; font-size: 20px; }
   .vw-main h2 { font-size: 28px; }
@@ -2344,7 +2344,7 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 }
 
 /* Forgotten Spaces > 3D Art > General: a card that opens the ArtStation portfolio */
-.gal-grid[data-cat="general"] { columns: 1 !important; }
+.gal-grid:is([data-medium="art"], [data-medium="mix"], [data-medium="photo"]) .gi-ext.show { display: block; column-span: all; margin-bottom: 34px; }   /* card stretches across; the rest sits below */
 .gx-card {
   position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 12px;
   aspect-ratio: 21 / 8 !important; padding: 7% 7% 6%; text-decoration: none; color: var(--ink); overflow: hidden;

@@ -383,12 +383,13 @@ if (full) {
 // ===== Forgotten Spaces gallery: Film / 3D Art tabs, categories, pages =====
 const gal = document.getElementById("animation");
 const viewer = document.getElementById("viewer");
-const GAL_PER_PAGE = { film: 6, art: 9, photo: 12 };   // pieces per page
-const galState = { medium: "film", cat: "all", page: 1 };
+const GAL_PER_PAGE = { mix: 12, photo: 12 };   // pieces per page
+const galState = { medium: "mix", cat: "all", page: 1 };
 
 function galItems() {
   return [...gal.querySelectorAll(".gi")].filter((g) =>
-    g.dataset.medium.split(" ").includes(galState.medium) &&
+    // "Art & Film" shows both your 3D art and your films
+    g.dataset.medium.split(" ").some((m) => (galState.medium === "mix" ? m === "film" || m === "art" : m === galState.medium)) &&
     (galState.cat === "all" ? !g.classList.contains("gi-ext") || (g.classList.contains("gi-empty") && !gal.querySelector('.gi[data-medium="photo"]:not(.gi-ext)'))
                             : g.dataset.cat === galState.cat));
 }
@@ -461,7 +462,7 @@ function pieceFromItem(g) {
   return {
     kind: g.dataset.kind, video: g.dataset.video, src: g.dataset.src,
     ph: [...g.querySelector(".gi-media").classList].find((c) => c.startsWith("ph-")),
-    shape: g.dataset.medium === "art" || g.dataset.orient === "tall" ? g.dataset.orient : "wide",
+    shape: g.dataset.orient || "wide",
     cat: g.querySelector(".gi-cat").textContent, title: g.querySelector("h3").textContent,
     desc: g.querySelector(".gi-desc")?.textContent || "", year: g.dataset.year || "",
     spec: g.dataset.spec || "", tools: g.dataset.tools || "",
