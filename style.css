@@ -2448,3 +2448,20 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   left: 23px; top: 21px; width: 18px; height: 22px; border: 0;
   background: linear-gradient(90deg, #fff 0 33%, transparent 33% 67%, #fff 67%);
 }
+
+/* several videos can play at once; only one has sound */
+.ip-snd { flex: none; position: relative; width: 30px; height: 30px; border: 0; background: none; cursor: pointer; }
+.ip-snd::before {   /* speaker */
+  content: ""; position: absolute; left: 6px; top: 9px; width: 6px; height: 12px; background: #f2ede6;
+  clip-path: polygon(0 30%, 40% 30%, 100% 0, 100% 100%, 40% 70%, 0 70%);
+  width: 12px;
+}
+.ip-snd::after {   /* sound waves */
+  content: ""; position: absolute; left: 17px; top: 9px; width: 8px; height: 12px; border: 2px solid #f2ede6;
+  border-left: 0; border-radius: 0 12px 12px 0;
+}
+.inline-play.muted .ip-snd::after {   /* muted: a cross instead of waves */
+  border: 0; border-radius: 0; left: 17px; top: 10px; width: 10px; height: 10px;
+  background: linear-gradient(45deg, transparent 42%, #e2556a 42% 58%, transparent 58%), linear-gradient(-45deg, transparent 42%, #e2556a 42% 58%, transparent 58%);
+}
+.inline-play.muted { box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.12); }

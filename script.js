@@ -1539,6 +1539,7 @@ function updateMuFilter() {
    The play button on a video plays it right there in the grid or carousel.
    Tapping anywhere else on the tile, or its title, still opens it full screen. */
 var inlineEl = null;   // var: used by renderGallery before this point in the file
+var inlineAll = new Set();   // every video playing in place (several can play; only one has sound)
 function inlineEmbed(url) {
   const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/);
   if (yt) return `<iframe src="https://www.youtube.com/embed/${yt[1]}?autoplay=1&playsinline=1&rel=0" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen title="Video"></iframe>`;
@@ -1546,7 +1547,17 @@ function inlineEmbed(url) {
   if (vm) return `<iframe src="https://player.vimeo.com/video/${vm[1]}?autoplay=1&playsinline=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Video"></iframe>`;
   return `<video src="${url}" controls autoplay playsinline></video>`;
 }
-function stopInline() { if (inlineEl) { inlineEl.stop && inlineEl.stop(); inlineEl.remove(); inlineEl = null; } }
+function closeInline(el) {
+  if (!el) return;
+  const hadSound = !el.classList.contains("muted");
+  el.stop && el.stop(); el.remove(); inlineAll.delete(el); if (inlineEl === el) inlineEl = null;
+  if (hadSound && inlineAll.size) soundTo([...inlineAll].pop());   // closing the one you're hearing passes the sound on
+}
+function stopInline() { if (!inlineAll) return; [...inlineAll].forEach(closeInline); inlineEl = null; }   // (runs once before inlineAll is set up)
+// the video you started or touched last gets the sound; every other one keeps playing on mute
+function soundTo(el) {
+  inlineAll.forEach((x) => { const on = x === el; x.classList.toggle("muted", !on); x.setMuted && x.setMuted(!on); });
+}
 // YouTube in place: YouTube's own controls are hidden and a clear layer sits over the video, so tapping
 // the picture does nothing. Only the pause / play button pauses, and the timeline lets you jump around.
 let ytApi = null;
@@ -1561,13 +1572,13 @@ function loadYT() {
 }
 const fmtT = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, "0")}`;
 function playInline(tile, url) {
-  stopInline();
+  if ([...inlineAll].some((x) => x.tile === tile)) return;         // already playing here
   if (typeof MP !== "undefined" && MP.r && !MP.paused) togglePause();   // pause any music
   const box = tile.closest(".gi") || tile.closest(".car-track") || tile.parentElement;
   if (getComputedStyle(box).position === "static") box.style.position = "relative";
   const t = tile.getBoundingClientRect(), b = box.getBoundingClientRect();
   const el = (inlineEl = document.createElement("div"));
-  el.className = "inline-play";
+  el.className = "inline-play"; el.tile = tile; inlineAll.add(el);
   Object.assign(el.style, {
     left: t.left - b.left + box.scrollLeft + "px", top: t.top - b.top + box.scrollTop + "px",
     width: t.width + "px", height: t.height + "px",
@@ -1575,8 +1586,9 @@ function playInline(tile, url) {
   const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/);
   if (!yt) {
     el.innerHTML = inlineEmbed(url) + `<button type="button" class="inline-x" aria-label="Stop video">×</button>`;
-    el.querySelector(".inline-x").addEventListener("click", stopInline);
-    box.appendChild(el); return;
+    el.querySelector(".inline-x").addEventListener("click", () => closeInline(el));
+    const v = el.querySelector("video"); if (v) el.setMuted = (m) => (v.muted = m);
+    box.appendChild(el); soundTo(el); return;
   }
   el.innerHTML = `<div class="ip-video"><div></div></div>
     <div class="ip-shield"></div>
@@ -1586,12 +1598,15 @@ function playInline(tile, url) {
       <span class="ip-cur">0:00</span>
       <input class="ip-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Video position" />
       <span class="ip-dur">0:00</span>
+      <button type="button" class="ip-snd" aria-label="Sound"></button>
     </div>
     <button type="button" class="inline-x" aria-label="Stop video">×</button>`;
   box.appendChild(el);
   const pp = el.querySelector(".ip-pp"), seek = el.querySelector(".ip-seek");
   let player = null, dragging = false, timer = null;
-  el.querySelector(".inline-x").addEventListener("click", stopInline);
+  el.querySelector(".inline-x").addEventListener("click", () => closeInline(el));
+  el.setMuted = (m) => { if (player && player.mute) m ? player.mute() : player.unMute(); };
+  el.querySelector(".ip-snd").addEventListener("click", () => (el.classList.contains("muted") ? soundTo(el) : (el.classList.add("muted"), el.setMuted(true))));
   el.stop = () => { clearInterval(timer); try { player && player.destroy(); } catch (e) {} };
   const sync = () => {
     if (!player || !player.getDuration) return;
@@ -1600,13 +1615,13 @@ function playInline(tile, url) {
     if (!dragging) { el.querySelector(".ip-cur").textContent = fmtT(c); seek.value = d ? Math.round((c / d) * 1000) : 0; }
   };
   const toggle = () => { if (player) player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo(); };
-  pp.addEventListener("click", toggle);
+  pp.addEventListener("click", () => { if (player && player.getPlayerState() !== 1) soundTo(el); toggle(); });
   // the round button in the middle plays / pauses too. While playing it fades out;
   // tapping the picture just brings it back for a moment (it never pauses by itself)
   const big = el.querySelector(".ip-big");
   let hideT = null;
   const peek = () => { el.classList.add("peek"); clearTimeout(hideT); hideT = setTimeout(() => el.classList.remove("peek"), 2200); };
-  big.addEventListener("click", () => { toggle(); peek(); });
+  big.addEventListener("click", () => { if (player && player.getPlayerState() !== 1) soundTo(el); toggle(); peek(); });
   el.querySelector(".ip-shield").addEventListener("click", peek);
   el.addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") peek(); });
   seek.addEventListener("input", () => {
@@ -1619,13 +1634,14 @@ function playInline(tile, url) {
     if (player) player.seekTo((seek.value / 1000) * d, true);
     dragging = false;
   });
+  soundTo(el);                                                        // the new one takes the sound
   loadYT().then(() => {
-    if (inlineEl !== el) return;
+    if (!inlineAll.has(el)) return;
     player = new YT.Player(el.querySelector(".ip-video > div"), {
       videoId: yt[1],
       playerVars: { autoplay: 1, controls: 0, playsinline: 1, rel: 0, modestbranding: 1, fs: 0, iv_load_policy: 3, disablekb: 1 },
       events: {
-        onReady: (e) => { e.target.playVideo(); sync(); },
+        onReady: (e) => { if (el.classList.contains("muted")) e.target.mute(); else e.target.unMute(); e.target.playVideo(); sync(); },
         onStateChange: (e) => {
           const playing = e.data === 1;
           el.classList.toggle("playing", playing);
