@@ -1,5 +1,6 @@
 """Reads the public YouTube feed for the Tim Amarok channel and writes data/youtube.json for the site.
-Sorting: any hashtag containing "liminal" (#liminal, #liminalspaces, #liminalcore...) -> liminal; everything else -> general."""
+Sorting: any short or video with a hashtag containing "liminal" (#liminal, #liminalspaces, #liminalcore...) -> Liminal;
+shorts with no hashtags -> General; other videos (e.g. with unrelated hashtags) are left off the site."""
 import json, re, urllib.request, xml.etree.ElementTree as ET, datetime, os
 
 CHANNEL = "UCTXSYfN_RQIS9svvXbZfeYg"
@@ -37,7 +38,8 @@ for e in root.findall("a:entry", NS):
         "published": e.findtext("a:published", default="", namespaces=NS),
         "description": re.sub(r"(^|\s)#\w+", "", desc).strip(),
         "thumb": th.get("url", "") if th is not None else "", "hashtags": tags,
-        "section": "liminal" if any("liminal" in t for t in tags) else "general",
+        # liminal hashtag -> Liminal; a short with no hashtags -> General; anything else isn't shown
+        "section": "liminal" if any("liminal" in t for t in tags) else ("general" if "/shorts/" in link and not tags else "none"),
     })
 os.makedirs("data", exist_ok=True)
 out = {"synced_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"), "videos": videos}

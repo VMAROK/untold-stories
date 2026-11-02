@@ -1459,7 +1459,7 @@ function updateMuFilter() {
 (() => {
   if (!gal) return;
   fetch("data/youtube.json", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => {
-    const vids = (d && d.videos) || [];
+    const vids = ((d && d.videos) || []).filter((v) => v.section === "liminal" || v.section === "general");
     if (!vids.length) return;
     const grid = gal.querySelector(".gal-grid");
     const first = grid.querySelector('.gi[data-medium="film"]:not(.gi-ext)');
