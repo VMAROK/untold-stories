@@ -1143,7 +1143,7 @@ if (musicEl && MUSIC.length) {
 // ===== Modern Traces: dance =====
 const danceEl = document.getElementById("dance");
 const dnState = { disc: "fire", prop: "all" };
-const DISC_NAME = { fire: "Fire spinning", belly: "Belly dance" };
+const DISC_NAME = { fire: "Fire spinning", belly: "Tribal fusion" };
 const PROP_LABEL = { fire: "Prop", belly: "Style" };
 function dnItems() {
   return [...danceEl.querySelectorAll(".dc")].filter((d) => d.dataset.disc === dnState.disc && (dnState.prop === "all" || d.dataset.prop === dnState.prop));
@@ -1185,7 +1185,7 @@ if (danceEl) {
   else rb.classList.add(reel.dataset.ph);
   rb.addEventListener("click", () => openView([{
     kind: "video", video: reel.dataset.video, ph: reel.dataset.ph, shape: "wide", cat: "Showreel",
-    title: reel.dataset.title, desc: reel.dataset.desc, year: reel.dataset.year, spec: reel.dataset.spec, tools: "Fire spinning · Belly dance", toolsLabel: "Featuring",
+    title: reel.dataset.title, desc: reel.dataset.desc, year: reel.dataset.year, spec: reel.dataset.spec, tools: "Fire spinning · Tribal fusion", toolsLabel: "Featuring",
   }], 0));
   // tabs + filters
   danceEl.querySelectorAll(".dn-tabs button").forEach((b) => b.addEventListener("click", () => {
@@ -1771,6 +1771,7 @@ sizeGalRows();
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0); tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   };
   size(); addEventListener("resize", size);
+  if (window.ResizeObserver) new ResizeObserver(() => { if (card.clientWidth !== W || card.clientHeight !== H) size(); }).observe(card);
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const sparks = [];
 
