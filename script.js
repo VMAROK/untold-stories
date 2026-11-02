@@ -2034,18 +2034,13 @@ sizeGalRows();
   if (formats.size < 2) f.hidden = true;
 })();
 
-/* ---------- Home cards: the dark label fades away a few seconds after the cards come into view ---------- */
+/* ---------- Home cards: pressing or holding a card (phone / iPad) fades its label away ---------- */
 (() => {
-  const wrap = document.querySelector(".card")?.parentElement;
-  if (!wrap) return;
-  const io = new IntersectionObserver(([e]) => {
-    if (!e.isIntersecting) return;
-    io.disconnect();
-    setTimeout(() => wrap.classList.add("cards-ov-off"), 2600);
-  }, { threshold: 0.4 });
-  io.observe(wrap);
-  // touch screens: a press shows the label again for a moment
-  wrap.querySelectorAll(".card").forEach((c) => c.addEventListener("touchstart", () => {
-    c.classList.add("touch-ov"); clearTimeout(c._ov); c._ov = setTimeout(() => c.classList.remove("touch-ov"), 1400);
-  }, { passive: true }));
+  document.querySelectorAll(".card").forEach((c) => {
+    const show = () => { clearTimeout(c._ov); c.classList.add("touch-ov"); };
+    const hide = () => { clearTimeout(c._ov); c._ov = setTimeout(() => c.classList.remove("touch-ov"), 900); };
+    c.addEventListener("touchstart", show, { passive: true });
+    c.addEventListener("touchend", hide, { passive: true });
+    c.addEventListener("touchcancel", hide, { passive: true });
+  });
 })();
