@@ -2033,3 +2033,19 @@ sizeGalRows();
   f.querySelectorAll("[data-filter]").forEach((b) => { if (b.dataset.filter !== "all" && !formats.has(b.dataset.filter)) b.hidden = true; });
   if (formats.size < 2) f.hidden = true;
 })();
+
+/* ---------- Home cards: the dark label fades away a few seconds after the cards come into view ---------- */
+(() => {
+  const wrap = document.querySelector(".card")?.parentElement;
+  if (!wrap) return;
+  const io = new IntersectionObserver(([e]) => {
+    if (!e.isIntersecting) return;
+    io.disconnect();
+    setTimeout(() => wrap.classList.add("cards-ov-off"), 2600);
+  }, { threshold: 0.4 });
+  io.observe(wrap);
+  // touch screens: a press shows the label again for a moment
+  wrap.querySelectorAll(".card").forEach((c) => c.addEventListener("touchstart", () => {
+    c.classList.add("touch-ov"); clearTimeout(c._ov); c._ov = setTimeout(() => c.classList.remove("touch-ov"), 1400);
+  }, { passive: true }));
+})();
