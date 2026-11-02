@@ -1460,8 +1460,27 @@ function updateMuFilter() {
 (() => {
   if (!gal) return;
   fetch("data/youtube.json", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => {
-    const vids = ((d && d.videos) || []).filter((v) => v.section === "liminal" || v.section === "general");
-    if (!vids.length) return;
+    // a hashtag that matches a collection location (#poolrooms -> "Pool Rooms") puts the video in that
+    // location's Videos row; otherwise liminal videos and untagged shorts go in the grid
+    const key = (t) => String(t).toLowerCase().replace(/[^a-z0-9]/g, "");
+    const locs = [...gal.querySelectorAll(".coll-data section.loc")];
+    const placed = new Set();
+    ((d && d.videos) || []).forEach((v) => {
+      const loc = locs.find((l) => (v.hashtags || []).includes(key(l.dataset.name)));
+      if (!loc) return;
+      const a = document.createElement("div");
+      a.className = "ang";
+      Object.assign(a.dataset, {
+        kind: "video", video: v.url, orient: v.short ? "tall" : "wide", title: v.title,
+        poster: v.short ? `https://i.ytimg.com/vi/${v.id}/oar2.jpg` : v.thumb,
+        spec: v.short ? "Format: Short" : "Format: Video",
+      });
+      a.textContent = v.description || "";
+      loc.prepend(a);                                         // newest first in the Videos row
+      placed.add(v.id);
+    });
+    const vids = ((d && d.videos) || []).filter((v) => !placed.has(v.id) && (v.section === "liminal" || v.section === "general"));
+    if (!vids.length) { renderGallery(); return; }
     const grid = gal.querySelector(".gal-grid");
     const first = grid.querySelector('.gi[data-medium="film"]:not(.gi-ext)');
     vids.forEach((v) => {
