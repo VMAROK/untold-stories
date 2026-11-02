@@ -394,6 +394,7 @@ function galItems() {
                             : g.dataset.cat === galState.cat));
 }
 function renderGallery(scroll = false) {
+  stopInline();
   const grid = gal.querySelector(".gal-grid");
   grid.dataset.medium = galState.medium;
   grid.dataset.cat = galState.cat;
@@ -549,6 +550,7 @@ function anglePiece(a, i, total, world, locName, base) {
 function angleTile(a, label, cap) {
   const b = document.createElement("button");
   b.type = "button"; b.className = "ang-btn";
+  if (a.dataset.video) b.dataset.video = a.dataset.video;   // lets the play button play it right in place
   const pic = a.dataset.poster || a.dataset.src;
   b.innerHTML = `<div class="ang-tile ${pic ? "" : a.dataset.ph || ""}"${pic ? ` style="background:url('${pic}') center / cover no-repeat"` : ""}>
       <span class="ang-no">${label}</span>${a.dataset.kind === "video" ? '<span class="gi-play"></span>' : ""}</div>
@@ -1532,3 +1534,48 @@ function updateMuFilter() {
   watch(window, () => scrollY, (y) => scrollTo(0, y));
   document.querySelectorAll(".folio, .coll, .release, .reader").forEach((el) => watch(el, () => el.scrollTop, (y) => (el.scrollTop = y)));
 })();
+
+/* ---------- Play in place ----------
+   The play button on a video plays it right there in the grid or carousel.
+   Tapping anywhere else on the tile, or its title, still opens it full screen. */
+var inlineEl = null;   // var: used by renderGallery before this point in the file
+function inlineEmbed(url) {
+  const yt = url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([\w-]{6,})/);
+  if (yt) return `<iframe src="https://www.youtube.com/embed/${yt[1]}?autoplay=1&playsinline=1&rel=0" allow="autoplay; fullscreen; picture-in-picture; encrypted-media" allowfullscreen title="Video"></iframe>`;
+  const vm = url.match(/vimeo\.com\/(\d+)/);
+  if (vm) return `<iframe src="https://player.vimeo.com/video/${vm[1]}?autoplay=1&playsinline=1" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Video"></iframe>`;
+  return `<video src="${url}" controls autoplay playsinline></video>`;
+}
+function stopInline() { if (inlineEl) { inlineEl.remove(); inlineEl = null; } }
+function playInline(tile, url) {
+  stopInline();
+  if (typeof MP !== "undefined" && MP.r && !MP.paused) togglePause();   // pause any music
+  const box = tile.closest(".gi") || tile.closest(".car-track") || tile.parentElement;
+  if (getComputedStyle(box).position === "static") box.style.position = "relative";
+  const t = tile.getBoundingClientRect(), b = box.getBoundingClientRect();
+  const el = (inlineEl = document.createElement("div"));
+  el.className = "inline-play";
+  Object.assign(el.style, {
+    left: t.left - b.left + box.scrollLeft + "px", top: t.top - b.top + box.scrollTop + "px",
+    width: t.width + "px", height: t.height + "px",
+  });
+  el.innerHTML = inlineEmbed(url) + `<button type="button" class="inline-x" aria-label="Stop video">×</button>`;
+  el.querySelector(".inline-x").addEventListener("click", stopInline);
+  box.appendChild(el);
+}
+document.addEventListener("click", (e) => {
+  const play = e.target.closest(".gi-play");
+  if (!play) return;
+  const tile = play.closest(".gi-media, .ang-tile");
+  const url = tile && (tile.closest(".gi")?.dataset.video || tile.closest(".ang-btn")?.dataset.video);
+  if (!url || IN_FRAME) return;                         // no video yet (or preview): open full screen as before
+  e.preventDefault(); e.stopPropagation();
+  playInline(tile, url);
+}, true);
+// the title opens it full screen too
+document.addEventListener("click", (e) => {
+  const cap = e.target.closest(".gi .gi-cap");
+  if (!cap) return;
+  cap.closest(".gi").querySelector(".gi-media")?.click();
+});
+addEventListener("resize", stopInline);
