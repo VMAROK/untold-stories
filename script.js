@@ -813,27 +813,33 @@ function scPlay(url) {
   scPos = 0;
   const src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&auto_play=true&visual=false&show_comments=false&show_reposts=false&hide_related=true&color=%238e2533`;
   clearTimeout(scWait); scWait = setTimeout(dockShow, 1200);          // not playing on its own? show the player
-  if (scW) { scW.load(url, { auto_play: true, visual: false, show_comments: false, hide_related: true, color: "8e2533", callback: () => scW.play() }); return; }
   if (!scDock) {
     scDock = document.createElement("div");
     scDock.className = "sc-dock";
     scDock.innerHTML = `<div class="sc-dock-h"><span>Tap ▶ to start</span><button type="button" aria-label="Hide player">⌄</button></div>`;
     scDock.querySelector("button").onclick = dockHide;
-    scFrame = document.createElement("iframe");
-    scFrame.title = "SoundCloud player"; scFrame.allow = "autoplay; encrypted-media"; scFrame.src = src;
-    scDock.appendChild(scFrame); document.body.appendChild(scDock);
-    scLoadApi().then(() => {
-      scW = SC.Widget(scFrame);
-      scW.bind(SC.Widget.Events.READY, () => { if (MP.mode === "sc") scW.play(); });
-      scW.bind(SC.Widget.Events.PLAY, () => {
-        clearTimeout(scWait); MP.paused = false; syncPlayingUI(); setTimeout(dockHide, 500);
-        window.unloadListen && unloadListen();
-      });
-      scW.bind(SC.Widget.Events.PAUSE, () => { MP.paused = true; syncPlayingUI(); });
-      scW.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => (scPos = e.currentPosition / 1000));
-      scW.bind(SC.Widget.Events.FINISH, () => nextTrack(1));
-    }).catch(() => dockShow());
-  } else scFrame.src = src;
+    document.body.appendChild(scDock);
+  }
+  // A brand-new player for every track. Changing an existing player's address would add steps to the
+  // browser's history, and then the Back button would step the player back (pausing it) instead of the page.
+  if (scFrame) scFrame.remove();
+  scW = null;
+  const f = (scFrame = document.createElement("iframe"));
+  f.title = "SoundCloud player"; f.allow = "autoplay; encrypted-media"; f.src = src;
+  scDock.appendChild(f);
+  scLoadApi().then(() => {
+    if (f !== scFrame) return;                                       // a newer track took over
+    const w = (scW = SC.Widget(f));
+    w.bind(SC.Widget.Events.READY, () => { if (MP.mode === "sc" && f === scFrame) w.play(); });
+    w.bind(SC.Widget.Events.PLAY, () => {
+      if (f !== scFrame) return;
+      clearTimeout(scWait); MP.paused = false; syncPlayingUI(); setTimeout(dockHide, 500);
+      window.unloadListen && unloadListen();
+    });
+    w.bind(SC.Widget.Events.PAUSE, () => { if (f === scFrame) { MP.paused = true; syncPlayingUI(); } });
+    w.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => { if (f === scFrame) scPos = e.currentPosition / 1000; });
+    w.bind(SC.Widget.Events.FINISH, () => { if (f === scFrame) nextTrack(1); });
+  }).catch(() => dockShow());
 }
 // --- placeholder tracks (no link or file) play a soft generated tone ---
 const PREVIEW_SECONDS = 30;
@@ -1010,17 +1016,22 @@ if (musicEl && MUSIC.length) {
   try { framed = window.self !== window.top; } catch (e) { framed = true; }
   if (framed) return;                                   // preview: show the link cards instead
   box.classList.add("live");
-  const frames = { sp: box.querySelector('[data-key="sp"]'), sc: box.querySelector('[data-key="sc"]') };
+  // keep the two players as templates; each load builds a fresh one (changing an address would add history steps)
+  const tpl = { sp: box.querySelector('[data-key="sp"]'), sc: box.querySelector('[data-key="sc"]') };
+  const slot = box.querySelector(".mu-slot");
+  Object.values(tpl).forEach((f) => f.remove());
+  let live = null;
   const NAME = { sp: "Spotify", sc: "SoundCloud" };
   const tabs = [...box.querySelectorAll(".mu-src [data-src]")];
   const loadBtn = box.querySelector(".mu-slot-load");
   let tab = "sp";
-  const blank = () => Object.values(frames).forEach((f) => { f.removeAttribute("src"); f.hidden = true; });
+  const blank = () => { if (live) { live.remove(); live = null; } };
   const load = (k) => {
     tab = k;
     if (typeof MP !== "undefined" && MP.r) stopAll();   // the track player stops
     blank();                                            // the other box stops
-    frames[k].src = frames[k].dataset.src; frames[k].hidden = false;
+    live = tpl[k].cloneNode(false); live.hidden = false; live.src = tpl[k].dataset.src;
+    slot.insertBefore(live, loadBtn);
     loadBtn.hidden = true;
     tabs.forEach((t) => t.classList.toggle("on", t.dataset.src === k));
   };
