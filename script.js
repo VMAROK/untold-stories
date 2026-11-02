@@ -390,8 +390,11 @@ function galItems() {
   return [...gal.querySelectorAll(".gi")].filter((g) =>
     // "Art & Film" shows both your 3D art and your films
     g.dataset.medium.split(" ").some((m) => (galState.medium === "mix" ? m === "film" || m === "art" : m === galState.medium)) &&
-    (galState.cat === "all" ? !g.classList.contains("gi-ext") || (g.classList.contains("gi-empty") && !gal.querySelector('.gi[data-medium="photo"]:not(.gi-ext)'))
-                            : g.dataset.cat === galState.cat));
+    (galState.cat === "all"
+      ? (galState.medium === "mix"
+          ? g.dataset.kind === "video" && !g.classList.contains("gi-ext")      // Art & Film > All: every video you've made, nothing else
+          : !g.classList.contains("gi-ext") || (g.classList.contains("gi-empty") && !gal.querySelector('.gi[data-medium="photo"]:not(.gi-ext)')))
+      : g.dataset.cat === galState.cat));
 }
 function renderGallery(scroll = false) {
   stopInline();
