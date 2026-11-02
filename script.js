@@ -82,7 +82,11 @@ const openFolio = (id) => {
   if (el.classList.contains("open")) return;
   el.hidden = false;
   el.scrollTop = 0;
-  if (id === "music") setTimeout(() => { if (MUSIC[0]) scPrep(MUSIC[0].tracks[0][3]); }, 0);   // latest release ready to play
+  if (id === "music") setTimeout(() => {
+    if (!MUSIC[0]) return;
+    if (!MP.r) renderFeature(MUSIC[0], false);                                   // nothing playing: latest release
+    scPrep(MUSIC[0].tracks[0][3]);
+  }, 0);   // latest release ready to play
   requestAnimationFrame(() => el.classList.add("open"));
   document.body.classList.add("folio-open");
   // stagger the rows in
@@ -707,22 +711,29 @@ function embedMusic(url) {
   return "";
 }
 
-function renderFeature() {
-  const r = MUSIC[0]; if (!r) return;
-  $m("mu-feature").innerHTML = `${recHTML(r)}
+// top of the Music page: your latest release, or whatever is playing right now
+let featId = null;
+function renderFeature(r = MUSIC[0], playing = false) {
+  if (!r) return;
+  const box = $m("mu-feature"), first = featId === null;
+  if (featId === r.id && box.dataset.playing === String(playing)) return;
+  featId = r.id; box.dataset.playing = String(playing);
+  const html = `${recHTML(r)}
     <div>
-      <p class="mu-eyebrow">Latest release</p>
+      <p class="mu-eyebrow">${playing ? "Now playing" : "Latest release"}</p>
       <h3 class="mu-title">${escH(r.title)}</h3>
       <p class="mu-meta">${metaLine(r)}</p>
       ${r.tags ? `<p class="rl-tags">${escH(r.tags)}</p>` : ""}
       <p class="mu-about">${escH(r.about || "")}</p>
       <div class="mu-actions">
         <button type="button" class="mu-play" data-rel="${escH(r.id)}">Play</button>
-        <button type="button" class="mu-open" data-open-rel="0">Open release <span>→</span></button>
+        <button type="button" class="mu-open" data-open-rel="${MUSIC.indexOf(r)}">Open release <span>→</span></button>
       </div>
       ${linksHTML(r)}
     </div>`;
-  $m("mu-all").innerHTML = allTracksHTML();
+  if (first) { box.innerHTML = html; $m("mu-all").innerHTML = allTracksHTML(); return; }
+  box.classList.add("swap");                                   // quick fade between songs
+  setTimeout(() => { box.innerHTML = html; syncPlayingUI(); box.classList.remove("swap"); }, 220);
 }
 // every track from every release, newest first
 function allTracksHTML() {
@@ -962,6 +973,7 @@ function stopAll() {
   stopSound(); if (MP.ctx && MP.ctx.state === "suspended") MP.ctx.resume();
   MP.r = null; MP.mode = null; MP.paused = false; MP.waiting = false;
   $m("mini").hidden = true; document.body.classList.remove("mini-on"); syncPlayingUI();
+  renderFeature(MUSIC[0], false);                      // stopped: back to your latest release
 }
 MP.audio.addEventListener("ended", () => nextTrack(1));
 MP.audio.addEventListener("loadedmetadata", () => { if (isFinite(MP.audio.duration)) MP.dur = MP.audio.duration; });
@@ -972,6 +984,7 @@ function showMini() {
   $m("mini-art").outerHTML = coverHTML(r, "mini-art").replace('class="cover-art', 'id="mini-art" class="cover-art');
   $m("mini-title").textContent = t[0];
   $m("mini-sub").textContent = `${ARTIST} · ${MP.mode === "sc" ? "SoundCloud" : MP.mode === "synth" ? "placeholder tone" : r.title}`;
+  renderFeature(r, true);                              // the top of the page follows the song you're playing
 }
 function syncPlayingUI() {
   const on = MP.r ? MP.r.id : null;

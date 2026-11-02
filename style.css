@@ -2303,3 +2303,7 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 
 /* only the playing SoundCloud player shows in the pop-up; the one loaded ahead stays invisible */
 .sc-dock iframe:not(.cur) { position: absolute; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+
+/* top of Music: fade when it switches to the song that's playing */
+#mu-feature { transition: opacity 0.22s ease; }
+#mu-feature.swap { opacity: 0; }
