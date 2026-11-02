@@ -1239,14 +1239,16 @@ if (danceEl) {
     });
   });
   // showreel
-  const reel = danceEl.querySelector(".dn-reel");
-  const rb = reel.querySelector(".dn-reel-btn");
-  if (reel.dataset.poster || reel.dataset.src) rb.style.background = `url('${reel.dataset.poster || reel.dataset.src}') center / cover no-repeat`;
-  else rb.classList.add(reel.dataset.ph);
-  rb.addEventListener("click", () => openView([{
-    kind: "video", video: reel.dataset.video, ph: reel.dataset.ph, shape: "wide", cat: "Showreel",
-    title: reel.dataset.title, desc: reel.dataset.desc, year: reel.dataset.year, spec: reel.dataset.spec, tools: "Fire spinning · Tribal fusion", toolsLabel: "Featuring",
-  }], 0));
+  const reel = danceEl.querySelector(".dn-reel");                  // (the showreel can be switched off in index.html)
+  const rb = reel && reel.querySelector(".dn-reel-btn");
+  if (rb) {
+    if (reel.dataset.poster || reel.dataset.src) rb.style.background = `url('${reel.dataset.poster || reel.dataset.src}') center / cover no-repeat`;
+    else rb.classList.add(reel.dataset.ph);
+    rb.addEventListener("click", () => openView([{
+      kind: "video", video: reel.dataset.video, ph: reel.dataset.ph, shape: "wide", cat: "Showreel",
+      title: reel.dataset.title, desc: reel.dataset.desc, year: reel.dataset.year, spec: reel.dataset.spec, tools: "Fire spinning · Tribal fusion", toolsLabel: "Featuring",
+    }], 0));
+  }
   // tabs + filters
   danceEl.querySelectorAll(".dn-tabs button").forEach((b) => b.addEventListener("click", () => {
     dnState.disc = b.dataset.disc; dnState.prop = "all";

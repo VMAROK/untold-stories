@@ -2569,3 +2569,13 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .gi-coll.gi-soon .gi-media { filter: saturate(0.5) brightness(0.55); }
 .gi-coll.gi-soon .gi-collbadge b { font-size: 1.15em; letter-spacing: 3px; }
 .coll-soon { text-align: center; font-family: var(--serif-2); font-size: 28px; color: var(--muted); padding: 60px 0 100px; }
+
+/* Modern Traces: Coming soon (the showreel / tabs / grid design is kept, switched off, in index.html) */
+.dn-soon {
+  margin: 10px 0 80px; padding: 70px 24px; text-align: center;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: radial-gradient(ellipse 60% 70% at 50% 40%, rgba(255, 120, 40, 0.10), transparent 70%), rgba(255, 255, 255, 0.015);
+}
+.dn-soon-k { font-family: var(--body); font-size: 10.5px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--crimson-bright); }
+.dn-soon-t { margin-top: 14px; font-family: var(--serif); font-size: clamp(34px, 6vw, 56px); line-height: 1.05; }
+.dn-soon-s { margin-top: 12px; font-family: var(--body); font-size: 14px; color: var(--muted); }
