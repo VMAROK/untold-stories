@@ -2556,7 +2556,7 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 
 /* release pop-up: keep the record that slides out (when playing) well clear of the title and text */
 @media (min-width: 641px) {
-  .rl-panel .release-inner .rec { max-width: 300px; margin-right: 32%; }
+  .rl-panel .release-inner .rec { max-width: 380px; margin-right: 21%; }
   .rl-panel .release-inner .rec .vinyl { transform: translateX(16%); }
   .rl-panel .release-inner .rec.spin .vinyl, .rl-panel .release-inner .rec:hover .vinyl { transform: translateX(26%); }
 }
