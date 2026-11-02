@@ -2342,3 +2342,23 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   -webkit-mask: radial-gradient(circle, transparent 0 25%, #000 26%);          /* keeps the shine off the centre label */
           mask: radial-gradient(circle, transparent 0 25%, #000 26%);
 }
+
+/* Forgotten Spaces > 3D Art > General: a card that opens the ArtStation portfolio */
+.gal-grid[data-cat="general"] { columns: 1 !important; }
+.gx-card {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-end; gap: 12px;
+  aspect-ratio: 21 / 8 !important; padding: 7% 7% 6%; text-decoration: none; color: var(--ink); overflow: hidden;
+  background:
+    radial-gradient(ellipse 60% 90% at 85% 10%, rgba(19, 175, 240, 0.18), transparent 70%),
+    radial-gradient(ellipse 50% 80% at 10% 100%, rgba(142, 37, 51, 0.25), transparent 70%),
+    linear-gradient(160deg, #101418, #060606);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: border-color 0.3s, transform 0.3s;
+}
+.gx-card:hover { border-color: rgba(255, 255, 255, 0.28); transform: translateY(-3px); }
+.gx-k { font-family: var(--body); font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); }
+.gx-t { font-family: var(--serif); font-size: clamp(36px, 6vw, 64px); line-height: 1; }
+.gx-s { max-width: 460px; font-family: var(--body); font-size: 14px; line-height: 1.7; color: var(--muted); }
+.gx-go { margin-top: 6px; font-family: var(--body); font-size: 10.5px; font-weight: 500; letter-spacing: 2.6px; text-transform: uppercase; border: 1px solid var(--crimson-bright); padding: 12px 18px; }
+.gx-card:hover .gx-go { background: rgba(142, 37, 51, 0.25); }
+@media (max-width: 640px) { .gx-card { aspect-ratio: 4 / 5 !important; padding: 26px; } .gx-s { font-size: 13px; } }

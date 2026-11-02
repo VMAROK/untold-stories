@@ -388,11 +388,13 @@ const galState = { medium: "film", cat: "all", page: 1 };
 
 function galItems() {
   return [...gal.querySelectorAll(".gi")].filter((g) =>
-    g.dataset.medium.split(" ").includes(galState.medium) && (galState.cat === "all" || g.dataset.cat === galState.cat));
+    g.dataset.medium.split(" ").includes(galState.medium) &&
+    (galState.cat === "all" ? !g.classList.contains("gi-ext") : g.dataset.cat === galState.cat));
 }
 function renderGallery(scroll = false) {
   const grid = gal.querySelector(".gal-grid");
   grid.dataset.medium = galState.medium;
+  grid.dataset.cat = galState.cat;
   const items = galItems();
   const per = GAL_PER_PAGE[galState.medium];
   const total = Math.max(1, Math.ceil(items.length / per));
@@ -435,10 +437,10 @@ if (gal) {
     const b = e.target.closest("button"); if (!b || b.disabled) return;
     galState.page = Number(b.dataset.p); renderGallery(true);
   });
-  gal.querySelectorAll(".gi").forEach((g) => g.querySelector(".gi-media").addEventListener("click", () => {
+  gal.querySelectorAll(".gi:not(.gi-ext)").forEach((g) => g.querySelector(".gi-media").addEventListener("click", () => {
     if (g.classList.contains("gi-coll")) openColl(g);
-    else openView(galItems().filter((x) => !x.classList.contains("gi-coll")).map(pieceFromItem),
-                  galItems().filter((x) => !x.classList.contains("gi-coll")).indexOf(g));
+    else openView(galItems().filter((x) => !x.classList.contains("gi-coll") && !x.classList.contains("gi-ext")).map(pieceFromItem),
+                  galItems().filter((x) => !x.classList.contains("gi-coll") && !x.classList.contains("gi-ext")).indexOf(g));
   }));
   renderGallery();
 }
