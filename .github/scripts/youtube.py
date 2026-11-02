@@ -39,9 +39,9 @@ for e in root.findall("a:entry", NS):
         "description": re.sub(r"(^|\s)#\w+", "", desc).strip(),
         "thumb": th.get("url", "") if th is not None else "", "hashtags": tags,
         # liminal hashtag -> Liminal; a short with no hashtags -> General; anything else isn't shown
-        # liminal hashtag -> Liminal; a short with no hashtags -> General; anything else is "other"
+        # liminal hashtag -> Liminal; anything with no hashtags -> General; anything else is "other"
         # (the site still checks its hashtags, e.g. #poolrooms puts it in that collection location)
-        "section": "liminal" if any("liminal" in t for t in tags) else ("general" if "/shorts/" in link and not tags else "other"),
+        "section": "liminal" if any("liminal" in t for t in tags) else ("general" if not tags else "other"),
     })
 os.makedirs("data", exist_ok=True)
 out = {"synced_at": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ"), "videos": videos}
