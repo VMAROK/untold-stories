@@ -1733,13 +1733,19 @@ sizeGalRows();
       s.className = "cs-slide"; s.style.background = bgLayers(url);
       card.appendChild(s); slides.push(s);
     };
+    let i = 0;
     card.classList.add("cs-on");
     add("images/forgotten-spaces.jpg");
     slides[0].classList.add("on", "orig");
     // only use thumbnails that actually load
     // use a video once its plain thumbnail loads (the upright one, if it exists, layers on top)
-    pics.forEach((u) => { const im = new Image(); im.onload = () => { if (im.naturalWidth > 120) add(u); }; im.src = u.split("|").pop(); });
-    let i = 0;
+    // the cover only holds the spot until the first video thumbnail is ready, then it's gone for good
+    pics.forEach((u) => { const im = new Image(); im.onload = () => {
+      if (im.naturalWidth <= 120) return;
+      add(u);
+      const cover = slides.find((s) => s.classList.contains("orig"));
+      if (cover) { slides.splice(slides.indexOf(cover), 1); slides[0].classList.add("on"); i = 0; setTimeout(() => cover.remove(), 1700); cover.classList.remove("on"); }
+    }; im.src = u.split("|").pop(); });
     setInterval(() => {
       if (slides.length < 2 || document.hidden) return;
       const r = card.getBoundingClientRect();
