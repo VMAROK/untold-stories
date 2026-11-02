@@ -48,14 +48,36 @@ window.addEventListener("scroll", () => {
   links.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === "#" + current));
 });
 
-// Contact form: show a thank-you note (no real sending yet)
+// Contact form: sends the message to your email through Web3Forms (free).
+// Put your Web3Forms access key below. It only routes messages to your inbox; it doesn't reveal your email.
+const WEB3FORMS_KEY = "";
 const form = document.getElementById("contactForm");
 const note = document.getElementById("formNote");
 if (form) {
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    note.textContent = "Thanks! Your message is ready to send once a backend is hooked up.";
-    form.reset();
+    if (form.botcheck && form.botcheck.checked) return;              // a bot ticked the hidden box
+    if (!WEB3FORMS_KEY) { note.textContent = "Thanks! Messages will start arriving once the form is connected."; form.reset(); return; }
+    const btn = form.querySelector('button[type="submit"]');
+    const d = Object.fromEntries(new FormData(form));
+    btn.disabled = true; note.textContent = "Sending…";
+    try {
+      const r = await fetch("https://api.web3forms.com/submit", {
+        method: "POST", headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify({
+          access_key: WEB3FORMS_KEY,
+          subject: `Website message: ${d.subject || "(no subject)"} from ${d.first} ${d.last}`,
+          from_name: "Untold Stories website",
+          name: `${d.first} ${d.last}`, email: d.email, replyto: d.email,
+          message: d.message, "Their subject": d.subject || "",
+        }),
+      });
+      const res = await r.json().catch(() => ({}));
+      if (r.ok && res.success) { note.textContent = "Thank you! Your message has been sent. I'll get back to you soon."; form.reset(); }
+      else throw new Error(res.message || "failed");
+    } catch (err) {
+      note.textContent = "Sorry, that didn't go through. Please try again in a moment.";
+    } finally { btn.disabled = false; }
   });
 }
 
