@@ -461,7 +461,7 @@ function pieceFromItem(g) {
   return {
     kind: g.dataset.kind, video: g.dataset.video, src: g.dataset.src,
     ph: [...g.querySelector(".gi-media").classList].find((c) => c.startsWith("ph-")),
-    shape: g.dataset.medium === "art" ? g.dataset.orient : "wide",
+    shape: g.dataset.medium === "art" || g.dataset.orient === "tall" ? g.dataset.orient : "wide",
     cat: g.querySelector(".gi-cat").textContent, title: g.querySelector("h3").textContent,
     desc: g.querySelector(".gi-desc")?.textContent || "", year: g.dataset.year || "",
     spec: g.dataset.spec || "", tools: g.dataset.tools || "",
@@ -1450,5 +1450,42 @@ function updateMuFilter() {
       });
       read();
     });
+  }).catch(() => {});
+})();
+
+/* ---------- Film: your YouTube videos and shorts ----------
+   data/youtube.json is kept up to date from the Tim Amarok channel by a GitHub job.
+   Videos with a hashtag containing "liminal" go to Liminal; everything else goes to General. */
+(() => {
+  if (!gal) return;
+  fetch("data/youtube.json", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => {
+    const vids = (d && d.videos) || [];
+    if (!vids.length) return;
+    const grid = gal.querySelector(".gal-grid");
+    const first = grid.querySelector('.gi[data-medium="film"]:not(.gi-ext)');
+    vids.forEach((v) => {
+      const li = document.createElement("li");
+      li.className = "gi gi-yt";
+      Object.assign(li.dataset, {
+        medium: "film", cat: v.section === "liminal" ? "liminal" : "general", kind: "video",
+        orient: v.short ? "tall" : "wide", video: v.url, year: (v.published || "").slice(0, 4),
+        spec: v.short ? "Format: Short" : "Format: Video", tools: "",
+      });
+      const thumb = v.short ? `https://i.ytimg.com/vi/${v.id}/oar2.jpg` : v.thumb;
+      li.innerHTML = `<button type="button" class="gi-media" aria-label=""><span class="gi-play" aria-hidden="true"></span>${v.short ? '<span class="gi-dur">Short</span>' : ""}</button>
+        <div class="gi-cap"><p class="gi-cat"></p><h3></h3></div><p class="gi-desc" hidden></p>`;
+      const m = li.querySelector(".gi-media");
+      m.style.background = `#0a0a0a url("${thumb}") center / cover no-repeat`;
+      m.setAttribute("aria-label", "Play " + v.title);
+      li.querySelector(".gi-cat").textContent = `${v.short ? "Short" : "Video"} · ${v.section === "liminal" ? "Liminal" : "General"}`;
+      li.querySelector("h3").textContent = v.title;
+      li.querySelector(".gi-desc").textContent = v.description || "";
+      m.addEventListener("click", () => {
+        const list = galItems().filter((x) => !x.classList.contains("gi-coll") && !x.classList.contains("gi-ext"));
+        openView(list.map(pieceFromItem), list.indexOf(li));
+      });
+      grid.insertBefore(li, first);
+    });
+    renderGallery();
   }).catch(() => {});
 })();
