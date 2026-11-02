@@ -1968,3 +1968,12 @@ sizeGalRows();
   });
   if (still) frame(0); else io.observe(card);
 })();
+
+/* Screenplays: only show the format buttons that have scripts (and no filter at all for a single format) */
+(() => {
+  const f = document.querySelector("#screenplays .folio-filter");
+  if (!f) return;
+  const formats = new Set([...document.querySelectorAll("#screenplays .sp")].map((r) => r.dataset.format));
+  f.querySelectorAll("[data-filter]").forEach((b) => { if (b.dataset.filter !== "all" && !formats.has(b.dataset.filter)) b.hidden = true; });
+  if (formats.size < 2) f.hidden = true;
+})();
