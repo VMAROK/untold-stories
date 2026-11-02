@@ -2362,3 +2362,12 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .gx-go { margin-top: 6px; font-family: var(--body); font-size: 10.5px; font-weight: 500; letter-spacing: 2.6px; text-transform: uppercase; border: 1px solid var(--crimson-bright); padding: 12px 18px; }
 .gx-card:hover .gx-go { background: rgba(142, 37, 51, 0.25); }
 @media (max-width: 640px) { .gx-card { aspect-ratio: 4 / 5 !important; padding: 26px; } .gx-s { font-size: 13px; } }
+
+/* Photography tab: a clean masonry of photos, like 3D Art */
+.gal-grid[data-medium="photo"] { display: block; columns: 3; column-gap: 22px; }
+.gal-grid[data-medium="photo"] .gi.show { break-inside: avoid; margin-bottom: 30px; display: inline-block; width: 100%; }
+.gal-grid[data-medium="photo"] .gi-empty.show { columns: auto; }
+.gal-grid[data-medium="photo"]:has(.gi-empty.show) { columns: 1; }
+@media (max-width: 1100px) { .gal-grid[data-medium="photo"] { columns: 2; } }
+@media (max-width: 640px) { .gal-grid[data-medium="photo"] { columns: 2; column-gap: 12px; } .gal-grid[data-medium="photo"] .gi.show { margin-bottom: 20px; } }
+.gx-empty { cursor: default; }

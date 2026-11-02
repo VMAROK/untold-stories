@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500;600&family=Manrope:wght@300;400;500&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20261101224832" />
+  <link rel="stylesheet" href="style.css?v=20261101230040" />
 </head>
 <body>
 
@@ -514,6 +514,7 @@
         <div class="gal-tabs" role="tablist" aria-label="Medium">
           <button type="button" role="tab" class="on" data-medium="film" aria-selected="true">Film</button>
           <button type="button" role="tab" data-medium="art" aria-selected="false">3D Art</button>
+          <button type="button" role="tab" data-medium="photo" aria-selected="false">Photography</button>
         </div>
         <div class="gal-chips" data-for="film" role="group" aria-label="Film categories">
           <button type="button" class="on" data-cat="all">All</button>
@@ -532,6 +533,14 @@
       </header>
 
       <ul class="gal-grid" data-medium="film">
+        <!-- Photography: filled automatically from your photo page (see script.js) -->
+        <li class="gi gi-ext gi-empty" data-medium="photo" data-cat="all" data-kind="link">
+          <div class="gi-media gx-card gx-empty">
+            <span class="gx-k">Photography</span>
+            <span class="gx-t">Coming soon</span>
+            <span class="gx-s">Photos will appear here as they're posted.</span>
+          </div>
+        </li>
         <!-- General: art made just to show off, kept on ArtStation -->
         <li class="gi gi-ext" data-medium="art" data-cat="general" data-kind="link">
           <a class="gi-media gx-card" href="https://passive-art.artstation.com" target="_blank" rel="noopener">
@@ -1258,6 +1267,6 @@
     <div class="fs-pages" id="fs-pages"></div>
   </section>
 
-  <script src="script.js?v=20261101224832"></script>
+  <script src="script.js?v=20261101230040"></script>
 </body>
 </html>

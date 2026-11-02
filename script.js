@@ -383,13 +383,14 @@ if (full) {
 // ===== Forgotten Spaces gallery: Film / 3D Art tabs, categories, pages =====
 const gal = document.getElementById("animation");
 const viewer = document.getElementById("viewer");
-const GAL_PER_PAGE = { film: 6, art: 9 };   // pieces per page
+const GAL_PER_PAGE = { film: 6, art: 9, photo: 12 };   // pieces per page
 const galState = { medium: "film", cat: "all", page: 1 };
 
 function galItems() {
   return [...gal.querySelectorAll(".gi")].filter((g) =>
     g.dataset.medium.split(" ").includes(galState.medium) &&
-    (galState.cat === "all" ? !g.classList.contains("gi-ext") : g.dataset.cat === galState.cat));
+    (galState.cat === "all" ? !g.classList.contains("gi-ext") || (g.classList.contains("gi-empty") && !gal.querySelector('.gi[data-medium="photo"]:not(.gi-ext)'))
+                            : g.dataset.cat === galState.cat));
 }
 function renderGallery(scroll = false) {
   const grid = gal.querySelector(".gal-grid");
