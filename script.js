@@ -1709,3 +1709,34 @@ window.sizeGalRows = sizeGalRows;
 addEventListener("resize", sizeGalRows);
 if (window.ResizeObserver && gal) new ResizeObserver(sizeGalRows).observe(gal.querySelector(".gal-grid"));
 sizeGalRows();
+
+/* ---------- Home page: Forgotten Spaces card slideshow ----------
+   Fades through your cover image and the thumbnails of every video in Art & Film > All,
+   all given the same dark, faded, grainy look as the cover. */
+(() => {
+  const card = document.querySelector(".card-img.img-2");
+  if (!card) return;
+  fetch("data/youtube.json", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => {
+    const vids = ((d && d.videos) || []).filter((v) => v.section === "liminal" || v.section === "general");
+    const pics = vids.map((v) => (v.short ? `https://i.ytimg.com/vi/${v.id}/oar2.jpg` : `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`));
+    if (!pics.length) return;
+    const slides = [];
+    const add = (url) => {
+      const s = document.createElement("div");
+      s.className = "cs-slide"; s.style.backgroundImage = `url("${url}")`;
+      card.appendChild(s); slides.push(s);
+    };
+    card.classList.add("cs-on");
+    add("images/forgotten-spaces.jpg");
+    slides[0].classList.add("on", "orig");
+    // only use thumbnails that actually load
+    pics.forEach((u) => { const im = new Image(); im.onload = () => { if (im.naturalWidth > 120) add(u); }; im.src = u; });
+    let i = 0;
+    setInterval(() => {
+      if (slides.length < 2 || document.hidden) return;
+      const r = card.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;           // off screen: wait
+      slides[i].classList.remove("on"); i = (i + 1) % slides.length; slides[i].classList.add("on");
+    }, 4000);
+  }).catch(() => {});
+})();
