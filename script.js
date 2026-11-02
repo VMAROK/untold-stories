@@ -621,6 +621,11 @@ function carouselRow(name, set, world, where, base, W) {
       <div class="car-nav"><button type="button" class="car-prev" aria-label="Previous">‹</button><button type="button" class="car-next" aria-label="Next">›</button></div></div>
     <div class="car-track"></div>`;
   const track = row.querySelector(".car-track");
+  if (!set.length) {                                         // nothing here yet: keep the section, say so
+    row.classList.add("is-empty"); row.querySelector(".car-nav").remove();
+    track.outerHTML = `<p class="row-empty">No ${name.toLowerCase()} yet.</p>`;
+    return row;
+  }
   const list = set.map((a, i) => anglePiece(a, i, set.length, world, where, base));
   set.forEach((a, i) => {
     const cap = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : "Still";
@@ -634,6 +639,7 @@ function carouselRow(name, set, world, where, base, W) {
   row.querySelector(".car-next").addEventListener("click", () => step(1));
   return row;
 }
+const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
 function collWords(item) {
   const d = item.dataset;
   return { unit: d.unit || "Location", units: d.units || "locations", piece: d.piece || "Angle", pieces: d.pieces || "angles" };
@@ -653,7 +659,7 @@ function openColl(item, push = true) {
   $v("cl-kicker").textContent = item.querySelector(".gi-cat").textContent;
   $v("cl-title").textContent = world;
   $v("cl-intro").textContent = item.querySelector(".gi-desc").textContent;
-  $v("cl-stats").textContent = `${locs} ${W.units} · ${pieces} pieces`;
+  $v("cl-stats").textContent = `${plural(locs, W.units.replace(/s$/, ""))} · ${plural(pieces, "piece")}`;
   // featured piece(s) that sit outside any location
   const feat = $v("cl-feature"); feat.innerHTML = "";
   const loose = [...d.children].filter((el) => el.classList.contains("ang"));
@@ -677,9 +683,9 @@ function openColl(item, push = true) {
     const gid = `loc-grid-${li}`;
     sec.innerHTML = `<div class="loc-toggle" role="button" tabindex="0" aria-expanded="false" aria-controls="${gid}">
         <div class="loc-head"><span class="loc-num">${W.unit} ${pad2(li + 1)}</span><h3></h3><p></p>
-          <span class="loc-count">${angs.length} ${W.pieces}</span></div>
+          <span class="loc-count">${plural(angs.filter((a) => a.dataset.kind === "video").length, "video")} · ${plural(angs.filter((a) => a.dataset.kind !== "video").length, "photo")}</span></div>
         <div class="loc-cover"><div class="loc-dots"></div>
-          <span class="loc-cta"><span class="open-t">View ${angs.length} ${W.pieces}</span><span class="close-t">Hide ${W.pieces}</span><i>⌄</i></span></div>
+          <span class="loc-cta"><span class="open-t">Open</span><span class="close-t">Close</span><i>⌄</i></span></div>
       </div>
       <div class="loc-body" id="${gid}"><div class="loc-body-in"></div></div>`;
     sec.querySelector("h3").textContent = loc.dataset.name;
@@ -706,7 +712,7 @@ function openColl(item, push = true) {
     // inside the drop-down: a Videos row, then a Photos row, each a swipeable carousel
     const body = sec.querySelector(".loc-body-in");
     [["Videos", angs.filter((a) => a.dataset.kind === "video")], ["Photos", angs.filter((a) => a.dataset.kind !== "video")]]
-      .forEach(([name, set]) => set.length && body.appendChild(carouselRow(name, set, world, loc.dataset.name, base, W)));
+      .forEach(([name, set]) => body.appendChild(carouselRow(name, set, world, loc.dataset.name, base, W)));   // both sections always show
     wrap.appendChild(sec);
   });
   if (push) history.pushState({ folio: "animation", coll: item.dataset.coll }, "", "#animation");

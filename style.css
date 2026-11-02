@@ -2560,3 +2560,7 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   .rl-panel .release-inner .rec .vinyl { transform: translateX(16%); }
   .rl-panel .release-inner .rec.spin .vinyl, .rl-panel .release-inner .rec:hover .vinyl { transform: translateX(26%); }
 }
+
+/* an empty Videos / Photos section inside a location */
+.row-empty { font-family: var(--body); font-size: 13px; color: var(--muted); opacity: 0.7; padding: 18px 0 6px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
+.loc-row.is-empty .loc-row-h span { opacity: 0.5; }
