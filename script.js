@@ -58,7 +58,7 @@ function sendCopy(d) {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       service_id: EMAILJS.service, template_id: EMAILJS.template, user_id: EMAILJS.publicKey,
-      template_params: { email: d.email, name: `${d.first} ${d.last}`.trim(), subject: d.subject || "(no subject)", message: d.message },
+      template_params: { email: d.email, to_email: d.email, reply_to: d.email, from_name: "AMAROK", name: `${d.first} ${d.last}`.trim(), subject: d.subject || "(no subject)", message: d.message },
     }),
   }).catch(() => {});                                                      // if the copy fails, your message still reached you
 }
