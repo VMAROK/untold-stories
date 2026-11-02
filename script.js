@@ -1,3 +1,6 @@
+// Music players (SoundCloud / Spotify) add their own steps to the browser history.
+// While one is on the page, Back buttons close things directly instead of using "back".
+function playersLive() { return !!document.querySelector(".sc-dock iframe, .mu-slot iframe"); }
 // Fade the cards in one after another when the page loads
 document.querySelectorAll(".card").forEach((card, i) => {
   card.style.opacity = "0";
@@ -103,7 +106,7 @@ document.querySelectorAll(".card[data-open]").forEach((card) => {
 });
 document.querySelectorAll(".folio [data-close]").forEach((btn) =>
   btn.addEventListener("click", () => {
-    if (history.state && history.state.folio) history.back();   // also handles the browser Back button
+    if (history.state && history.state.folio && !playersLive()) history.back();   // also handles the browser Back button
     else { closeFolio(); history.replaceState(null, "", "#portfolio"); }
   })
 );
@@ -774,8 +777,8 @@ function fillRelease(i) {
 function openRelease(i, push = true) {
   if (!release || !MUSIC[i]) return;
   fillRelease(i);
-  if (push) history.pushState({ folio: "music", rel: i }, "", "#music");
-  release.hidden = false; release.scrollTop = 0;
+  if (push && innerWidth <= 640) history.pushState({ folio: "music", rel: i }, "", "#music");   // phone: Back gesture closes it
+  release.hidden = false; release.scrollTop = 0; release.querySelector(".rl-panel").scrollTop = 0;
   requestAnimationFrame(() => release.classList.add("open"));
 }
 function closeRelease() {
@@ -784,13 +787,16 @@ function closeRelease() {
   setTimeout(() => { if (!release.classList.contains("open")) release.hidden = true; }, 450);
 }
 function leaveRelease() {
-  if (history.state && history.state.rel != null) history.back();
-  else closeRelease();
+  // close directly: the music players add their own steps to the browser history, so "back" can't be trusted here
+  closeRelease();
+  if (history.state && history.state.rel != null) history.replaceState({ folio: "music" }, "", "#music");
 }
+// pop-up on iPad / desktop: tapping the dark area around it closes it
+release?.addEventListener("click", (e) => { if (e.target === release) leaveRelease(); });
 function stepRelease(d) {
   const j = relIdx + d; if (!MUSIC[j]) return;
   history.replaceState({ folio: "music", rel: j }, "", "#music");
-  fillRelease(j); release.scrollTop = 0;
+  fillRelease(j); release.scrollTop = 0; release.querySelector(".rl-panel").scrollTop = 0;
 }
 
 // --- player: SoundCloud tracks play through a hidden SoundCloud player; audio files play directly ---
@@ -1111,7 +1117,8 @@ if (danceEl) {
   danceEl.querySelectorAll("[data-book]").forEach((a) => a.addEventListener("click", (e) => {
     e.preventDefault();
     const subject = a.dataset.book;
-    if (history.state && history.state.folio) history.back(); else closeFolio();
+    if (history.state && history.state.folio && !playersLive()) history.back();
+    else { closeFolio(); history.replaceState(null, "", "#contact"); }
     setTimeout(() => {
       const contact = document.getElementById("contact");
       contact.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -1196,7 +1203,7 @@ if (danceEl) {
   bar.querySelectorAll("[data-leave]").forEach((a) => a.addEventListener("click", (e) => {
     e.preventDefault();
     const target = a.dataset.leave;
-    if (history.state && history.state.folio) history.back();
+    if (history.state && history.state.folio && !playersLive()) history.back();
     else { closeFolio(); history.replaceState(null, "", "#" + target); }
     setTimeout(() => {
       if (target === "home") window.scrollTo({ top: 0, behavior: "smooth" });

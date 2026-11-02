@@ -961,12 +961,14 @@
 
   <!-- ========== RELEASE PAGE: one album / EP / single ========== -->
   <section class="release" id="release" role="dialog" aria-modal="true" aria-labelledby="rl-title" hidden>
+    <div class="rl-panel">   <!-- a pop-up window on iPad / desktop, full screen on phones -->
     <button class="folio-close release-close" type="button" data-release-close><span>←</span> Music</button>
     <div class="release-inner" id="release-inner"></div>
     <nav class="rd-nav" aria-label="Other releases">
       <button type="button" id="rl-prev"><span class="ar">←</span><span class="lb">Previous</span><span class="t"></span></button>
       <button type="button" id="rl-next"><span class="lb">Next</span><span class="t"></span><span class="ar">→</span></button>
     </nav>
+    </div>
   </section>
 
   <!-- ========== MINI PLAYER: stays at the bottom while music plays ========== -->
