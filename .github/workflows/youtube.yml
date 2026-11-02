@@ -19,6 +19,7 @@ jobs:
         run: |
           git config user.name "youtube-sync"
           git config user.email "actions@users.noreply.github.com"
+          [ -f data/youtube.json ] || exit 0
           git add data/youtube.json
           git diff --cached --quiet || git commit -m "Sync YouTube videos"
           git push

@@ -6,7 +6,22 @@ CHANNEL = "UCTXSYfN_RQIS9svvXbZfeYg"
 FEED = f"https://www.youtube.com/feeds/videos.xml?channel_id={CHANNEL}"
 NS = {"a": "http://www.w3.org/2005/Atom", "yt": "http://www.youtube.com/xml/schemas/2015", "m": "http://search.yahoo.com/mrss/"}
 
-root = ET.fromstring(urllib.request.urlopen(FEED, timeout=30).read())
+import time, sys
+# YouTube's feed sometimes answers "not found" for a moment, so try a few times, and also the
+# channel's uploads-playlist feed (same videos). If both stay down, keep the last saved list.
+FEEDS = [FEED, f"https://www.youtube.com/feeds/videos.xml?playlist_id=UU{CHANNEL[2:]}"]
+xml = None
+for attempt in range(4):
+    for url in FEEDS:
+        try:
+            xml = urllib.request.urlopen(url, timeout=30).read(); break
+        except Exception as err:
+            print(f"try {attempt + 1}: {url} -> {err}")
+    if xml: break
+    time.sleep(20)
+if not xml:
+    print("YouTube feed unavailable right now; keeping the current list."); sys.exit(0)
+root = ET.fromstring(xml)
 videos = []
 for e in root.findall("a:entry", NS):
     vid = e.findtext("yt:videoId", default="", namespaces=NS)
