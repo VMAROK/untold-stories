@@ -597,7 +597,7 @@ function openColl(item, push = true) {
         <div class="loc-cover"><div class="loc-dots"></div>
           <span class="loc-cta"><span class="open-t">View ${angs.length} ${W.pieces}</span><span class="close-t">Hide ${W.pieces}</span><i>⌄</i></span></div>
       </div>
-      <div class="loc-body" id="${gid}"><div class="loc-body-in"><div class="loc-grid"></div></div></div>`;
+      <div class="loc-body" id="${gid}"><div class="loc-body-in"></div></div>`;
     sec.querySelector("h3").textContent = loc.dataset.name;
     sec.querySelector(".loc-head p").textContent = loc.dataset.note || "";
     // cover: a slow crossfade through this location's stills (falls back to all angles)
@@ -619,14 +619,29 @@ function openColl(item, push = true) {
     };
     toggle.addEventListener("click", flip);
     toggle.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } });
-    const grid = sec.querySelector(".loc-grid");
-    const list = angs.map((a, i) => anglePiece(a, i, angs.length, world, loc.dataset.name, base));
-    angs.forEach((a, i) => {
-      const cap = (a.dataset.kind === "video" ? "Film · " + a.dataset.spec.replace(/^[^:]*:\s*/, "") : "Still");
-      const t = angleTile(a, `${W.piece} ${pad2(i + 1)}`, cap);
-      t.addEventListener("click", () => openView(list, i, "coll"));
-      grid.appendChild(t);
-    });
+    // inside the drop-down: a Videos row, then a Photos row, each a swipeable carousel
+    const body = sec.querySelector(".loc-body-in");
+    [["Videos", angs.filter((a) => a.dataset.kind === "video")], ["Photos", angs.filter((a) => a.dataset.kind !== "video")]]
+      .forEach(([name, set]) => {
+        if (!set.length) return;
+        const row = document.createElement("div");
+        row.className = "loc-row loc-row-" + name.toLowerCase();
+        row.innerHTML = `<div class="loc-row-h"><h4>${name}</h4><span>${set.length}</span>
+            <div class="car-nav"><button type="button" class="car-prev" aria-label="Previous">‹</button><button type="button" class="car-next" aria-label="Next">›</button></div></div>
+          <div class="car-track"></div>`;
+        const track = row.querySelector(".car-track");
+        const list = set.map((a, i) => anglePiece(a, i, set.length, world, loc.dataset.name, base));
+        set.forEach((a, i) => {
+          const cap = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : "Still";
+          const t = angleTile(a, `${name === "Videos" ? "Video" : W.piece} ${pad2(i + 1)}`, cap);
+          t.addEventListener("click", () => openView(list, i, "coll"));
+          track.appendChild(t);
+        });
+        const step = (d) => track.scrollBy({ left: d * track.clientWidth * 0.8, behavior: "smooth" });
+        row.querySelector(".car-prev").addEventListener("click", () => step(-1));
+        row.querySelector(".car-next").addEventListener("click", () => step(1));
+        body.appendChild(row);
+      });
     wrap.appendChild(sec);
   });
   if (push) history.pushState({ folio: "animation", coll: item.dataset.coll }, "", "#animation");

@@ -2371,3 +2371,28 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 @media (max-width: 1100px) { .gal-grid[data-medium="photo"] { columns: 2; } }
 @media (max-width: 640px) { .gal-grid[data-medium="photo"] { columns: 2; column-gap: 12px; } .gal-grid[data-medium="photo"] .gi.show { margin-bottom: 20px; } }
 .gx-empty { cursor: default; }
+
+/* collection drop-down: Videos row, then Photos row, each a swipeable carousel */
+.loc-row { margin-top: 26px; }
+.loc-row:first-child { margin-top: 22px; }
+.loc-row-h { display: flex; align-items: baseline; gap: 12px; margin-bottom: 14px; }
+.loc-row-h h4 { font-family: var(--serif-2); font-weight: 400; font-size: 24px; letter-spacing: 0.5px; }
+.loc-row-h span { font-family: var(--body); font-size: 10px; letter-spacing: 2.4px; color: var(--crimson-bright); }
+.car-nav { margin-left: auto; display: flex; gap: 6px; }
+.car-nav button { width: 36px; height: 36px; border: 1px solid rgba(255, 255, 255, 0.14); background: none; color: var(--ink); font-size: 18px; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+.car-nav button:hover { border-color: var(--crimson-bright); background: rgba(142, 37, 51, 0.18); }
+.car-track {
+  display: grid; grid-auto-flow: column; grid-auto-columns: minmax(240px, 30%); gap: 20px;
+  overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding: 0 2px; padding: 4px 2px 14px;
+  -webkit-overflow-scrolling: touch; scrollbar-width: thin;
+}
+.loc-row-videos .car-track { grid-auto-columns: minmax(280px, 42%); }
+.car-track > .ang-btn { scroll-snap-align: start; }
+.car-track .ang-tile { aspect-ratio: 4 / 3; }
+.loc-row-videos .car-track .ang-tile { aspect-ratio: 16 / 9; }
+@media (max-width: 640px) {
+  .car-nav { display: none; }                         /* swipe on phones */
+  .car-track { grid-auto-columns: 72%; gap: 12px; }
+  .loc-row-videos .car-track { grid-auto-columns: 84%; }
+  .loc-row-h h4 { font-size: 20px; }
+}
