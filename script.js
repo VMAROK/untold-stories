@@ -27,6 +27,13 @@ if (wave) {
   }
 }
 
+// YouTube thumbnails: shorts try the upright versions first; the plain one underneath always exists.
+// Several pictures separated by "|" are layered, so whichever loads first shows.
+function ytThumbs(v) {
+  const b = `https://i.ytimg.com/vi/${v.id}/`;
+  return v.short ? [b + "oar2.jpg", b + "oardefault.jpg", b + "hqdefault.jpg"].join("|") : (v.thumb || b + "hqdefault.jpg");
+}
+function bgLayers(pics) { return String(pics).split("|").map((u) => `url("${u}") center / cover no-repeat`).join(", "); }
 // Highlight the nav link for the section on screen
 const links = document.querySelectorAll(".nav:not(.pnav) .nav-links a");   // home page navbar only
 const sections = ["home", "portfolio", "about", "contact"]
@@ -556,7 +563,7 @@ function angleTile(a, label, cap) {
   b.type = "button"; b.className = "ang-btn";
   if (a.dataset.video) b.dataset.video = a.dataset.video;   // lets the play button play it right in place
   const pic = a.dataset.poster || a.dataset.src;
-  b.innerHTML = `<div class="ang-tile ${pic ? "" : a.dataset.ph || ""}"${pic ? ` style="background:url('${pic}') center / cover no-repeat"` : ""}>
+  b.innerHTML = `<div class="ang-tile ${pic ? "" : a.dataset.ph || ""}"${pic ? ` style='background:${bgLayers(pic)}, #0a0a0a'` : ""}>
       <span class="ang-no">${label}</span>${a.dataset.kind === "video" ? '<span class="gi-play"></span>' : ""}</div>
     <div class="ang-cap"><h4></h4><p>${cap}</p></div>`;
   b.querySelector("h4").textContent = a.dataset.title || label;
@@ -640,7 +647,7 @@ function openColl(item, push = true) {
       const sl = document.createElement("div");
       const pic = a.dataset.src || a.dataset.poster;
       sl.className = "loc-slide " + (pic ? "" : a.dataset.ph || "") + (k === 0 ? " on" : "");
-      if (pic) sl.style.background = `url("${pic}") center / cover no-repeat`;
+      if (pic) sl.style.background = bgLayers(pic);
       cover.insertBefore(sl, cover.querySelector(".loc-dots"));
       cover.querySelector(".loc-dots").insertAdjacentHTML("beforeend", `<i${k === 0 ? ' class="on"' : ""}></i>`);
     });
@@ -1486,7 +1493,7 @@ function updateMuFilter() {
       a.className = "ang";
       Object.assign(a.dataset, {
         kind: "video", video: v.url, orient: v.short ? "tall" : "wide", title: v.title,
-        poster: v.short ? `https://i.ytimg.com/vi/${v.id}/oar2.jpg` : v.thumb,
+        poster: ytThumbs(v),
         spec: v.short ? "Format: Short" : "Format: Video",
       });
       a.textContent = v.description || "";
@@ -1513,11 +1520,11 @@ function updateMuFilter() {
         orient: v.short ? "tall" : "wide", video: v.url, year: (v.published || "").slice(0, 4),
         spec: v.short ? "Format: Short" : "Format: Video", tools: "",
       });
-      const thumb = v.short ? `https://i.ytimg.com/vi/${v.id}/oar2.jpg` : v.thumb;
+      const thumb = ytThumbs(v);
       li.innerHTML = `<button type="button" class="gi-media" aria-label=""><span class="gi-play" aria-hidden="true"></span>${v.short ? '<span class="gi-dur">Short</span>' : ""}</button>
         <div class="gi-cap"><p class="gi-cat"></p><h3></h3></div><p class="gi-desc" hidden></p>`;
       const m = li.querySelector(".gi-media");
-      m.style.background = `#0a0a0a url("${thumb}") center / cover no-repeat`;
+      m.style.background = `${bgLayers(thumb)}, #0a0a0a`;
       m.setAttribute("aria-label", "Play " + v.title);
       li.querySelector(".gi-cat").textContent = `${v.short ? "Short" : "Video"} · ${placed.has(v.id) ? "Liminal" : "General"}`;
       li.querySelector("h3").textContent = v.title;
@@ -1718,19 +1725,20 @@ sizeGalRows();
   if (!card) return;
   fetch("data/youtube.json", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => {
     const vids = ((d && d.videos) || []).filter((v) => v.section === "liminal" || v.section === "general");
-    const pics = vids.map((v) => (v.short ? `https://i.ytimg.com/vi/${v.id}/oar2.jpg` : `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`));
+    const pics = vids.map(ytThumbs);
     if (!pics.length) return;
     const slides = [];
     const add = (url) => {
       const s = document.createElement("div");
-      s.className = "cs-slide"; s.style.backgroundImage = `url("${url}")`;
+      s.className = "cs-slide"; s.style.background = bgLayers(url);
       card.appendChild(s); slides.push(s);
     };
     card.classList.add("cs-on");
     add("images/forgotten-spaces.jpg");
     slides[0].classList.add("on", "orig");
     // only use thumbnails that actually load
-    pics.forEach((u) => { const im = new Image(); im.onload = () => { if (im.naturalWidth > 120) add(u); }; im.src = u; });
+    // use a video once its plain thumbnail loads (the upright one, if it exists, layers on top)
+    pics.forEach((u) => { const im = new Image(); im.onload = () => { if (im.naturalWidth > 120) add(u); }; im.src = u.split("|").pop(); });
     let i = 0;
     setInterval(() => {
       if (slides.length < 2 || document.hidden) return;
