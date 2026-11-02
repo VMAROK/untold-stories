@@ -1754,3 +1754,118 @@ sizeGalRows();
     }, 4000);
   }).catch(() => {});
 })();
+
+/* ---------- Home page: Modern Traces card — a hooded figure spinning fire poi (drawn live) ---------- */
+(() => {
+  const card = document.querySelector(".card-img.img-4");
+  if (!card) return;
+  card.classList.add("fire-on");
+  const cv = document.createElement("canvas"); cv.className = "fire-cv"; card.appendChild(cv);
+  const ctx = cv.getContext("2d");
+  const trail = document.createElement("canvas"), tctx = trail.getContext("2d");
+  let W = 0, H = 0, dpr = 1;
+  const size = () => {
+    dpr = Math.min(2, devicePixelRatio || 1);
+    W = card.clientWidth; H = card.clientHeight;
+    [cv, trail].forEach((c) => { c.width = W * dpr; c.height = H * dpr; });
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); tctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  size(); addEventListener("resize", size);
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const sparks = [];
+
+  // the figure: a person in a loose dark hoodie, drawn in units of their height (fh), feet at (cx, base)
+  function figure(c, fh, cx, base, hands, glow) {
+    c.save();
+    c.fillStyle = "#060505"; c.strokeStyle = "#060505";
+    c.shadowColor = "rgba(255, 120, 30, " + (0.65 * glow) + ")"; c.shadowBlur = 0.06 * fh;
+    const P = (x, y) => [cx + x * fh, base - y * fh];
+    const poly = (pts) => { c.beginPath(); c.moveTo(...P(...pts[0])); pts.slice(1).forEach((p) => c.lineTo(...P(...p))); c.closePath(); c.fill(); };
+    // legs: jeans, slightly apart, a little wider at the hip
+    poly([[-0.12, 0.47], [-0.01, 0.46], [-0.055, 0.24], [-0.075, 0.03], [-0.07, 0], [-0.16, 0], [-0.13, 0.04], [-0.12, 0.25]]);   // weight on the left leg
+    poly([[0.12, 0.47], [0.01, 0.46], [0.07, 0.24], [0.13, 0.03], [0.14, 0], [0.21, 0], [0.175, 0.05], [0.13, 0.25]]);            // right leg stepping out
+    // hoodie body: loose, hem past the hips, broad sloped shoulders
+    c.beginPath();
+    c.moveTo(...P(-0.145, 0.43));
+    c.quadraticCurveTo(...P(-0.12, 0.55), ...P(-0.155, 0.66));          // a little in at the waist, baggy above
+    c.quadraticCurveTo(...P(-0.175, 0.72), ...P(-0.165, 0.735));
+    c.quadraticCurveTo(...P(-0.11, 0.775), ...P(-0.06, 0.80));            // sloped shoulder up into the hood
+    c.lineTo(...P(0.06, 0.80));
+    c.quadraticCurveTo(...P(0.11, 0.775), ...P(0.165, 0.735));
+    c.quadraticCurveTo(...P(0.175, 0.72), ...P(0.155, 0.66));
+    c.quadraticCurveTo(...P(0.12, 0.55), ...P(0.145, 0.43));
+    c.quadraticCurveTo(...P(0, 0.40), ...P(-0.145, 0.43)); c.fill();
+    // hood, up, tilted very slightly
+    c.beginPath();
+    c.moveTo(...P(-0.075, 0.785));
+    c.quadraticCurveTo(...P(-0.095, 0.88), ...P(-0.055, 0.945));
+    c.quadraticCurveTo(...P(0.0, 0.99), ...P(0.05, 0.955));              // peak of the hood, tipped forward
+    c.quadraticCurveTo(...P(0.09, 0.90), ...P(0.075, 0.785)); c.closePath(); c.fill();
+    // arms out to the sides, elbows bent, hands holding the poi chains
+    c.lineCap = "round"; c.lineJoin = "round";
+    [[-1, hands[0]], [1, hands[1]]].forEach(([s, h]) => {
+      const sh = P(0.14 * s, 0.725);
+      const el = [cx + 0.26 * s * fh, base - 0.655 * fh];               // arms out to the side, slightly bent
+      c.lineWidth = 0.07 * fh; c.beginPath(); c.moveTo(...sh); c.lineTo(...el); c.stroke();     // baggy sleeve
+      c.lineWidth = 0.055 * fh; c.beginPath(); c.moveTo(...el); c.lineTo(...h); c.stroke();
+    });
+    c.restore();
+  }
+  function flame(c, x, y, r) {
+    const g = c.createRadialGradient(x, y, 0, x, y, r * 2.4);
+    g.addColorStop(0, "rgba(255, 245, 210, 1)"); g.addColorStop(0.25, "rgba(255, 190, 70, 0.95)");
+    g.addColorStop(0.55, "rgba(240, 90, 20, 0.45)"); g.addColorStop(1, "rgba(200, 40, 10, 0)");
+    c.fillStyle = g; c.beginPath(); c.arc(x, y, r * 2.4, 0, Math.PI * 2); c.fill();
+  }
+  let t0 = performance.now(), running = false;
+  function frame(now) {
+    const t = still ? 2.2 : (now - t0) / 1000;
+    const u = W, cx = W * 0.5, base = H * 0.93, fh = H * 0.6;          // figure stands in the lower part of the card
+    const hands = [[cx - 0.37 * fh, base - 0.62 * fh], [cx + 0.37 * fh, base - 0.62 * fh]];
+    const R = 0.22 * fh, a = t * 5.2;
+    // the poi: two flames on chains, spinning in opposite directions (a "butterfly")
+    const heads = [
+      [hands[0][0] + R * Math.cos(-a), hands[0][1] + R * Math.sin(-a)],
+      [hands[1][0] + R * Math.cos(a + Math.PI), hands[1][1] + R * Math.sin(a + Math.PI)],
+    ];
+    // trails: fade the old light a little each frame, then draw the flames again
+    tctx.globalCompositeOperation = "destination-out";
+    tctx.fillStyle = still ? "rgba(0,0,0,0)" : "rgba(0,0,0,0.11)"; tctx.fillRect(0, 0, W, H);
+    tctx.globalCompositeOperation = "lighter";
+    if (still) { for (let k = 0; k < 120; k++) { const b = (k / 120) * Math.PI * 2;
+      flame(tctx, hands[0][0] + R * Math.cos(b), hands[0][1] + R * Math.sin(b), 0.012 * u);
+      flame(tctx, hands[1][0] + R * Math.cos(b), hands[1][1] + R * Math.sin(b), 0.012 * u); } }
+    heads.forEach(([x, y]) => flame(tctx, x, y, 0.028 * u));
+    // sparks thrown off the flames
+    if (!still) heads.forEach(([x, y]) => { if (Math.random() < 0.5) sparks.push({ x, y, vx: (Math.random() - 0.5) * 2.4, vy: -Math.random() * 1.6, life: 1 }); });
+    for (let k = sparks.length - 1; k >= 0; k--) {
+      const s = sparks[k]; s.x += s.vx; s.y += s.vy; s.vy += 0.06; s.life -= 0.025;
+      if (s.life <= 0) { sparks.splice(k, 1); continue; }
+      tctx.fillStyle = `rgba(255, ${150 + 90 * s.life | 0}, 60, ${s.life})`; tctx.fillRect(s.x, s.y, 1.6, 1.6);
+    }
+    // the scene
+    ctx.clearRect(0, 0, W, H);
+    const bg = ctx.createRadialGradient(cx, H * 0.45, 0, cx, H * 0.45, H * 0.8);
+    bg.addColorStop(0, "#1c120c"); bg.addColorStop(0.55, "#0b0807"); bg.addColorStop(1, "#040303");
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    const fl = 0.75 + 0.25 * Math.sin(t * 9) * Math.sin(t * 3.7);              // flicker of the firelight
+    const glow = ctx.createRadialGradient(cx, H * 0.42, 0, cx, H * 0.42, W * 0.7);
+    glow.addColorStop(0, `rgba(255, 120, 40, ${0.22 * fl})`); glow.addColorStop(1, "rgba(255, 120, 40, 0)");
+    ctx.fillStyle = glow; ctx.fillRect(0, 0, W, H);
+    const floor = ctx.createRadialGradient(cx, base, 0, cx, base, W * 0.5);
+    floor.addColorStop(0, `rgba(255, 110, 40, ${0.18 * fl})`); floor.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = floor; ctx.fillRect(0, H * 0.75, W, H * 0.25);
+    ctx.globalCompositeOperation = "lighter"; ctx.drawImage(trail, 0, 0, W, H); ctx.globalCompositeOperation = "source-over";
+    ctx.strokeStyle = "rgba(160, 120, 90, 0.35)"; ctx.lineWidth = 1;          // chains
+    heads.forEach(([x, y], i) => { ctx.beginPath(); ctx.moveTo(...hands[i]); ctx.lineTo(x, y); ctx.stroke(); });
+    figure(ctx, fh, cx, base, hands, fl);
+    heads.forEach(([x, y]) => flame(ctx, x, y, 0.022 * u));                     // flames in front of the trails
+    if (!still && running) requestAnimationFrame(frame);
+  }
+  // only animate while the card is on screen
+  const io = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting && !running) { running = true; requestAnimationFrame(frame); }
+    else if (!e.isIntersecting) running = false;
+  });
+  if (still) frame(0); else io.observe(card);
+})();
