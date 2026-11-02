@@ -1378,7 +1378,9 @@ function updateMuFilter() {
     if (!sounds.length) return null;
     const albums = new Map(), out = [];
     sounds.forEach((s) => {
-      const a = (s.publisher_metadata && s.publisher_metadata.album_title || "").trim();
+      const old = savedFor(clean(s.title));
+      const a = (s.publisher_metadata && s.publisher_metadata.album_title || "").trim()
+        || (old && old.type === "Album" ? old.title : "");           // SoundCloud didn't send the album: use the saved one
       if (a) { if (!albums.has(a)) albums.set(a, []); albums.get(a).push(s); }
       else out.push(single(s));
     });
