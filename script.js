@@ -848,7 +848,15 @@ function scMake(url, autoplay) {
       clearTimeout(scWait); MP.paused = false; MP.waiting = false; syncPlayingUI(); setTimeout(dockHide, 500);
       window.unloadListen && unloadListen();
     });
-    w.bind(SC.Widget.Events.PAUSE, () => { if (o === scCur) { MP.paused = true; syncPlayingUI(); } });
+    w.bind(SC.Widget.Events.PAUSE, () => {
+      if (o !== scCur) return;
+      // iPad: SoundCloud often stops a split second after starting (the same thing your "Resume" tap fixed).
+      // If you didn't pause it yourself, give it another nudge, up to twice, right after starting.
+      if (!o.userPause && Date.now() - (o.t0 || 0) < 5000 && (o.retries || 0) < 2) {
+        o.retries = (o.retries || 0) + 1; setTimeout(() => o === scCur && w.play(), 250); return;
+      }
+      o.userPause = false; MP.paused = true; syncPlayingUI();
+    });
     w.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => { if (o === scCur) scPos = e.currentPosition / 1000; });
     w.bind(SC.Widget.Events.FINISH, () => { if (o === scCur) nextTrack(1); });
   }).catch(() => { if (o === scCur) dockShow(); });
@@ -867,11 +875,11 @@ function scPlay(url) {
   if (scNext && scNext.url === url) { o = scNext; scNext = null; }
   else if (scCur && scCur.url === url) o = scCur;
   if (o) {
-    o.want = true; scSetCur(o);
-    if (o.ready && o.w) { o.w.seekTo(0); o.w.play(); }               // straight from your tap: allowed everywhere
+    o.want = true; o.t0 = Date.now(); o.retries = 0; o.userPause = false; scSetCur(o);
+    if (o.ready && o.w) o.w.play();                                    // straight from your tap
     return;
   }
-  scSetCur(scMake(url, true));
+  const n = scMake(url, true); n.t0 = Date.now(); scSetCur(n);
 }
 // --- placeholder tracks (no link or file) play a soft generated tone ---
 const PREVIEW_SECONDS = 30;
@@ -898,7 +906,7 @@ function synthStart(seed) {
 }
 function stopSound() {
   MP.audio.pause();
-  if (scW && MP.mode === "sc") scW.pause();
+  if (scW && MP.mode === "sc") { if (scCur) scCur.userPause = true; scW.pause(); }
   clearTimeout(scWait); dockHide();
   if (MP.synth) { MP.synth.stop(); MP.synth = null; }
 }
@@ -935,8 +943,8 @@ function togglePause() {
   if (MP.mode === "audio") MP.paused ? MP.audio.pause() : MP.audio.play().catch(() => {});
   else if (MP.mode === "sc") {
     if (!scW) return;
-    if (MP.paused) { scW.pause(); }
-    else { MP.paused = true; scW.play(); clearTimeout(scWait); scWait = setTimeout(dockShow, 1200); }   // "playing" again when SoundCloud confirms
+    if (MP.paused) { if (scCur) scCur.userPause = true; scW.pause(); }
+    else { MP.paused = true; if (scCur) { scCur.t0 = Date.now(); scCur.retries = 0; } scW.play(); clearTimeout(scWait); scWait = setTimeout(dockShow, 1200); }   // "playing" again when SoundCloud confirms
   }
   else if (MP.ctx) MP.paused ? MP.ctx.suspend() : MP.ctx.resume();
   syncPlayingUI();
