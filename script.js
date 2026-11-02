@@ -1497,7 +1497,8 @@ function updateMuFilter() {
       const coll = gal.querySelector(`.gi-coll[data-coll="level-${lv != null ? lv : 0}"] .coll-data`);
       if ((lv != null || v.section === "liminal") && coll) { coll.prepend(asAngle(v)); placed.add(v.id); }
     });
-    const vids = ((d && d.videos) || []).filter((v) => !placed.has(v.id) && v.section === "general");
+    // the grid: General shorts, plus your liminal videos under "All" only (the Liminal tab shows just the Levels)
+    const vids = ((d && d.videos) || []).filter((v) => v.section === "general" || placed.has(v.id));
     if (!vids.length) { renderGallery(); return; }
     const grid = gal.querySelector(".gal-grid");
     const first = grid.querySelector('.gi[data-medium="film"]:not(.gi-ext)');
@@ -1505,7 +1506,7 @@ function updateMuFilter() {
       const li = document.createElement("li");
       li.className = "gi gi-yt";
       Object.assign(li.dataset, {
-        medium: "film", cat: v.section === "liminal" ? "liminal" : "general", kind: "video",
+        medium: "film", cat: v.section === "general" && !placed.has(v.id) ? "general" : "liminal-yt", kind: "video",
         orient: v.short ? "tall" : "wide", video: v.url, year: (v.published || "").slice(0, 4),
         spec: v.short ? "Format: Short" : "Format: Video", tools: "",
       });
@@ -1515,7 +1516,7 @@ function updateMuFilter() {
       const m = li.querySelector(".gi-media");
       m.style.background = `#0a0a0a url("${thumb}") center / cover no-repeat`;
       m.setAttribute("aria-label", "Play " + v.title);
-      li.querySelector(".gi-cat").textContent = `${v.short ? "Short" : "Video"} · ${v.section === "liminal" ? "Liminal" : "General"}`;
+      li.querySelector(".gi-cat").textContent = `${v.short ? "Short" : "Video"} · ${placed.has(v.id) ? "Liminal" : "General"}`;
       li.querySelector("h3").textContent = v.title;
       li.querySelector(".gi-desc").textContent = v.description || "";
       m.addEventListener("click", () => {
