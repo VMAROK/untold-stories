@@ -1304,12 +1304,7 @@ if (danceEl) {
 /* ---------- Music: tidy-ups for real releases ---------- */
 (() => {
   // only show the type filter if there's more than one kind of release
-  const types = new Set(MUSIC.map((r) => r.type));
-  const filt = document.querySelector("#music .mu-filter");
-  if (filt) {
-    filt.querySelectorAll("[data-type]").forEach((b) => { if (b.dataset.type !== "all" && !types.has(b.dataset.type)) b.remove(); });
-    if (types.size < 2) filt.style.display = "none";
-  }
+  updateMuFilter();
   // real artwork that can't load (blocked or offline) is removed, so the designed cover shows
   document.addEventListener("error", (e) => { if (e.target.classList?.contains("ca-img")) e.target.remove(); }, true);
 })();
@@ -1338,3 +1333,103 @@ document.addEventListener("pointerover", (e) => {
   const r = MUSIC.find((x) => x.id === t.dataset.rel);
   if (r) scPrep(r.tracks[Number(t.dataset.ti)][3]);
 });
+
+/* show only the filter buttons that have releases (and no filter at all if there's only one kind) */
+function updateMuFilter() {
+  const types = new Set(MUSIC.map((r) => r.type));
+  const filt = document.querySelector("#music .mu-filter");
+  if (!filt) return;
+  filt.querySelectorAll("[data-type]").forEach((b) => { b.style.display = b.dataset.type === "all" || types.has(b.dataset.type) ? "" : "none"; });
+  filt.style.display = types.size < 2 ? "none" : "";
+}
+
+/* ---------- Live music from SoundCloud ----------
+   On the published site, the track list comes straight from your SoundCloud profile every time the page opens:
+   titles, lengths, artwork, release dates, genres, and the album name in each track's metadata.
+   Tracks with the same album name become one album; the rest are singles. New uploads appear by themselves.
+   If SoundCloud can't be reached (like in the preview), the list saved in index.html is shown instead. */
+(() => {
+  if (IN_FRAME || !musicEl) return;
+  const PROFILE = "https://soundcloud.com/vmarok";
+  const SPOTIFY = "https://open.spotify.com/artist/16kZEsy2rvo6h7gwWlDl0Z";
+  const saved = MUSIC.slice();                                  // the list in index.html: fallback + Spotify links
+  const f = document.createElement("iframe");
+  f.className = "sc-reader"; f.title = "SoundCloud track list"; f.setAttribute("aria-hidden", "true"); f.tabIndex = -1;
+  f.src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(PROFILE)}&auto_play=false&visual=false`;
+  document.body.appendChild(f);
+
+  const dur = (ms) => fmt(Math.round((ms || 0) / 1000));
+  const big = (u) => (u ? u.replace(/-(large|t\d+x\d+)\./, "-t500x500.") : "");
+  const when = (s) => new Date(s.release_date || s.display_date || s.created_at || 0);
+  const nice = (d) => d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+  const slug = (t) => String(t).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const tagsOf = (s) => {
+    const list = [s.genre, ...String(s.tag_list || "").match(/"[^"]+"|\S+/g) || []]
+      .map((t) => String(t || "").replace(/["#]/g, "").trim()).filter(Boolean);
+    const seen = new Set(); return list.filter((t) => { const k = t.toLowerCase(); if (seen.has(k) || k === "idk" || k === "unknown") return false; seen.add(k); return true; })
+      .slice(0, 4).map((t) => t.replace(/\b\w/g, (c) => c.toUpperCase())).join(" · ");
+  };
+  const firstLine = (s) => String(s.description || "").split(/\n/)[0].trim().slice(0, 220);
+  const clean = (title) => String(title).replace(/^VMAROK\s*[-–]\s*/i, "").trim();   // "VMAROK - Reborn" -> "Reborn"
+  const savedFor = (title) => saved.find((r) => r.tracks.some((t) => t[0].toLowerCase() === title.toLowerCase()));
+
+  function build(sounds) {
+    sounds = sounds.filter((s) => s && s.title && s.permalink_url && s.duration);
+    if (!sounds.length) return null;
+    const albums = new Map(), out = [];
+    sounds.forEach((s) => {
+      const a = (s.publisher_metadata && s.publisher_metadata.album_title || "").trim();
+      if (a) { if (!albums.has(a)) albums.set(a, []); albums.get(a).push(s); }
+      else out.push(single(s));
+    });
+    albums.forEach((list, name) => {
+      if (list.length === 1) { out.push(single(list[0], name)); return; }
+      list.sort((a, b) => when(a) - when(b));                  // album order: earliest first
+      const last = when(list[list.length - 1]);
+      out.push({
+        id: "a-" + slug(name), title: name, type: list.length <= 4 ? "EP" : "Album",
+        year: last.getUTCFullYear(), date: nice(last), sortDate: +last,
+        art: big(list.find((s) => s.artwork_url)?.artwork_url), cover: "mc-1", label: "#8e2533",
+        about: firstLine(list[0]) || `${list.length} tracks.`, tags: tagsOf(list[0]),
+        credits: [["Written & produced by", ARTIST]],
+        links: { SoundCloud: list[0].permalink_url, Spotify: SPOTIFY },
+        tracks: list.map((s) => [clean(s.title), dur(s.duration), "", s.permalink_url]),
+      });
+    });
+    out.sort((a, b) => b.sortDate - a.sortDate);              // newest first
+    return out;
+  }
+  function single(s, albumName) {
+    const title = clean(s.title), d = when(s), old = savedFor(title);
+    return {
+      id: slug(title) || String(s.id), title, type: "Single", year: d.getUTCFullYear(), date: nice(d), sortDate: +d,
+      art: big(s.artwork_url) || (old && old.art) || "", cover: (old && old.cover) || "mc-1", label: (old && old.label) || "#8e2533",
+      about: firstLine(s) || (old && old.about) || "", tags: tagsOf(s) || (old && old.tags) || "",
+      credits: [["Written & produced by", ARTIST]],
+      links: Object.assign({ SoundCloud: s.permalink_url }, old && old.links && old.links.Spotify ? { Spotify: old.links.Spotify } : {}),
+      tracks: [[title, dur(s.duration), "", s.permalink_url]],
+      album: albumName || "",
+    };
+  }
+  function apply(list) {
+    if (!list || !list.length || MP.r) return;                 // never swap the list under a song that's playing
+    MUSIC.length = 0; MUSIC.push(...list);
+    featId = null; renderFeature(MUSIC[0], false);
+    muState.page = 1; renderGrid(); updateMuFilter();
+    if (musicEl.classList.contains("open")) scPrep(MUSIC[0].tracks[0][3]);
+  }
+  scLoadApi().then(() => {
+    const w = SC.Widget(f);
+    w.bind(SC.Widget.Events.READY, () => {
+      let tries = 0;
+      const read = () => w.getSounds((sounds) => {
+        // SoundCloud fills in details a few at a time; wait until they're all in (or give up after ~6s)
+        const missing = (sounds || []).filter((s) => !s || !s.title).length;
+        if (missing && tries++ < 12) return setTimeout(read, 500);
+        apply(build(sounds || []));
+        f.remove();
+      });
+      read();
+    });
+  }).catch(() => {});
+})();
