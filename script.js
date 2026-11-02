@@ -1508,6 +1508,8 @@ function updateMuFilter() {
       if ((lv != null || v.section === "liminal") && coll) { coll.prepend(asAngle(v)); placed.add(v.id); }
     });
     // the grid: General shorts, plus your liminal videos under "All" only (the Liminal tab shows just the Levels)
+    // any video or short with no hashtags counts as General
+    ((d && d.videos) || []).forEach((v) => { if (v.section === "other" && !(v.hashtags || []).length) v.section = "general"; });
     const vids = ((d && d.videos) || []).filter((v) => v.section === "general" || placed.has(v.id));
     if (!vids.length) { renderGallery(); return; }
     const grid = gal.querySelector(".gal-grid");
@@ -1724,7 +1726,7 @@ sizeGalRows();
   const card = document.querySelector(".card-img.img-2");
   if (!card) return;
   fetch("data/youtube.json", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).then((d) => {
-    const vids = ((d && d.videos) || []).filter((v) => v.section === "liminal" || v.section === "general");
+    const vids = ((d && d.videos) || []).filter((v) => v.section === "liminal" || v.section === "general" || (v.section === "other" && !(v.hashtags || []).length));
     const pics = vids.map(ytThumbs);
     if (!pics.length) return;
     const slides = [];
