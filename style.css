@@ -2315,8 +2315,8 @@ body.mini-on .site-foot { padding-bottom: 130px; }
    Shown whenever a release has no artwork (or SoundCloud's artwork can't load). Real artwork sits on top. */
 .cover-art.mc-1, .cover-art.mc-2, .cover-art.mc-3, .cover-art.mc-4, .cover-art.mc-5, .cover-art.mc-6 {
   background:
-    radial-gradient(circle at 50% 50%, #050505 0 4%, #3a3a3a 4.5% 13%, #050505 13.5% 14.5%, transparent 15%),
-    repeating-radial-gradient(circle at 50% 50%, #1d1d1d 0 0.6%, #232323 0.6% 1.2%),
+    radial-gradient(circle at 50% 50%, #050505 0 4%, #3d3d3d 4.5% 12.5%, #0c0c0c 13% 14.5%, transparent 15%),
+    repeating-radial-gradient(circle at 50% 50%, #141414 0 0.35%, #262626 0.45% 0.7%, #181818 0.8% 1.05%),
     #050505;
   background-size: 100% 100%, 74% 74%, 100% 100%;
   background-position: center;
@@ -2332,3 +2332,13 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .cover-art.mc-1 .ca-a, .cover-art.mc-2 .ca-a, .cover-art.mc-3 .ca-a, .cover-art.mc-4 .ca-a, .cover-art.mc-5 .ca-a, .cover-art.mc-6 .ca-a { display: none; }
 /* the record peeking out and the release glow stay neutral too */
 .rec, .release { --lbl: #4a4a4a !important; }
+/* shine: two soft light sweeps across the grooves, like light catching vinyl */
+.cover-art.mc-1::after, .cover-art.mc-2::after, .cover-art.mc-3::after,
+.cover-art.mc-4::after, .cover-art.mc-5::after, .cover-art.mc-6::after {
+  content: ""; position: absolute; inset: 13%; border-radius: 50%; pointer-events: none;
+  background: conic-gradient(from 20deg,
+    transparent 0deg, rgba(255,255,255,0.10) 18deg, rgba(255,255,255,0.22) 30deg, rgba(255,255,255,0.10) 42deg, transparent 62deg,
+    transparent 180deg, rgba(255,255,255,0.07) 198deg, rgba(255,255,255,0.16) 210deg, rgba(255,255,255,0.07) 222deg, transparent 242deg);
+  -webkit-mask: radial-gradient(circle, transparent 0 25%, #000 26%);          /* keeps the shine off the centre label */
+          mask: radial-gradient(circle, transparent 0 25%, #000 26%);
+}
