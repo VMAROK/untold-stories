@@ -395,6 +395,7 @@ function galItems() {
 }
 function renderGallery(scroll = false) {
   stopInline();
+  setTimeout(() => window.sizeGalRows && sizeGalRows(), 0);
   const grid = gal.querySelector(".gal-grid");
   grid.dataset.medium = galState.medium;
   grid.dataset.cat = galState.cat;
@@ -1671,3 +1672,22 @@ document.addEventListener("click", (e) => {
   cap.closest(".gi").querySelector(".gi-media")?.click();
 });
 addEventListener("resize", stopInline);
+
+/* Art & Film puzzle layout: one row = the height of a 16:9 landscape card (two columns wide);
+   a portrait card is two rows tall. */
+function sizeGalRows() {
+  const grid = gal && gal.querySelector('.gal-grid[data-medium="mix"]');
+  if (!grid) return;
+  // portraits fit in pairs; with an odd number, the last one moves to the end so no hole opens up mid-page
+  const shown = [...grid.querySelectorAll(".gi.show")];
+  shown.forEach((g) => (g.style.order = ""));
+  const tall = shown.filter((g) => g.dataset.orient === "tall");
+  if (tall.length % 2) tall[tall.length - 1].style.order = "999";
+  const cs = getComputedStyle(grid), cols = cs.gridTemplateColumns.split(" ").length, gap = parseFloat(cs.columnGap) || 0;
+  const colW = (grid.clientWidth - gap * (cols - 1)) / cols;
+  grid.style.setProperty("--rowh", ((2 * colW + gap) * 9) / 16 + "px");
+}
+window.sizeGalRows = sizeGalRows;
+addEventListener("resize", sizeGalRows);
+if (window.ResizeObserver && gal) new ResizeObserver(sizeGalRows).observe(gal.querySelector(".gal-grid"));
+sizeGalRows();

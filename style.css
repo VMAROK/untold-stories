@@ -2465,3 +2465,33 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   background: linear-gradient(45deg, transparent 42%, #e2556a 42% 58%, transparent 58%), linear-gradient(-45deg, transparent 42%, #e2556a 42% 58%, transparent 58%);
 }
 .inline-play.muted { box-shadow: 0 24px 50px -18px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.12); }
+
+/* ================= Art & Film: puzzle layout =================
+   Only two card sizes: landscape (2 columns wide) and portrait / shorts (2 rows tall).
+   They lock together with no gaps; titles sit on the card. Row height is set by script.js. */
+.gal-grid[data-medium="mix"] {
+  display: grid !important; columns: auto !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-auto-rows: var(--rowh, 200px); grid-auto-flow: row dense; gap: 16px;
+}
+.gal-grid[data-medium="mix"] .gi.show {
+  position: relative; display: block; margin: 0 !important; width: auto;
+  grid-column: span 2; grid-row: span 1;                     /* landscape */
+}
+.gal-grid[data-medium="mix"] .gi.show[data-orient="tall"] { grid-column: span 1; grid-row: span 2; }   /* portrait / shorts */
+.gal-grid[data-medium="mix"] .gi.show.gi-ext { grid-column: 1 / -1; grid-row: span 1; }
+.gal-grid[data-medium="mix"] .gi.show .gi-media { position: absolute; inset: 0; width: 100%; height: 100%; aspect-ratio: auto !important; }
+.gal-grid[data-medium="mix"] .gi.show .gx-card { aspect-ratio: auto !important; }
+.gal-grid[data-medium="mix"] .gi.show:not(.gi-ext) .gi-cap {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 2; margin: 0; padding: 40px 14px 12px;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.82)); pointer-events: none;
+}
+.gal-grid[data-medium="mix"] .gi.show .gi-cap h3 { font-size: 18px; margin-top: 3px; color: #f2ede6; }
+.gal-grid[data-medium="mix"] .gi.show .gi-cat { font-size: 8.5px; letter-spacing: 1.8px; }
+.gal-grid[data-medium="mix"] .gi.show .gi-dur { bottom: auto; top: 10px; }
+@media (max-width: 640px) {
+  .gal-grid[data-medium="mix"] { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .gal-grid[data-medium="mix"] .gi.show .gi-cap { padding: 30px 10px 9px; }
+  .gal-grid[data-medium="mix"] .gi.show .gi-cap h3 { font-size: 15px; }
+  .gal-grid[data-medium="mix"] .gi.show .gi-cat { font-size: 7.5px; letter-spacing: 1.4px; }
+}
