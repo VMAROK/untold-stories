@@ -1700,7 +1700,7 @@ function sizeGalRows() {
   const shown = [...grid.querySelectorAll(".gi.show")];
   shown.forEach((g) => (g.style.order = ""));
   const tall = shown.filter((g) => g.dataset.orient === "tall");
-  if (tall.length % 2 && innerWidth > 640) tall[tall.length - 1].style.order = "999";   // phones list them in order
+  if (tall.length % 2) tall[tall.length - 1].style.order = "999";
   const cs = getComputedStyle(grid), cols = cs.gridTemplateColumns.split(" ").length, gap = parseFloat(cs.columnGap) || 0;
   const colW = (grid.clientWidth - gap * (cols - 1)) / cols;
   grid.style.setProperty("--rowh", ((2 * colW + gap) * 9) / 16 + "px");
