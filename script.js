@@ -50,7 +50,7 @@ window.addEventListener("scroll", () => {
 
 // Contact form: sends the message to your email through Web3Forms (free).
 // Put your Web3Forms access key below. It only routes messages to your inbox; it doesn't reveal your email.
-const WEB3FORMS_KEY = "";
+const WEB3FORMS_KEY = "995072c5-9b16-42fc-9e83-033eb399072c";
 const form = document.getElementById("contactForm");
 const note = document.getElementById("formNote");
 if (form) {
