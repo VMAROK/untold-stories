@@ -12,14 +12,14 @@ import time, sys
 # channel's uploads-playlist feed (same videos). If both stay down, keep the last saved list.
 FEEDS = [FEED, f"https://www.youtube.com/feeds/videos.xml?playlist_id=UU{CHANNEL[2:]}"]
 xml = None
-for attempt in range(4):
+for attempt in range(10):   # up to ~7 minutes: the feed often comes back after a few tries
     for url in FEEDS:
         try:
             xml = urllib.request.urlopen(url, timeout=30).read(); break
         except Exception as err:
             print(f"try {attempt + 1}: {url} -> {err}")
     if xml: break
-    time.sleep(20)
+    time.sleep(40)
 if not xml:
     print("YouTube feed unavailable right now; keeping the current list."); sys.exit(0)
 root = ET.fromstring(xml)
