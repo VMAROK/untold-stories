@@ -27,11 +27,12 @@ if (wave) {
   }
 }
 
-// YouTube thumbnails: shorts try the upright versions first; the plain one underneath always exists.
-// Several pictures separated by "|" are layered, so whichever loads first shows.
+// YouTube thumbnails: always the thumbnail you've set on YouTube (hqdefault is YouTube's copy of it).
+// For an upright short, the centre of that image is exactly the short's frame, so tall cards show it with no bars.
+// The date on the end makes browsers fetch it again each day, so a thumbnail you change shows up.
 function ytThumbs(v) {
-  const b = `https://i.ytimg.com/vi/${v.id}/`;
-  return v.short ? [b + "oar2.jpg", b + "oardefault.jpg", b + "hqdefault.jpg"].join("|") : (v.thumb || b + "hqdefault.jpg");
+  const day = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  return `https://i.ytimg.com/vi/${v.id}/hqdefault.jpg?d=${day}`;
 }
 function bgLayers(pics) { return String(pics).split("|").map((u) => `url("${u}") center / cover no-repeat`).join(", "); }
 // Highlight the nav link for the section on screen
