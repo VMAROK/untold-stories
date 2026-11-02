@@ -82,6 +82,7 @@ const openFolio = (id) => {
   if (el.classList.contains("open")) return;
   el.hidden = false;
   el.scrollTop = 0;
+  if (id === "music") setTimeout(() => { if (MUSIC[0]) scPrep(MUSIC[0].tracks[0][3]); }, 0);   // latest release ready to play
   requestAnimationFrame(() => el.classList.add("open"));
   document.body.classList.add("folio-open");
   // stagger the rows in
@@ -777,6 +778,7 @@ function fillRelease(i) {
 function openRelease(i, push = true) {
   if (!release || !MUSIC[i]) return;
   fillRelease(i);
+  scPrep(MUSIC[i].tracks[0][3]);                       // load it ahead so one tap on Play starts it
   if (push && innerWidth <= 640) history.pushState({ folio: "music", rel: i }, "", "#music");   // phone: Back gesture closes it
   release.hidden = false; release.scrollTop = 0; release.querySelector(".rl-panel").scrollTop = 0;
   requestAnimationFrame(() => release.classList.add("open"));
@@ -796,12 +798,13 @@ release?.addEventListener("click", (e) => { if (e.target === release) leaveRelea
 function stepRelease(d) {
   const j = relIdx + d; if (!MUSIC[j]) return;
   history.replaceState({ folio: "music", rel: j }, "", "#music");
-  fillRelease(j); release.scrollTop = 0; release.querySelector(".rl-panel").scrollTop = 0;
+  fillRelease(j); scPrep(MUSIC[j].tracks[0][3]); release.scrollTop = 0; release.querySelector(".rl-panel").scrollTop = 0;
 }
 
 // --- player: SoundCloud tracks play through a hidden SoundCloud player; audio files play directly ---
 const IN_FRAME = window.self !== window.top;
 let scW = null, scFrame = null, scApi = null, scPos = 0, scDock = null, scWait = null;
+let scCur = null, scNext = null;   // the player that's playing, and one loaded ahead for the track you're about to play
 function scLoadApi() {
   if (!scApi) scApi = new Promise((ok, no) => {
     if (window.SC && SC.Widget) return ok();
@@ -811,41 +814,64 @@ function scLoadApi() {
   });
   return scApi;
 }
-// iPad / iPhone (and some browsers) only let SoundCloud start after a tap inside its own player,
-// so the real player pops up above the mini player. Once it's playing, it tucks itself away.
+// iPad / iPhone only let SoundCloud start straight from a tap if its player is already loaded.
+// So the release you open (and the latest release) is loaded ahead of time; one tap on Play starts it.
+// If a track isn't ready yet, SoundCloud's own player pops up above the mini player to tap once.
 const dockShow = () => scDock && scDock.classList.add("show");
 const dockHide = () => scDock && scDock.classList.remove("show");
-function scPlay(url) {
-  scPos = 0;
-  const src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&auto_play=true&visual=false&show_comments=false&show_reposts=false&hide_related=true&color=%238e2533`;
-  clearTimeout(scWait); scWait = setTimeout(dockShow, 1200);          // not playing on its own? show the player
-  if (!scDock) {
-    scDock = document.createElement("div");
-    scDock.className = "sc-dock";
-    scDock.innerHTML = `<div class="sc-dock-h"><span>Tap ▶ to start</span><button type="button" aria-label="Hide player">⌄</button></div>`;
-    scDock.querySelector("button").onclick = dockHide;
-    document.body.appendChild(scDock);
-  }
-  // A brand-new player for every track. Changing an existing player's address would add steps to the
-  // browser's history, and then the Back button would step the player back (pausing it) instead of the page.
-  if (scFrame) scFrame.remove();
-  scW = null;
-  const f = (scFrame = document.createElement("iframe"));
-  f.title = "SoundCloud player"; f.allow = "autoplay; encrypted-media"; f.src = src;
-  scDock.appendChild(f);
+function scEnsureDock() {
+  if (scDock) return;
+  scDock = document.createElement("div");
+  scDock.className = "sc-dock";
+  scDock.innerHTML = `<div class="sc-dock-h"><span>Tap ▶ to start</span><button type="button" aria-label="Hide player">⌄</button></div>`;
+  scDock.querySelector("button").onclick = dockHide;
+  document.body.appendChild(scDock);
+}
+function scSetCur(o) {
+  if (scCur && scCur !== o) scCur.f.remove();
+  scCur = o; scFrame = o ? o.f : null; scW = o ? o.w : null;
+  scDock.querySelectorAll("iframe").forEach((f) => f.classList.toggle("cur", !!o && f === o.f));
+}
+// a brand-new player each time (changing an existing player's address would add browser-history steps)
+function scMake(url, autoplay) {
+  scEnsureDock();
+  const o = { url, f: document.createElement("iframe"), w: null, ready: false, want: autoplay };
+  o.f.title = "SoundCloud player"; o.f.allow = "autoplay; encrypted-media";
+  o.f.src = `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}&auto_play=${autoplay}&visual=false&show_comments=false&show_reposts=false&hide_related=true&color=%238e2533`;
+  scDock.appendChild(o.f);
   scLoadApi().then(() => {
-    if (f !== scFrame) return;                                       // a newer track took over
-    const w = (scW = SC.Widget(f));
-    w.bind(SC.Widget.Events.READY, () => { if (MP.mode === "sc" && f === scFrame) w.play(); });
+    const w = (o.w = SC.Widget(o.f));
+    if (o === scCur) scW = w;
+    w.bind(SC.Widget.Events.READY, () => { o.ready = true; if (o === scCur && o.want && MP.mode === "sc") w.play(); });
     w.bind(SC.Widget.Events.PLAY, () => {
-      if (f !== scFrame) return;
-      clearTimeout(scWait); MP.paused = false; syncPlayingUI(); setTimeout(dockHide, 500);
+      if (o !== scCur) { w.pause(); return; }                     // a loaded-ahead player never plays by itself
+      clearTimeout(scWait); MP.paused = false; MP.waiting = false; syncPlayingUI(); setTimeout(dockHide, 500);
       window.unloadListen && unloadListen();
     });
-    w.bind(SC.Widget.Events.PAUSE, () => { if (f === scFrame) { MP.paused = true; syncPlayingUI(); } });
-    w.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => { if (f === scFrame) scPos = e.currentPosition / 1000; });
-    w.bind(SC.Widget.Events.FINISH, () => { if (f === scFrame) nextTrack(1); });
-  }).catch(() => dockShow());
+    w.bind(SC.Widget.Events.PAUSE, () => { if (o === scCur) { MP.paused = true; syncPlayingUI(); } });
+    w.bind(SC.Widget.Events.PLAY_PROGRESS, (e) => { if (o === scCur) scPos = e.currentPosition / 1000; });
+    w.bind(SC.Widget.Events.FINISH, () => { if (o === scCur) nextTrack(1); });
+  }).catch(() => { if (o === scCur) dockShow(); });
+  return o;
+}
+function scPrep(url) {
+  if (IN_FRAME || !url) return;
+  if ((scCur && scCur.url === url) || (scNext && scNext.url === url)) return;
+  if (scNext) scNext.f.remove();
+  scNext = scMake(url, false);
+}
+function scPlay(url) {
+  scPos = 0; MP.waiting = true;
+  clearTimeout(scWait); scWait = setTimeout(dockShow, 1500);          // not playing on its own? show the player
+  let o = null;
+  if (scNext && scNext.url === url) { o = scNext; scNext = null; }
+  else if (scCur && scCur.url === url) o = scCur;
+  if (o) {
+    o.want = true; scSetCur(o);
+    if (o.ready && o.w) { o.w.seekTo(0); o.w.play(); }               // straight from your tap: allowed everywhere
+    return;
+  }
+  scSetCur(scMake(url, true));
 }
 // --- placeholder tracks (no link or file) play a soft generated tone ---
 const PREVIEW_SECONDS = 30;
@@ -926,7 +952,7 @@ function nextTrack(d = 1) {
 }
 function stopAll() {
   stopSound(); if (MP.ctx && MP.ctx.state === "suspended") MP.ctx.resume();
-  MP.r = null; MP.mode = null; MP.paused = false;
+  MP.r = null; MP.mode = null; MP.paused = false; MP.waiting = false;
   $m("mini").hidden = true; document.body.classList.remove("mini-on"); syncPlayingUI();
 }
 MP.audio.addEventListener("ended", () => nextTrack(1));
@@ -948,7 +974,8 @@ function syncPlayingUI() {
   document.querySelectorAll(".rec").forEach((el) => el.classList.toggle("spin", !!on && el.dataset.rel === on && !MP.paused));
   document.querySelectorAll(".mu-play").forEach((b) => {
     const p = on && b.dataset.rel === on && !MP.paused;
-    b.classList.toggle("is-on", !!p); b.textContent = p ? "Pause" : on && b.dataset.rel === on ? "Resume" : "Play";
+    const mine = on && b.dataset.rel === on;
+    b.classList.toggle("is-on", !!p); b.textContent = p ? "Pause" : mine && MP.waiting ? "Starting…" : mine ? "Resume" : "Play";
   });
   $m("mini")?.classList.toggle("paused", MP.paused);
 }
@@ -1282,3 +1309,11 @@ function muToast(title, url) {
   requestAnimationFrame(() => el.classList.add("show"));
   clearTimeout(muToast.t); muToast.t = setTimeout(() => el.classList.remove("show"), 7000);
 }
+
+/* desktop: pointing at a track loads it ahead, so the click starts it straight away */
+document.addEventListener("pointerover", (e) => {
+  const t = e.target.closest && e.target.closest(".trk");
+  if (!t || e.pointerType === "touch") return;
+  const r = MUSIC.find((x) => x.id === t.dataset.rel);
+  if (r) scPrep(r.tracks[Number(t.dataset.ti)][3]);
+});

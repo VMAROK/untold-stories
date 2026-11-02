@@ -2300,3 +2300,6 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   .rl-panel .release-inner { grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: 40px; max-width: none; }
   .rl-panel .release-inner .rec { position: sticky; width: auto; max-width: 340px; margin: 0 18% 0 0; transform: none; }
 }
+
+/* only the playing SoundCloud player shows in the pop-up; the one loaded ahead stays invisible */
+.sc-dock iframe:not(.cur) { position: absolute; left: 0; bottom: 0; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
