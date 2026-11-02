@@ -2507,3 +2507,14 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .loc-row-videos .car-track:has(.is-tall) > .ang-btn.is-tall .ang-tile { aspect-ratio: 9 / 16; }
 .coll-feature .loc-row:first-child { margin-top: 0; }
 @media (max-width: 640px) { .loc-row-videos .car-track:has(.is-tall) { --ch: 260px; } }
+
+/* phone: Art & Film cards take the whole row (no puzzle). Videos 16:9, shorts portrait. */
+@media (max-width: 640px) {
+  .gal-grid[data-medium="mix"] { grid-template-columns: 1fr; grid-auto-rows: auto; gap: 14px; }
+  .gal-grid[data-medium="mix"] .gi.show,
+  .gal-grid[data-medium="mix"] .gi.show[data-orient="tall"] { grid-column: 1 / -1; grid-row: auto; }
+  .gal-grid[data-medium="mix"] .gi.show .gi-media { position: relative; inset: auto; height: auto; aspect-ratio: 16 / 9 !important; }
+  .gal-grid[data-medium="mix"] .gi.show[data-orient="tall"] .gi-media { aspect-ratio: 9 / 16 !important; max-height: 78vh; }
+  .gal-grid[data-medium="mix"] .gi.show.gi-ext .gi-media { aspect-ratio: 4 / 5 !important; }
+  .gal-grid[data-medium="mix"] .gi.show .gi-cap h3 { font-size: 17px; }
+}
