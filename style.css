@@ -2564,3 +2564,8 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 /* an empty Videos / Photos section inside a location */
 .row-empty { font-family: var(--body); font-size: 13px; color: var(--muted); opacity: 0.7; padding: 18px 0 6px; border-top: 1px solid rgba(255, 255, 255, 0.06); }
 .loc-row.is-empty .loc-row-h span { opacity: 0.5; }
+
+/* collections with nothing in them yet */
+.gi-coll.gi-soon .gi-media { filter: saturate(0.5) brightness(0.55); }
+.gi-coll.gi-soon .gi-collbadge b { font-size: 1.15em; letter-spacing: 3px; }
+.coll-soon { text-align: center; font-family: var(--serif-2); font-size: 28px; color: var(--muted); padding: 60px 0 100px; }

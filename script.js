@@ -640,7 +640,7 @@ function carouselRow(name, set, world, where, base, W) {
   row.querySelector(".car-next").addEventListener("click", () => step(1));
   return row;
 }
-const plural = (n, w) => `${n} ${w}${n === 1 ? "" : "s"}`;
+const plural = (n, w) => `${n} ${w}${n === 1 || /s$/.test(w) ? "" : "s"}`;   // "series" stays "series"
 function collWords(item) {
   const d = item.dataset;
   return { unit: d.unit || "Location", units: d.units || "locations", piece: d.piece || "Angle", pieces: d.pieces || "angles" };
@@ -660,7 +660,7 @@ function openColl(item, push = true) {
   $v("cl-kicker").textContent = item.querySelector(".gi-cat").textContent;
   $v("cl-title").textContent = world;
   $v("cl-intro").textContent = item.querySelector(".gi-desc").textContent;
-  $v("cl-stats").textContent = `${plural(locs, W.units.replace(/s$/, ""))} · ${plural(pieces, "piece")}`;
+  $v("cl-stats").textContent = `${plural(locs, W.unit.toLowerCase())} · ${plural(pieces, "piece")}`;
   // featured piece(s) that sit outside any location
   const feat = $v("cl-feature"); feat.innerHTML = "";
   const loose = [...d.children].filter((el) => el.classList.contains("ang"));
@@ -716,6 +716,9 @@ function openColl(item, push = true) {
       .forEach(([name, set]) => body.appendChild(carouselRow(name, set, world, loc.dataset.name, base, W)));   // both sections always show
     wrap.appendChild(sec);
   });
+  if (!d.querySelector(".ang") && !d.querySelector(".loc")) {
+    wrap.innerHTML = `<p class="coll-soon">Coming soon.</p>`; $v("cl-stats").textContent = "In progress";
+  }
   if (push) history.pushState({ folio: "animation", coll: item.dataset.coll }, "", "#animation");
   coll.hidden = false; coll.scrollTop = 0;
   requestAnimationFrame(() => coll.classList.add("open"));
@@ -748,11 +751,17 @@ setInterval(() => {
 
 if (coll) {
   coll.querySelector("[data-coll-close]").addEventListener("click", leaveColl);
-  // show each collection's size on its gallery tile
+  refreshCollBadges();
+}
+// show each collection's size on its gallery tile (again after YouTube videos are sorted in)
+function refreshCollBadges() {
   document.querySelectorAll(".gi-coll").forEach((g) => {
     const { locs, pieces } = collCounts(g);
     const W = collWords(g);
-    g.querySelector(".gi-collbadge").innerHTML = `<b>Collection</b><small>${locs} ${W.units} · ${pieces} pieces</small>`;
+    const empty = !locs && !pieces;
+    g.classList.toggle("gi-soon", empty);                               // nothing in it yet: "Coming soon" on the cover
+    g.querySelector(".gi-collbadge").innerHTML = empty ? `<b>Coming soon</b><small>Collection</small>`
+      : `<b>Collection</b><small>${plural(locs, W.unit.toLowerCase())} · ${plural(pieces, "piece")}</small>`;
   });
 }
 
@@ -1562,6 +1571,7 @@ function updateMuFilter() {
     // any video or short with no hashtags counts as General
     ((d && d.videos) || []).forEach((v) => { if (v.section === "other" && !(v.hashtags || []).length) v.section = "general"; });
     const vids = ((d && d.videos) || []).filter((v) => v.section === "general" || placed.has(v.id));
+    if (typeof refreshCollBadges === "function") refreshCollBadges();
     if (!vids.length) { renderGallery(); return; }
     const grid = gal.querySelector(".gal-grid");
     const first = grid.querySelector('.gi[data-medium="film"]:not(.gi-ext)');
