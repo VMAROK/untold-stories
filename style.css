@@ -2553,3 +2553,10 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 @media (min-width: 641px) and (max-width: 1100px) {
   .nav .nav-links { position: absolute; left: 50%; transform: translateX(-50%); flex: none; margin-right: 0; }
 }
+
+/* release pop-up: keep the record that slides out (when playing) well clear of the title and text */
+@media (min-width: 641px) {
+  .rl-panel .release-inner .rec { max-width: 300px; margin-right: 32%; }
+  .rl-panel .release-inner .rec .vinyl { transform: translateX(16%); }
+  .rl-panel .release-inner .rec.spin .vinyl, .rl-panel .release-inner .rec:hover .vinyl { transform: translateX(26%); }
+}
