@@ -1580,6 +1580,7 @@ function playInline(tile, url) {
   }
   el.innerHTML = `<div class="ip-video"><div></div></div>
     <div class="ip-shield"></div>
+    <button type="button" class="ip-big" aria-label="Pause"></button>
     <div class="ip-bar">
       <button type="button" class="ip-pp" aria-label="Pause"></button>
       <span class="ip-cur">0:00</span>
@@ -1598,10 +1599,16 @@ function playInline(tile, url) {
     el.querySelector(".ip-dur").textContent = fmtT(d);
     if (!dragging) { el.querySelector(".ip-cur").textContent = fmtT(c); seek.value = d ? Math.round((c / d) * 1000) : 0; }
   };
-  pp.addEventListener("click", () => {
-    if (!player) return;
-    player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo();
-  });
+  const toggle = () => { if (player) player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo(); };
+  pp.addEventListener("click", toggle);
+  // the round button in the middle plays / pauses too. While playing it fades out;
+  // tapping the picture just brings it back for a moment (it never pauses by itself)
+  const big = el.querySelector(".ip-big");
+  let hideT = null;
+  const peek = () => { el.classList.add("peek"); clearTimeout(hideT); hideT = setTimeout(() => el.classList.remove("peek"), 2200); };
+  big.addEventListener("click", () => { toggle(); peek(); });
+  el.querySelector(".ip-shield").addEventListener("click", peek);
+  el.addEventListener("pointermove", (e) => { if (e.pointerType === "mouse") peek(); });
   seek.addEventListener("input", () => {
     dragging = true;
     const d = player && player.getDuration ? player.getDuration() : 0;
@@ -1624,6 +1631,7 @@ function playInline(tile, url) {
           el.classList.toggle("playing", playing);
           if (playing) el.classList.add("started");            // after the first start, taps on the picture do nothing
           pp.setAttribute("aria-label", playing ? "Pause" : "Play");
+          big.setAttribute("aria-label", playing ? "Pause" : "Play");
           sync();
         },
       },

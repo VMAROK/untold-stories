@@ -2428,3 +2428,23 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .ip-cur, .ip-dur { flex: none; min-width: 32px; text-align: center; font-variant-numeric: tabular-nums; }
 .ip-seek { flex: 1; min-width: 0; height: 22px; accent-color: var(--crimson-bright); background: transparent; cursor: pointer; }
 .inline-x { z-index: 3; }
+
+/* the round play / pause bubble in the middle of a video playing in place */
+.ip-big {
+  position: absolute; left: 50%; top: 50%; z-index: 2; width: 64px; height: 64px; margin: -32px 0 0 -32px;
+  border-radius: 50%; border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(10, 8, 8, 0.45);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); cursor: pointer;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.2s, background 0.2s;
+}
+.inline-play.started .ip-big { opacity: 1; pointer-events: auto; }                  /* paused: always showing */
+.inline-play.started.playing .ip-big { opacity: 0; pointer-events: none; }          /* playing: tucked away... */
+.inline-play.started.playing.peek .ip-big { opacity: 1; pointer-events: auto; }     /* ...until you tap the picture */
+.ip-big:hover { background: rgba(142, 37, 51, 0.55); transform: scale(1.06); }
+.ip-big::before {   /* play icon */
+  content: ""; position: absolute; left: 25px; top: 21px; width: 0; height: 0;
+  border-left: 18px solid #fff; border-top: 11px solid transparent; border-bottom: 11px solid transparent;
+}
+.inline-play.playing .ip-big::before {   /* pause icon */
+  left: 23px; top: 21px; width: 18px; height: 22px; border: 0;
+  background: linear-gradient(90deg, #fff 0 33%, transparent 33% 67%, #fff 67%);
+}
