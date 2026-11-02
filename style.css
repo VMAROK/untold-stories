@@ -2310,3 +2310,25 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 
 /* invisible SoundCloud player that reads your track list */
 .sc-reader { position: fixed; left: -9999px; top: 0; width: 300px; height: 166px; border: 0; opacity: 0; pointer-events: none; }
+
+/* ================= PLACEHOLDER COVERS: all the same, black with a gray disc =================
+   Shown whenever a release has no artwork (or SoundCloud's artwork can't load). Real artwork sits on top. */
+.cover-art.mc-1, .cover-art.mc-2, .cover-art.mc-3, .cover-art.mc-4, .cover-art.mc-5, .cover-art.mc-6 {
+  background:
+    radial-gradient(circle at 50% 50%, #050505 0 4%, #3a3a3a 4.5% 13%, #050505 13.5% 14.5%, transparent 15%),
+    repeating-radial-gradient(circle at 50% 50%, #1d1d1d 0 0.6%, #232323 0.6% 1.2%),
+    #050505;
+  background-size: 100% 100%, 74% 74%, 100% 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.cover-art.mc-1::before, .cover-art.mc-2::before, .cover-art.mc-3::before,
+.cover-art.mc-4::before, .cover-art.mc-5::before, .cover-art.mc-6::before {   /* rounds the disc */
+  content: ""; position: absolute; inset: 13%; border-radius: 50%;
+  box-shadow: 0 0 0 100vmax #050505, inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+.cover-art.mc-1 .ca-t, .cover-art.mc-2 .ca-t, .cover-art.mc-3 .ca-t, .cover-art.mc-4 .ca-t, .cover-art.mc-5 .ca-t, .cover-art.mc-6 .ca-t,
+.cover-art.mc-1 .ca-a, .cover-art.mc-2 .ca-a, .cover-art.mc-3 .ca-a, .cover-art.mc-4 .ca-a, .cover-art.mc-5 .ca-a, .cover-art.mc-6 .ca-a { display: none; }
+/* the record peeking out and the release glow stay neutral too */
+.rec, .release { --lbl: #4a4a4a !important; }
