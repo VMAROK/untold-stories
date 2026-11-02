@@ -1870,3 +1870,92 @@ sizeGalRows();
   });
   if (still) frame(0); else io.observe(card);
 })();
+
+/* ---------- Home page: Unseen Perspectives card — a live music visual (drawn in code) ----------
+   A record-like disc with a ring of bars pulsing to a beat, drifting dust and a soft waveform. */
+(() => {
+  const card = document.querySelector(".card-img.img-3");
+  if (!card) return;
+  card.classList.add("viz-on");
+  const cv = document.createElement("canvas"); cv.className = "fire-cv"; card.appendChild(cv);
+  const ctx = cv.getContext("2d");
+  let W = 0, H = 0;
+  const size = () => {
+    const dpr = Math.min(2, devicePixelRatio || 1);
+    W = card.clientWidth; H = card.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  };
+  size(); addEventListener("resize", size);
+  if (window.ResizeObserver) new ResizeObserver(() => { if (card.clientWidth !== W || card.clientHeight !== H) size(); }).observe(card);
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const N = 72, bars = new Float32Array(N);
+  const dust = Array.from({ length: 40 }, () => ({ x: Math.random(), y: Math.random(), s: Math.random() * 1.4 + 0.4, v: Math.random() * 0.02 + 0.005 }));
+  let running = false;
+  function frame(now) {
+    const t = still ? 3.1 : now / 1000;
+    const bpm = 92, beatT = (t * bpm / 60) % 1, kick = Math.exp(-beatT * 6);       // a soft kick on every beat
+    const cx = W / 2, cy = H * 0.46, R = Math.min(W, H) * 0.24;
+    // background: near black with a slow crimson haze that swells on the beat
+    ctx.fillStyle = "#050405"; ctx.fillRect(0, 0, W, H);
+    const haze = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * 0.75);
+    haze.addColorStop(0, `rgba(142, 37, 51, ${0.30 + 0.18 * kick})`); haze.addColorStop(0.5, "rgba(60, 14, 22, 0.25)"); haze.addColorStop(1, "rgba(0,0,0,0)");
+    ctx.fillStyle = haze; ctx.fillRect(0, 0, W, H);
+    // the spectrum: bars around the disc, low notes thump, highs shimmer
+    for (let k = 0; k < N; k++) {
+      const f = k / N;
+      const target = 0.18 + 0.55 * kick * Math.exp(-f * 3) +
+        0.25 * (0.5 + 0.5 * Math.sin(t * (2.1 + f * 7) + k * 0.7)) * (0.4 + f) +
+        0.15 * (0.5 + 0.5 * Math.sin(t * 5.3 + k * 1.9));
+      bars[k] += ((still ? target : target) - bars[k]) * 0.25;
+    }
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(t * 0.15);
+    ctx.lineCap = "round";
+    for (let k = 0; k < N; k++) {
+      const a = (k / N) * Math.PI * 2, mirror = bars[k < N / 2 ? k : N - 1 - k];
+      const len = R * 0.55 * mirror;
+      const x0 = Math.cos(a) * (R * 1.08), y0 = Math.sin(a) * (R * 1.08);
+      const x1 = Math.cos(a) * (R * 1.08 + len), y1 = Math.sin(a) * (R * 1.08 + len);
+      const g = ctx.createLinearGradient(x0, y0, x1, y1);
+      g.addColorStop(0, "rgba(255, 220, 225, 0.95)"); g.addColorStop(1, "rgba(200, 50, 70, 0.15)");
+      ctx.strokeStyle = g; ctx.lineWidth = Math.max(1.2, (Math.PI * 2 * R) / N * 0.45);
+      ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1, y1); ctx.stroke();
+    }
+    ctx.restore();
+    // the disc: a slowly turning record with wide, soft grooves and a glowing label
+    ctx.save(); ctx.translate(cx, cy);
+    const pulse = 1 + 0.03 * kick;
+    ctx.beginPath(); ctx.arc(0, 0, R * pulse, 0, Math.PI * 2); ctx.fillStyle = "#0b0a0b"; ctx.fill();
+    for (let r = R * 0.42; r < R * 0.98; r += R * 0.07) { ctx.beginPath(); ctx.arc(0, 0, r * pulse, 0, Math.PI * 2); ctx.strokeStyle = "rgba(255,255,255,0.05)"; ctx.lineWidth = 1; ctx.stroke(); }
+    ctx.rotate(t * 0.6);
+    const sheen = ctx.createConicGradient ? ctx.createConicGradient(0, 0, 0) : null;
+    if (sheen) {
+      sheen.addColorStop(0, "rgba(255,255,255,0)"); sheen.addColorStop(0.08, "rgba(255,255,255,0.10)"); sheen.addColorStop(0.16, "rgba(255,255,255,0)");
+      sheen.addColorStop(0.5, "rgba(255,255,255,0)"); sheen.addColorStop(0.58, "rgba(255,255,255,0.07)"); sheen.addColorStop(0.66, "rgba(255,255,255,0)");
+      ctx.beginPath(); ctx.arc(0, 0, R * pulse, 0, Math.PI * 2); ctx.fillStyle = sheen; ctx.fill();
+    }
+    const lab = ctx.createRadialGradient(0, 0, 0, 0, 0, R * 0.36);
+    lab.addColorStop(0, "#f2c9cf"); lab.addColorStop(0.35, "#b0303f"); lab.addColorStop(1, "#5a121c");
+    ctx.beginPath(); ctx.arc(0, 0, R * 0.34, 0, Math.PI * 2); ctx.fillStyle = lab; ctx.fill();
+    ctx.beginPath(); ctx.arc(0, 0, R * 0.035, 0, Math.PI * 2); ctx.fillStyle = "#050405"; ctx.fill();
+    ctx.restore();
+    // waveform across the bottom
+    ctx.beginPath();
+    for (let x = 0; x <= W; x += 2) {
+      const p = x / W, env = Math.sin(p * Math.PI);
+      const y = H * 0.86 + env * H * 0.045 * (Math.sin(p * 38 + t * 6) * 0.6 + Math.sin(p * 91 - t * 9) * 0.4) * (0.5 + kick);
+      x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    }
+    ctx.strokeStyle = "rgba(242, 237, 230, 0.55)"; ctx.lineWidth = 1.2; ctx.stroke();
+    // dust drifting up through the light
+    dust.forEach((d) => {
+      if (!still) { d.y -= d.v * 0.016 * 6; if (d.y < -0.02) { d.y = 1.02; d.x = Math.random(); } }
+      ctx.fillStyle = `rgba(255, 210, 200, ${0.25 + 0.35 * kick})`; ctx.fillRect(d.x * W, d.y * H, d.s, d.s);
+    });
+    if (!still && running) requestAnimationFrame(frame);
+  }
+  const io = new IntersectionObserver(([e]) => {
+    if (e.isIntersecting && !running) { running = true; requestAnimationFrame(frame); }
+    else if (!e.isIntersecting) running = false;
+  });
+  if (still) frame(0); else io.observe(card);
+})();
