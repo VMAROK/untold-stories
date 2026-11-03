@@ -2296,12 +2296,36 @@ function clSmallBuild(item, world) {
     b.innerHTML = `<span class="cs-cap"><b></b><small></small></span>`;
     b.querySelector("b").textContent = loc.dataset.name;
     b.querySelector("small").textContent = plural(angs.length, "version");
-    b.addEventListener("click", () => openView(list, 0, "coll"));
+    b.addEventListener("click", () => csToggle(b, loc, angs, world, base, collWords(item)));
     small.appendChild(b);
   });
   let pref = "large";
   try { pref = localStorage.getItem("clSize") || "large"; } catch (e) {}
   clSetSize(pref, false);
+}
+// Mosaic: tapping a photo opens its drop-down (name, note, versions row) right under that row of tiles
+function csToggle(tile, loc, angs, world, base, W) {
+  const small = document.getElementById("cl-small");
+  const open = small.querySelector(".cs-drop");
+  const same = open && open.dataset.for === loc.dataset.name;
+  if (open) open.remove();
+  small.querySelectorAll(".cs-tile.on").forEach((x) => x.classList.remove("on"));
+  if (same) return;
+  const drop = document.createElement("div");
+  drop.className = "cs-drop";
+  drop.dataset.for = loc.dataset.name;
+  drop.innerHTML = `<div class="cs-drop-h"><h3></h3><p></p><button type="button" class="cs-close" aria-label="Close">Close <i>⌃</i></button></div>`;
+  drop.querySelector("h3").textContent = loc.dataset.name;
+  drop.querySelector("p").textContent = loc.dataset.note || "";
+  drop.appendChild(carouselRow("Photos", angs, world, loc.dataset.name, base, W));
+  drop.querySelector(".cs-close").addEventListener("click", () => { drop.remove(); tile.classList.remove("on"); });
+  // after the last tile on the same row as the one tapped
+  const tiles = [...small.querySelectorAll(".cs-tile")];
+  const top = tile.offsetTop;
+  const last = tiles.filter((t) => Math.abs(t.offsetTop - top) < 4).pop() || tile;
+  last.after(drop);
+  tile.classList.add("on");
+  setTimeout(() => drop.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60);
 }
 function clSetSize(size, save = true) {
   const small = document.getElementById("cl-small"), locs = document.getElementById("cl-locs"), bar = document.getElementById("cl-size");
