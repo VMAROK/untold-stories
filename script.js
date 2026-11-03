@@ -691,6 +691,13 @@ function openColl(item, push = true) {
       <div class="loc-body" id="${gid}"><div class="loc-body-in"></div></div>`;
     sec.querySelector("h3").textContent = loc.dataset.name;
     sec.querySelector(".loc-head p").textContent = loc.dataset.note || "";
+    // "Coming soon": locations marked data-soon in index.html, until something is added to them
+    const soon = loc.hasAttribute("data-soon") && !angs.length;
+    if (soon) {
+      sec.classList.add("loc-soon");
+      sec.querySelector(".loc-count").textContent = "Coming soon";
+      sec.querySelector(".loc-cover").insertAdjacentHTML("beforeend", '<span class="loc-soon-t">Coming soon</span>');
+    }
     // cover: a slow crossfade through this location's stills (falls back to all angles)
     const cover = sec.querySelector(".loc-cover");
     const stills = angs.filter((a) => a.dataset.kind !== "video");
@@ -708,6 +715,7 @@ function openColl(item, push = true) {
       toggle.setAttribute("aria-expanded", open);
       if (open) setTimeout(() => sec.querySelector(".loc-body").scrollIntoView({ behavior: "smooth", block: "nearest" }), 350);
     };
+    if (soon) { toggle.removeAttribute("role"); toggle.removeAttribute("tabindex"); wrap.appendChild(sec); return; }
     toggle.addEventListener("click", flip);
     toggle.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } });
     // inside the drop-down: a Videos row, then a Photos row, each a swipeable carousel
