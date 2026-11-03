@@ -765,6 +765,29 @@ if (coll) {
   coll.querySelector("[data-coll-close]").addEventListener("click", leaveColl);
   refreshCollBadges();
 }
+// A collection's cover becomes a puzzle of its YouTube videos' thumbnails, newest first (up to 5).
+// 1 video fills the cover; 2 split it; 3+ = one big tile on the left and smaller ones on the right.
+function collMosaics(videos) {
+  const byUrl = new Map(videos.map((v) => [v.url, v]));
+  document.querySelectorAll(".gi-coll").forEach((g) => {
+    const media = g.querySelector(".gi-media");
+    media.querySelector(".gi-mosaic")?.remove();
+    const vids = [...g.querySelectorAll(".coll-data .ang[data-video]")].map((a) => byUrl.get(a.dataset.video)).filter(Boolean)
+      .sort((x, y) => String(y.published).localeCompare(String(x.published))).slice(0, 5);
+    media.classList.toggle("has-mosaic", vids.length > 0);
+    if (!vids.length) return;
+    const m = document.createElement("span");
+    m.className = `gi-mosaic n${vids.length}`;
+    m.setAttribute("aria-hidden", "true");
+    vids.forEach((v) => {
+      const t = document.createElement("i");
+      t.style.backgroundImage = `url("${ytThumbs(v)}")`;
+      m.appendChild(t);
+    });
+    media.prepend(m);
+  });
+}
+
 // show each collection's size on its gallery tile (again after YouTube videos are sorted in)
 function refreshCollBadges() {
   document.querySelectorAll(".gi-coll").forEach((g) => {
@@ -1586,6 +1609,7 @@ function updateMuFilter() {
     ((d && d.videos) || []).forEach((v) => { if (v.section === "other" && !(v.hashtags || []).length) v.section = "general"; });
     const vids = ((d && d.videos) || []).filter((v) => v.section === "general" || placed.has(v.id));
     if (typeof refreshCollBadges === "function") refreshCollBadges();
+    collMosaics(d.videos || []);
     if (!vids.length) { renderGallery(); return; }
     const grid = gal.querySelector(".gal-grid");
     const first = grid.querySelector('.gi[data-medium="film"]:not(.gi-ext)');
