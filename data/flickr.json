@@ -1,5 +1,188 @@
 {
+ "albums": [
+  {
+   "id": "72177720336726682",
+   "title": "The Chapel",
+   "type": "story",
+   "description": "Type: Story"
+  },
+  {
+   "id": "72177720336837184",
+   "title": "General",
+   "type": "standard",
+   "description": "Type: Standard"
+  }
+ ],
  "photos": [
+  {
+   "title": "Midnight Prayers",
+   "url": "https://www.flickr.com/photos/205100593@N02/55631153840/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55631153840_ea0cdc5266_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:51-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE Midnight Prayers\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "Masonry and the Chapel",
+   "url": "https://www.flickr.com/photos/205100593@N02/55631153175/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55631153175_4dd2342c78_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:15-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE Masonry and the Chapel\n STORY The Chapel\n SCENE The Pillar Halls\n VERSION 1",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "He Watches Me Hunched [C3] 02",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630869833/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55630869833_e070563d92_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:59-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE He Watches Me Hunched\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "Midnight Prayers",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630869748/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55630869748_99806b714a_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:53-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE Midnight Prayers\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "Midnight Prayers [C4] 02",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630869558/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55630869558_2041275cb6_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:42-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE Midnight Prayers\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "He Watches Me Hunched [C3] 01",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630739676/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55630739676_8e0e9200e8_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:59-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE He Watches Me Hunched\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "Midnight Prayers [C3] 04",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630739656/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55630739656_cf4492f7a5_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:58-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE Midnight Prayers\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "Midnight Prayers [C3] 05",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630739351/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55630739351_2193a10591_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:39-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE Midnight Prayers\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "The School Lunchroom",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630739131/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55630739131_969a480bcb_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:29-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE The School Lunchroom\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "He Watches Me Hunched",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630739116/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55630739116_9e8cfeb7e0_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:29-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE He Watches Me Hunched\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "The School Lunchroom",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630739111/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55630739111_ee59dcb7e1_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:29-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE The School Lunchroom\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 1",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "He Watches Me Hunched",
+   "url": "https://www.flickr.com/photos/205100593@N02/55629738582/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55629738582_76b1af217f_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:52-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE He Watches Me Hunched\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "He Watches Me Hunched",
+   "url": "https://www.flickr.com/photos/205100593@N02/55629738227/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55629738227_49746c77a1_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-03T15:20:28-08:00",
+   "published": "2026-11-03T23:29:12Z",
+   "description": "TITLE He Watches Me Hunched (C5)\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
   {
    "title": "No Church In The Wild",
    "url": "https://www.flickr.com/photos/205100593@N02/55629369087/in/set-72177720336837184/",
@@ -8,8 +191,9 @@
    "h": 134,
    "taken": "2026-11-03T11:16:22-08:00",
    "published": "2026-11-03T22:27:04Z",
-   "description": "TITLE : No Church In The Wild VERSION : 1",
+   "description": "TITLE: No Church In The Wild\n VERSION: 1",
    "tags": [],
+   "album": "72177720336837184",
    "category": "general"
   },
   {
@@ -20,8 +204,9 @@
    "h": 156,
    "taken": "2026-11-03T11:16:22-08:00",
    "published": "2026-11-03T22:26:58Z",
-   "description": "TITLE : No Church In The Wild VERSION : 7",
+   "description": "TITLE: No Church In The Wild\n VERSION: 7",
    "tags": [],
+   "album": "72177720336837184",
    "category": "general"
   },
   {
@@ -32,8 +217,9 @@
    "h": 134,
    "taken": "2026-11-03T11:16:22-08:00",
    "published": "2026-11-03T22:26:54Z",
-   "description": "TITLE : No Church In The Wild VERSION : 6",
+   "description": "TITLE: No Church In The Wild\n VERSION: 6",
    "tags": [],
+   "album": "72177720336837184",
    "category": "general"
   },
   {
@@ -44,8 +230,9 @@
    "h": 134,
    "taken": "2026-11-03T11:16:22-08:00",
    "published": "2026-11-03T22:26:49Z",
-   "description": "TITLE : No Church In The Wild VERSION : 5",
+   "description": "TITLE: No Church In The Wild\n VERSION: 5",
    "tags": [],
+   "album": "72177720336837184",
    "category": "general"
   },
   {
@@ -56,8 +243,9 @@
    "h": 135,
    "taken": "2026-11-03T11:16:22-08:00",
    "published": "2026-11-03T22:26:43Z",
-   "description": "TITLE : No Church In The Wild VERSION : 4",
+   "description": "TITLE: No Church In The Wild\n VERSION: 4",
    "tags": [],
+   "album": "72177720336837184",
    "category": "general"
   },
   {
@@ -68,8 +256,9 @@
    "h": 135,
    "taken": "2026-11-03T11:16:22-08:00",
    "published": "2026-11-03T22:26:21Z",
-   "description": "TITLE : No Church In The Wild VERSION : 3",
+   "description": "TITLE: No Church In The Wild\n VERSION: 3",
    "tags": [],
+   "album": "72177720336837184",
    "category": "general"
   },
   {
@@ -80,8 +269,9 @@
    "h": 134,
    "taken": "2026-11-03T11:16:22-08:00",
    "published": "2026-11-03T22:26:14Z",
-   "description": "TITLE : No Church In The Wild VERSION : 2",
+   "description": "TITLE: No Church In The Wild\n VERSION: 2",
    "tags": [],
+   "album": "72177720336837184",
    "category": "general"
   },
   {
@@ -92,8 +282,9 @@
    "h": 127,
    "taken": "2026-11-03T09:35:11-08:00",
    "published": "2026-11-03T19:14:04Z",
-   "description": "TITLE : Spinning Earth VERSION : 1",
+   "description": "TITLE: Spinning Earth\n VERSION: 1",
    "tags": [],
+   "album": "72177720336837184",
    "category": "general"
   },
   {
@@ -104,56 +295,9 @@
    "h": 135,
    "taken": "2026-11-03T09:34:09-08:00",
    "published": "2026-11-03T17:34:27Z",
-   "description": "TITLE : Lake VERSION : 1",
+   "description": "TITLE: Lake\n VERSION: 1",
    "tags": [],
-   "category": "general"
-  },
-  {
-   "title": "Night Grass",
-   "url": "https://www.flickr.com/photos/205100593@N02/55630315958/in/set-72177720336837184/",
-   "m": "https://live.staticflickr.com/65535/55630315958_6d4ecc95d9_m.jpg",
-   "w": 240,
-   "h": 135,
-   "taken": "2026-11-03T09:34:16-08:00",
-   "published": "2026-11-03T17:34:26Z",
-   "description": "TITLE : Night Grass VERSION : 3",
-   "tags": [],
-   "category": "general"
-  },
-  {
-   "title": "Night Grass",
-   "url": "https://www.flickr.com/photos/205100593@N02/55630316128/in/set-72177720336837184/",
-   "m": "https://live.staticflickr.com/65535/55630316128_6099e6686a_m.jpg",
-   "w": 240,
-   "h": 135,
-   "taken": "2026-11-03T09:34:21-08:00",
-   "published": "2026-11-03T17:34:26Z",
-   "description": "TITLE : Night Grass VERSION : 2",
-   "tags": [],
-   "category": "general"
-  },
-  {
-   "title": "Night Grass",
-   "url": "https://www.flickr.com/photos/205100593@N02/55630387979/in/set-72177720336837184/",
-   "m": "https://live.staticflickr.com/65535/55630387979_52a6b1c789_m.jpg",
-   "w": 240,
-   "h": 135,
-   "taken": "2026-11-03T09:34:16-08:00",
-   "published": "2026-11-03T17:34:26Z",
-   "description": "TITLE : Night Grass VERSION : 5",
-   "tags": [],
-   "category": "general"
-  },
-  {
-   "title": "Night Grass",
-   "url": "https://www.flickr.com/photos/205100593@N02/55630599610/in/set-72177720336837184/",
-   "m": "https://live.staticflickr.com/65535/55630599610_dd5c3a71d1_m.jpg",
-   "w": 240,
-   "h": 135,
-   "taken": "2026-11-03T09:34:10-08:00",
-   "published": "2026-11-03T17:34:26Z",
-   "description": "TITLE : Night Grass VERSION : 4",
-   "tags": [],
+   "album": "72177720336837184",
    "category": "general"
   },
   {
@@ -164,8 +308,61 @@
    "h": 135,
    "taken": "2026-11-03T09:34:20-08:00",
    "published": "2026-11-03T17:34:26Z",
-   "description": "TITLE : Night Grass VERSION : 1",
+   "description": "TITLE: Night Grass\n VERSION: 1",
    "tags": [],
+   "album": "72177720336837184",
+   "category": "general"
+  },
+  {
+   "title": "Night Grass",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630599610/in/set-72177720336837184/",
+   "m": "https://live.staticflickr.com/65535/55630599610_dd5c3a71d1_m.jpg",
+   "w": 240,
+   "h": 135,
+   "taken": "2026-11-03T09:34:10-08:00",
+   "published": "2026-11-03T17:34:26Z",
+   "description": "TITLE: Night Grass\n VERSION: 4",
+   "tags": [],
+   "album": "72177720336837184",
+   "category": "general"
+  },
+  {
+   "title": "Night Grass",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630387979/in/set-72177720336837184/",
+   "m": "https://live.staticflickr.com/65535/55630387979_52a6b1c789_m.jpg",
+   "w": 240,
+   "h": 135,
+   "taken": "2026-11-03T09:34:16-08:00",
+   "published": "2026-11-03T17:34:26Z",
+   "description": "TITLE: Night Grass\n VERSION: 5",
+   "tags": [],
+   "album": "72177720336837184",
+   "category": "general"
+  },
+  {
+   "title": "Night Grass",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630316128/in/set-72177720336837184/",
+   "m": "https://live.staticflickr.com/65535/55630316128_6099e6686a_m.jpg",
+   "w": 240,
+   "h": 135,
+   "taken": "2026-11-03T09:34:21-08:00",
+   "published": "2026-11-03T17:34:26Z",
+   "description": "TITLE: Night Grass\n VERSION: 2",
+   "tags": [],
+   "album": "72177720336837184",
+   "category": "general"
+  },
+  {
+   "title": "Night Grass",
+   "url": "https://www.flickr.com/photos/205100593@N02/55630315958/in/set-72177720336837184/",
+   "m": "https://live.staticflickr.com/65535/55630315958_6d4ecc95d9_m.jpg",
+   "w": 240,
+   "h": 135,
+   "taken": "2026-11-03T09:34:16-08:00",
+   "published": "2026-11-03T17:34:26Z",
+   "description": "TITLE: Night Grass\n VERSION: 3",
+   "tags": [],
+   "album": "72177720336837184",
    "category": "general"
   },
   {
@@ -176,11 +373,12 @@
    "h": 135,
    "taken": "2026-11-03T09:08:40-08:00",
    "published": "2026-11-03T17:13:27Z",
-   "description": "TITLE Grass VERSION 1",
+   "description": "TITLE Grass\n VERSION 1",
    "tags": [
     "blender",
     "3dart"
    ],
+   "album": "72177720336837184",
    "category": "general"
   }
  ]
