@@ -1,9 +1,9 @@
-# Updates the art gallery from your public Flickr albums every 6 hours.
+# Updates the art gallery from your public Flickr albums every hour.
 # Approved by the site owner. Turn it off any time: Actions > "Sync Flickr" > ... > Disable workflow.
 name: Sync Flickr
 on:
   schedule:
-    - cron: "41 */6 * * *"
+    - cron: "41 * * * *"
   workflow_dispatch:
   push:
     paths: [".github/workflows/flickr.yml", ".github/scripts/flickr.py"]
