@@ -2753,7 +2753,7 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 
 /* Mosaic: the drop-down under a photo's row */
 .cs-tile.on { border-color: var(--crimson-bright); box-shadow: 0 0 0 1px var(--crimson-bright); }
-.cs-drop { grid-column: 1 / -1; padding: 22px 0 10px; border-top: 1px solid rgba(142, 37, 51, 0.5); animation: csIn 0.35s ease; }
+.cs-drop { grid-column: 1 / -1; min-width: 0; padding: 22px 0 10px; border-top: 1px solid rgba(142, 37, 51, 0.5); animation: csIn 0.35s ease; }
 @keyframes csIn { from { opacity: 0; transform: translateY(-6px); } }
 .cs-drop-h { display: grid; grid-template-columns: 1fr auto; gap: 4px 20px; align-items: start; margin-bottom: 14px; }
 .cs-drop-h h3 { font-family: var(--serif-2); font-weight: 400; font-size: 30px; color: #f2ede6; margin: 0; }

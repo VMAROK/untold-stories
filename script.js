@@ -2327,6 +2327,14 @@ function csToggle(tile, loc, angs, world, base, W) {
   const top = tile.offsetTop;
   const last = tiles.filter((t) => Math.abs(t.offsetTop - top) < 4).pop() || tile;
   last.after(drop);
+  // only as wide as the photo it belongs to, straight under it
+  const cs = getComputedStyle(small);
+  const cols = cs.gridTemplateColumns.split(" ").length;
+  const gap = parseFloat(cs.columnGap) || 0;
+  const cw = (small.clientWidth - gap * (cols - 1)) / cols;
+  const col = Math.round((tile.offsetLeft - small.offsetLeft) / (cw + gap)) + 1;
+  const span = Math.max(1, Math.round((tile.offsetWidth + gap) / (cw + gap)));
+  drop.style.gridColumn = `${Math.min(col, cols)} / span ${Math.min(span, cols)}`;
   tile.classList.add("on");
   setTimeout(() => drop.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60);
 }
