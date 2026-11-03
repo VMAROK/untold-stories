@@ -1700,33 +1700,7 @@ const FLICKR_ALBUMS = { "72177720336837184": "general" };   // General
     const items = (list || []).filter((it) => it.m).sort((a, b) => String(b.published).localeCompare(String(a.published)));
     if (!items.length) return;
     const grid = gal.querySelector(".gal-grid");
-    gal.querySelectorAll(".gi-flickr").forEach((x) => x.remove());
-    items.forEach((it) => {
-      const m = it.m, w = it.w || 4, h = it.h || 3, text = it.description || "";
-      it.cat = it.category || "general";
-      const li = document.createElement("li");
-      li.className = "gi gi-flickr";
-      Object.assign(li.dataset, {
-        medium: "art", cat: it.cat, kind: "still",
-        orient: h > w * 1.1 ? "tall" : w > h * 1.1 ? "wide" : "square",
-        src: m.replace("_m.", "_b."), year: (it.taken || it.published || "").slice(0, 4),
-        spec: "Posted on: Flickr", tools: "",
-      });
-      li.innerHTML = `<button type="button" class="gi-media" aria-label=""></button>
-        <div class="gi-cap"><p class="gi-cat"></p><h3></h3></div><p class="gi-desc" hidden></p>`;
-      const b = li.querySelector(".gi-media");
-      b.style.background = `${bgLayers(m.replace("_m.", "_z."))}, #0a0a0a`;
-      b.setAttribute("aria-label", "View " + (it.title || "photo"));
-      li.querySelector(".gi-cat").textContent = `Still · ${CAT_NAME[it.cat] || "General"}`;
-      li.querySelector("h3").textContent = (it.title || "").trim() || "Untitled";
-      if (it.description_html) { li.dataset.rich = "1"; li.querySelector(".gi-desc").innerHTML = safeHtml(it.description_html); }
-      else li.querySelector(".gi-desc").textContent = text;
-      b.addEventListener("click", () => {
-        const list = galItems().filter((x) => !x.classList.contains("gi-coll") && !x.classList.contains("gi-ext"));
-        openView(list.map(pieceFromItem), list.indexOf(li));
-      });
-      grid.appendChild(li);
-    });
+    // the photos live inside the "General" collection only (no loose tiles in the grid)
     flickrCollection(items, grid);
     renderGallery();
   });
@@ -1789,7 +1763,7 @@ function flickrCollection(items, grid) {
   });
   li.querySelector(".gi-media").prepend(mo);
   li.querySelector(".gi-media").addEventListener("click", () => openColl(li));
-  grid.insertBefore(li, grid.querySelector(".gi-flickr") || null);
+  grid.insertBefore(li, grid.querySelector('.gi[data-cat="general"]') || null);
   refreshCollBadges();
 }
 
