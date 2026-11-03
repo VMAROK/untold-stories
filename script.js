@@ -665,6 +665,7 @@ function openColl(item, push = true) {
   if (!coll) return;
   collItem = item;
   coll.classList.toggle("coll-photos", "photosOnly" in item.dataset);   // photo collections: show each image whole, at its own shape
+  setTimeout(() => clSmallBuild(item, world0(item)), 0);
   const world = item.querySelector("h3").textContent;
   const W = collWords(item);
   const base = { year: item.dataset.year || "", tools: item.dataset.tools || "", piece: W.piece };
@@ -2270,3 +2271,58 @@ sizeGalRows();
   addEventListener("resize", () => { if (W) size(); });
   new MutationObserver(bokehTick).observe(gal, { attributes: true, attributeFilter: ["hidden"] });
 })();
+
+/* ---------- Photo collections: Large / Small view (like a folder's icon sizes) ----------
+   Large = the drop-downs per photo. Small = every image at once in a puzzle grid, like the All tab. */
+const world0 = (item) => item.querySelector("h3").textContent;
+function clSmallBuild(item, world) {
+  const bar = document.getElementById("cl-size"), small = document.getElementById("cl-small");
+  if (!bar || !small) return;
+  const photos = "photosOnly" in item.dataset;
+  bar.hidden = !photos;
+  small.innerHTML = "";
+  if (!photos) { clSetSize("large", false); return; }
+  const base = { year: item.dataset.year || "", tools: "", piece: collWords(item).piece };
+  const all = [];
+  item.querySelectorAll(".coll-data .loc").forEach((loc) => {
+    const angs = [...loc.querySelectorAll(".ang")];
+    angs.forEach((a, i) => all.push({ a, piece: anglePiece(a, i, angs.length, world, loc.dataset.name, base), loc: loc.dataset.name, i }));
+  });
+  const list = all.map((x) => x.piece);
+  all.forEach((x, k) => {
+    const r = +x.a.dataset.ratio || 1.5;
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "cs-tile " + (r > 1.25 ? "cs-wide" : r < 0.8 ? "cs-tall" : "cs-sq");
+    b.style.backgroundImage = `url("${x.a.dataset.src}")`;
+    b.innerHTML = `<span class="cs-cap"><b></b><small></small></span>`;
+    b.querySelector("b").textContent = x.loc;
+    b.querySelector("small").textContent = `Version ${x.i + 1}`;
+    b.addEventListener("click", () => openView(list, k, "coll"));
+    small.appendChild(b);
+  });
+  let pref = "large";
+  try { pref = localStorage.getItem("clSize") || "large"; } catch (e) {}
+  clSetSize(pref, false);
+}
+function clSetSize(size, save = true) {
+  const small = document.getElementById("cl-small"), locs = document.getElementById("cl-locs"), bar = document.getElementById("cl-size");
+  const isSmall = size === "small" && !bar.hidden;
+  small.hidden = !isSmall;
+  locs.hidden = isSmall;
+  bar.querySelectorAll("button").forEach((x) => x.classList.toggle("on", x.dataset.size === (isSmall ? "small" : "large")));
+  if (save) try { localStorage.setItem("clSize", size); } catch (e) {}
+  if (isSmall) clSizeRows();
+}
+function clSizeRows() {                                  // row height so a wide tile (2 columns) is 16:9
+  const small = document.getElementById("cl-small");
+  if (!small || small.hidden) return;
+  const cols = getComputedStyle(small).gridTemplateColumns.split(" ").length || 6;
+  const gap = parseFloat(getComputedStyle(small).columnGap) || 0;
+  const cw = (small.clientWidth - gap * (cols - 1)) / cols;
+  small.style.setProperty("--rowh", ((cw * 2 + gap) * 9 / 16) + "px");
+}
+document.getElementById("cl-size")?.addEventListener("click", (e) => {
+  const b = e.target.closest("button[data-size]"); if (b) clSetSize(b.dataset.size);
+});
+addEventListener("resize", clSizeRows);

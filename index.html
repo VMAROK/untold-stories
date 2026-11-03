@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500;600&family=Manrope:wght@300;400;500&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20261103174050" />
+  <link rel="stylesheet" href="style.css?v=20261103174354" />
 </head>
 <body>
 
@@ -475,8 +475,12 @@
         <p class="folio-intro" id="cl-intro"></p>
         <p class="coll-stats" id="cl-stats"></p>
       </header>
+      <div class="cl-size" id="cl-size" role="group" aria-label="View size" hidden>
+        <button type="button" data-size="large" class="on">Large</button><button type="button" data-size="small">Small</button>
+      </div>
       <div class="coll-feature" id="cl-feature"></div>
       <div class="coll-locs" id="cl-locs"></div>
+      <div class="cl-small" id="cl-small" hidden></div>
     </div>
   </section>
 
@@ -950,6 +954,6 @@
     <div class="fs-pages" id="fs-pages"></div>
   </section>
 
-  <script src="script.js?v=20261103174050"></script>
+  <script src="script.js?v=20261103174354"></script>
 </body>
 </html>
