@@ -664,6 +664,7 @@ function collCounts(item) {
 function openColl(item, push = true) {
   if (!coll) return;
   collItem = item;
+  coll.classList.toggle("coll-photos", "photosOnly" in item.dataset);   // photo collections: show each image whole, at its own shape
   const world = item.querySelector("h3").textContent;
   const W = collWords(item);
   const base = { year: item.dataset.year || "", tools: item.dataset.tools || "", piece: W.piece };
@@ -713,6 +714,7 @@ function openColl(item, push = true) {
     }
     // cover: a slow crossfade through this location's stills (falls back to all angles)
     const cover = sec.querySelector(".loc-cover");
+    if (angs[0] && angs[0].dataset.ratio) cover.style.setProperty("--r", angs[0].dataset.ratio);
     const stills = angs.filter((a) => a.dataset.kind !== "video");
     (stills.length ? stills : angs).forEach((a, k) => {
       const sl = document.createElement("div");

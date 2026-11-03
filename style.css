@@ -2707,3 +2707,14 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .car-track.fit > .ang-btn { flex: none; width: calc(var(--ch) * var(--r, 1.333)); max-width: 86vw; }
 .car-track.fit .ang-tile { aspect-ratio: var(--r, 1.333) !important; }
 @media (max-width: 640px) { .car-track.fit { --ch: 190px; } }
+
+/* Photo collections (General): every image shown whole, shaped like itself, never cropped */
+.coll-photos .loc-cover {
+  aspect-ratio: var(--r, 1.5) !important;
+  width: min(100%, calc(55vh * var(--r, 1.5))); margin: 0 auto;
+  background: #050404;
+}
+.coll-photos .loc-slide { inset: 0; background-size: contain !important; transform: none; }
+.coll-photos .loc-cover::after { background: none; }
+.coll-photos .ang-tile { background-size: contain !important; background-color: #050404 !important; }
+@media (max-width: 640px) { .coll-photos .loc-cover { width: 100%; } }
