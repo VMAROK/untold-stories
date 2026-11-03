@@ -249,6 +249,9 @@ function fillReader(row) {
   $r("rd-log").textContent = row.querySelector(".sp-log").textContent;
   const d = row.querySelector(".sp-detail");
   $r("rd-syn").textContent = d?.querySelector(".sp-syn")?.textContent || "";
+  $r("rd-syn").hidden = !$r("rd-syn").textContent.trim();          // no synopsis: hide it and its heading
+  $r("rd-syn").previousElementSibling.hidden = $r("rd-syn").hidden;
+  $r("rd-log").classList.toggle("sp-poem", row.querySelector(".sp-log").classList.contains("sp-poem"));
   const fullTpl = row.querySelector("template.sp-full");
   const opening = fullTpl ? [...fullTpl.content.children].slice(0, 9).map((n) => n.outerHTML).join("") : null;
   $r("rd-script").innerHTML = opening || d?.querySelector(".sp-excerpt")?.innerHTML || "<p class='ac'>Excerpt coming soon.</p>";

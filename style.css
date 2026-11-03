@@ -2641,3 +2641,6 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   color: rgba(242, 237, 230, 0.85); text-shadow: 0 0 18px rgba(0, 0, 0, 0.8);
 }
 .loc-soon .loc-head .loc-count { color: var(--crimson-bright); }
+
+/* screenplay text written in lines (The Chapel): keep the line breaks */
+.sp-poem { white-space: pre-line; }
