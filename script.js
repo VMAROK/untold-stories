@@ -2319,6 +2319,9 @@ function csToggle(tile, loc, angs, world, base, W) {
   drop.querySelector("p").textContent = loc.dataset.note || "";
   drop.appendChild(carouselRow("Photos", angs, world, loc.dataset.name, base, W));
   drop.querySelector(".cs-close").addEventListener("click", () => { drop.remove(); tile.classList.remove("on"); });
+  const rowH = drop.querySelector(".loc-row-h");                 // Close sits on the versions row, next to the arrows
+  if (rowH) rowH.insertBefore(drop.querySelector(".cs-close"), rowH.querySelector(".car-nav"));
+  if (!loc.dataset.note) drop.querySelector(".cs-drop-h").remove();
   // after the last tile on the same row as the one tapped
   const tiles = [...small.querySelectorAll(".cs-tile")];
   const top = tile.offsetTop;
