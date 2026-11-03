@@ -1,0 +1,26 @@
+# Updates the art gallery from your public Flickr albums every 6 hours.
+# Approved by the site owner. Turn it off any time: Actions > "Sync Flickr" > ... > Disable workflow.
+name: Sync Flickr
+on:
+  schedule:
+    - cron: "41 */6 * * *"
+  workflow_dispatch:
+  push:
+    paths: [".github/workflows/flickr.yml", ".github/scripts/flickr.py"]
+permissions:
+  contents: write
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 .github/scripts/flickr.py
+      - name: Save
+        run: |
+          git config user.name "flickr-sync"
+          git config user.email "actions@users.noreply.github.com"
+          [ -f data/flickr.json ] || exit 0
+          git add data/flickr.json
+          git diff --cached --quiet && exit 0
+          git commit -m "Sync Flickr photos"
+          git pull --rebase origin main && git push
