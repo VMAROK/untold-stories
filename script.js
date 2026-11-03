@@ -1642,6 +1642,65 @@ function updateMuFilter() {
   }).catch(() => {});
 })();
 
+/* ---------- Art: your Flickr albums ----------
+   Read live from Flickr's public album feed each time the page opens (no account keys needed).
+   Add more albums below as  "album id": "category"  (general, liminal, psy). Newest photos first. */
+const FLICKR_USER = "205100593@N02";
+const FLICKR_ALBUMS = { "72177720336837184": "general" };   // General
+(() => {
+  if (!gal) return;
+  const CAT_NAME = { general: "General", liminal: "Liminal", psy: "Psychedelic" };
+  const load = (set) => new Promise((res) => {
+    const cb = "flickrFeed_" + set;
+    const sc = document.createElement("script");
+    const done = (d) => { delete window[cb]; sc.remove(); clearTimeout(t); res(d); };
+    const t = setTimeout(() => done(null), 12000);
+    window[cb] = done;
+    sc.onerror = () => done(null);
+    sc.src = `https://www.flickr.com/services/feeds/photoset.gne?set=${set}&nsid=${encodeURIComponent(FLICKR_USER)}&format=json&lang=en-us&jsoncallback=${cb}`;
+    document.head.appendChild(sc);
+  });
+  Promise.all(Object.entries(FLICKR_ALBUMS).map(([set, cat]) => load(set).then((d) =>
+    ((d && d.items) || []).map((it) => ({ ...it, cat }))))).then((lists) => {
+    const items = lists.flat().sort((a, b) => String(b.published).localeCompare(String(a.published)));
+    if (!items.length) return;
+    const grid = gal.querySelector(".gal-grid");
+    const tmp = document.createElement("div");
+    items.forEach((it) => {
+      const m = (it.media && it.media.m) || "";
+      if (!m) return;
+      // the feed's description holds the small image (with its size) and then your own description
+      tmp.innerHTML = it.description || "";
+      const img = tmp.querySelector("img");
+      const w = +(img && img.getAttribute("width")) || 4, h = +(img && img.getAttribute("height")) || 3;
+      const ps = [...tmp.querySelectorAll("p")];
+      const text = ps.slice(2).map((p) => p.textContent.trim()).filter(Boolean).join(" ");
+      const li = document.createElement("li");
+      li.className = "gi gi-flickr";
+      Object.assign(li.dataset, {
+        medium: "art", cat: it.cat, kind: "still",
+        orient: h > w * 1.1 ? "tall" : w > h * 1.1 ? "wide" : "square",
+        src: m.replace("_m.", "_b."), year: (it.date_taken || it.published || "").slice(0, 4),
+        spec: "Posted on: Flickr", tools: "",
+      });
+      li.innerHTML = `<button type="button" class="gi-media" aria-label=""></button>
+        <div class="gi-cap"><p class="gi-cat"></p><h3></h3></div><p class="gi-desc" hidden></p>`;
+      const b = li.querySelector(".gi-media");
+      b.style.background = `${bgLayers(m.replace("_m.", "_z."))}, #0a0a0a`;
+      b.setAttribute("aria-label", "View " + (it.title || "photo"));
+      li.querySelector(".gi-cat").textContent = `Still · ${CAT_NAME[it.cat] || "General"}`;
+      li.querySelector("h3").textContent = (it.title || "").trim() || "Untitled";
+      li.querySelector(".gi-desc").textContent = text;
+      b.addEventListener("click", () => {
+        const list = galItems().filter((x) => !x.classList.contains("gi-coll") && !x.classList.contains("gi-ext"));
+        openView(list.map(pieceFromItem), list.indexOf(li));
+      });
+      grid.appendChild(li);
+    });
+    renderGallery();
+  });
+})();
+
 /* ---------- Scroll guard ----------
    Outside players (SoundCloud / Spotify / YouTube) sometimes yank the page back up on iPad while they load.
    If a scroll area jumps to the top without you touching it, it's put back where you were. */
