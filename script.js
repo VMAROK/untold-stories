@@ -2283,22 +2283,20 @@ function clSmallBuild(item, world) {
   small.innerHTML = "";
   if (!photos) { clSetSize("large", false); return; }
   const base = { year: item.dataset.year || "", tools: "", piece: collWords(item).piece };
-  const all = [];
+  // one tile per photo (its version 1), same as the collection; tapping it opens that photo's versions
   item.querySelectorAll(".coll-data .loc").forEach((loc) => {
     const angs = [...loc.querySelectorAll(".ang")];
-    angs.forEach((a, i) => all.push({ a, piece: anglePiece(a, i, angs.length, world, loc.dataset.name, base), loc: loc.dataset.name, i }));
-  });
-  const list = all.map((x) => x.piece);
-  all.forEach((x, k) => {
-    const r = +x.a.dataset.ratio || 1.5;
+    if (!angs.length) return;
+    const list = angs.map((a, i) => anglePiece(a, i, angs.length, world, loc.dataset.name, base));
+    const r = +angs[0].dataset.ratio || 1.5;
     const b = document.createElement("button");
     b.type = "button";
     b.className = "cs-tile " + (r > 1.25 ? "cs-wide" : r < 0.8 ? "cs-tall" : "cs-sq");
-    b.style.backgroundImage = `url("${x.a.dataset.src}")`;
+    b.style.backgroundImage = `url("${angs[0].dataset.src}")`;
     b.innerHTML = `<span class="cs-cap"><b></b><small></small></span>`;
-    b.querySelector("b").textContent = x.loc;
-    b.querySelector("small").textContent = `Version ${x.i + 1}`;
-    b.addEventListener("click", () => openView(list, k, "coll"));
+    b.querySelector("b").textContent = loc.dataset.name;
+    b.querySelector("small").textContent = plural(angs.length, "version");
+    b.addEventListener("click", () => openView(list, 0, "coll"));
     small.appendChild(b);
   });
   let pref = "large";
