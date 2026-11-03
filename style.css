@@ -2014,6 +2014,21 @@ body.mini-on .contact-inner { padding-bottom: 200px; }
   text-transform: uppercase;
   color: rgba(207, 198, 188, 0.55);
 }
+.sf-own {
+  font-family: var(--serif-2);
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  color: rgba(240, 232, 222, 0.92);
+  padding-top: 14px;
+  position: relative;
+}
+.sf-own::before {          /* small crimson rule above */
+  content: "";
+  position: absolute; top: 0; left: 50%;
+  width: 40px; height: 1px; margin-left: -20px;
+  background: #8e2533;
+}
+@media (max-width: 640px) { .sf-own { font-size: 13px; } }
 .folio > .site-foot, .coll > .site-foot, .release > .site-foot { margin-top: 0; }
 body.mini-on .site-foot { padding-bottom: 130px; }
 
