@@ -640,10 +640,6 @@ function carouselRow(name, set, world, where, base, W) {
     const cap = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : "Still";
     const t = angleTile(a, `${name === "Videos" ? "Video" : W.piece} ${pad2(i + 1)}`, cap);
     if (a.dataset.orient === "tall") t.classList.add("is-tall");
-    if (a.dataset.ratio) {                                   // shaped like the photo itself (no cropping)
-      track.classList.add("fit");
-      t.style.setProperty("--r", a.dataset.ratio);
-    }
     t.addEventListener("click", () => openView(list, i, "coll"));
     track.appendChild(t);
   });
@@ -1756,7 +1752,7 @@ function flickrCollection(items, grid) {
       a.className = "ang";
       Object.assign(a.dataset, { kind: "still", src: it.m.replace("_m.", "_b."), title: it.title || g.name,
         orient: it.h > it.w * 1.1 ? "tall" : it.w > it.h * 1.1 ? "wide" : "square",
-        spec: `Version: ${it.ver}`, ratio: ((it.w || 4) / (it.h || 3)).toFixed(4) });
+        spec: `Version: ${it.ver}` });
       a.textContent = it.description || "";
       data.appendChild(sec).appendChild(a);
     });
