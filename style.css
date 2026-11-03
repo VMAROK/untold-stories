@@ -2701,3 +2701,9 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   border: 1px solid rgba(255, 255, 255, 0.12); transition: color 0.3s, border-color 0.3s;
 }
 .gal-more a:hover { color: #f2ede6; border-color: var(--crimson-bright); }
+
+/* Version cards shaped like their photo: same height, width follows the image */
+.car-track.fit { display: flex; align-items: flex-start; --ch: 300px; }
+.car-track.fit > .ang-btn { flex: none; width: calc(var(--ch) * var(--r, 1.333)); max-width: 86vw; }
+.car-track.fit .ang-tile { aspect-ratio: var(--r, 1.333) !important; }
+@media (max-width: 640px) { .car-track.fit { --ch: 190px; } }

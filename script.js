@@ -640,6 +640,10 @@ function carouselRow(name, set, world, where, base, W) {
     const cap = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : "Still";
     const t = angleTile(a, `${name === "Videos" ? "Video" : W.piece} ${pad2(i + 1)}`, cap);
     if (a.dataset.orient === "tall") t.classList.add("is-tall");
+    if (a.dataset.ratio) {                                   // shaped like the photo itself (no cropping)
+      track.classList.add("fit");
+      t.style.setProperty("--r", a.dataset.ratio);
+    }
     t.addEventListener("click", () => openView(list, i, "coll"));
     track.appendChild(t);
   });
@@ -776,7 +780,7 @@ if (coll) {
 // 1 video fills the cover; 2 split it; 3+ = one big tile on the left and smaller ones on the right.
 function collMosaics(videos) {
   const byUrl = new Map(videos.map((v) => [v.url, v]));
-  document.querySelectorAll(".gi-coll").forEach((g) => {
+  document.querySelectorAll(".gi-coll:not(.gi-flickr-coll)").forEach((g) => {   // the Flickr collection builds its own cover
     const media = g.querySelector(".gi-media");
     media.querySelector(".gi-mosaic")?.remove();
     const vids = [...g.querySelectorAll(".coll-data .ang[data-video]")].map((a) => byUrl.get(a.dataset.video)).filter(Boolean)
@@ -1752,7 +1756,7 @@ function flickrCollection(items, grid) {
       a.className = "ang";
       Object.assign(a.dataset, { kind: "still", src: it.m.replace("_m.", "_b."), title: it.title || g.name,
         orient: it.h > it.w * 1.1 ? "tall" : it.w > it.h * 1.1 ? "wide" : "square",
-        spec: `Version: ${it.ver}` });
+        spec: `Version: ${it.ver}`, ratio: ((it.w || 4) / (it.h || 3)).toFixed(4) });
       a.textContent = it.description || "";
       data.appendChild(sec).appendChild(a);
     });
