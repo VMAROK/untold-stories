@@ -2766,3 +2766,12 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 }
 .cs-close i { font-style: normal; margin-left: 6px; }
 @media (max-width: 640px) { .cs-drop-h h3 { font-size: 24px; } }
+
+/* Mosaic drop-down: version cards kept small so they read as thumbnails, not main photos */
+.cs-drop .car-track.fit { --ch: 140px; gap: 12px; }
+.cs-drop .car-track:not(.fit) { grid-auto-columns: 220px; }
+.cs-drop .ang-cap h4 { font-size: 14px; }
+.cs-drop .ang-cap p { font-size: 8.5px; }
+.cs-drop .ang-no { font-size: 8.5px; padding: 4px 7px; }
+.cs-drop .loc-row-h h4 { font-size: 18px; }
+@media (max-width: 640px) { .cs-drop .car-track.fit { --ch: 96px; } }
