@@ -728,7 +728,8 @@ function openColl(item, push = true) {
     wrap.appendChild(sec);
   });
   if (!d.querySelector(".ang") && !d.querySelector(".loc")) {
-    wrap.innerHTML = `<p class="coll-soon">Coming soon.</p>`; $v("cl-stats").textContent = "In progress";
+    const saysSoon = /^coming soon\.?$/i.test($v("cl-intro").textContent.trim());   // caption already says it: don't repeat
+    wrap.innerHTML = saysSoon ? "" : `<p class="coll-soon">Coming soon.</p>`; $v("cl-stats").textContent = "In progress";
   }
   if (push) history.pushState({ folio: "animation", coll: item.dataset.coll }, "", "#animation");
   coll.hidden = false; coll.scrollTop = 0;
