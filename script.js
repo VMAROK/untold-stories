@@ -1720,7 +1720,7 @@ function flickrCollection(items, grid) {
     const base = (m && m[1].trim()) || t;
     const ver = dv ? +dv[1] : m && m[1].trim() ? +m[2] : 1;
     // the TITLE / VERSION labels are for sorting; whatever else you wrote is the description
-    it = { ...it, description: String(it.description || "").replace(/\btitle\s*:\s*.*?(?=\bversion\b|$)/i, "")
+    it = { ...it, description: String(it.description || "").replace(/\btitle\s*:?\s*.*?(?=\bversion\b|$)/i, "")
       .replace(/\bversion\s*:?\s*\d+/i, "").replace(/\s+/g, " ").trim() };
     const key = base.toLowerCase();
     if (!groups.has(key)) groups.set(key, { name: base, list: [] });
