@@ -529,6 +529,7 @@ function pieceFromItem(g) {
     shape: g.dataset.orient || "wide",
     cat: g.querySelector(".gi-cat").textContent, title: g.querySelector("h3").textContent,
     desc: g.querySelector(".gi-desc")?.textContent || "", year: g.dataset.year || "",
+    descHtml: g.dataset.rich ? g.querySelector(".gi-desc").innerHTML : "",
     spec: g.dataset.spec || "", tools: g.dataset.tools || "",
   };
 }
@@ -544,7 +545,7 @@ function fillView(p) {
   }
   $v("vw-cat").textContent = p.cat;
   $v("vw-title").textContent = p.title;
-  $v("vw-desc").textContent = p.desc;
+  if (p.descHtml) $v("vw-desc").innerHTML = p.descHtml; else $v("vw-desc").textContent = p.desc;
   $v("vw-year").textContent = p.year;
   const [k, ...v] = (p.spec || "").split(":");
   $v("vw-spec-k").textContent = k || "";
@@ -667,7 +668,7 @@ function openColl(item, push = true) {
   $v("cl-kicker").textContent = item.querySelector(".gi-cat").textContent;
   $v("cl-title").textContent = world;
   $v("cl-intro").textContent = item.querySelector(".gi-desc").textContent;
-  $v("cl-stats").textContent = `${plural(locs, W.unit.toLowerCase())} · ${plural(pieces, "piece")}`;
+  $v("cl-stats").textContent = `${plural(locs, W.unit.toLowerCase())} · ${plural(pieces, "photosOnly" in item.dataset ? W.piece.toLowerCase() : "piece")}`;
   // featured piece(s) that sit outside any location
   const feat = $v("cl-feature"); feat.innerHTML = "";
   const loose = [...d.children].filter((el) => el.classList.contains("ang"));
@@ -691,7 +692,8 @@ function openColl(item, push = true) {
     const gid = `loc-grid-${li}`;
     sec.innerHTML = `<div class="loc-toggle" role="button" tabindex="0" aria-expanded="false" aria-controls="${gid}">
         <div class="loc-head"><span class="loc-num">${W.unit} ${pad2(li + 1)}</span><h3></h3><p></p>
-          <span class="loc-count">${plural(angs.filter((a) => a.dataset.kind === "video").length, "video")} · ${plural(angs.filter((a) => a.dataset.kind !== "video").length, "photo")}</span></div>
+          <span class="loc-count">${"photosOnly" in item.dataset ? plural(angs.length, W.piece.toLowerCase())
+            : `${plural(angs.filter((a) => a.dataset.kind === "video").length, "video")} · ${plural(angs.filter((a) => a.dataset.kind !== "video").length, "photo")}`}</span></div>
         <div class="loc-cover"><div class="loc-dots"></div>
           <span class="loc-cta"><span class="open-t">Open</span><span class="close-t">Close</span><i>⌄</i></span></div>
       </div>
@@ -728,6 +730,7 @@ function openColl(item, push = true) {
     // inside the drop-down: a Videos row, then a Photos row, each a swipeable carousel
     const body = sec.querySelector(".loc-body-in");
     [["Videos", angs.filter((a) => a.dataset.kind === "video")], ["Photos", angs.filter((a) => a.dataset.kind !== "video")]]
+      .filter(([name]) => !(name === "Videos" && "photosOnly" in item.dataset))           // photo collections: no Videos row
       .forEach(([name, set]) => body.appendChild(carouselRow(name, set, world, loc.dataset.name, base, W)));   // both sections always show
     wrap.appendChild(sec);
   });
@@ -800,7 +803,7 @@ function refreshCollBadges() {
     const empty = !locs && !pieces;
     g.classList.toggle("gi-soon", empty);                               // nothing in it yet: "Coming soon" on the cover
     g.querySelector(".gi-collbadge").innerHTML = empty ? `<b>Coming soon</b><small>Collection</small>`
-      : `<b>Collection</b><small>${plural(locs, W.unit.toLowerCase())} · ${plural(pieces, "piece")}</small>`;
+      : `<b>Collection</b><small>${plural(locs, W.unit.toLowerCase())} · ${plural(pieces, "photosOnly" in g.dataset ? W.piece.toLowerCase() : "piece")}</small>`;
   });
 }
 
@@ -1647,6 +1650,24 @@ function updateMuFilter() {
 /* ---------- Art: your Flickr albums ----------
    Read live from Flickr's public album feed each time the page opens (no account keys needed).
    Add more albums below as  "album id": "category"  (general, liminal, psy). Newest photos first. */
+// Flickr descriptions may use bold, italics, links and line breaks; anything else is turned into plain text
+function safeHtml(src) {
+  const t = document.createElement("template"); t.innerHTML = String(src);
+  const OK = { B: 1, STRONG: 1, I: 1, EM: 1, BR: 1, A: 1 };
+  const clean = (n) => [...n.childNodes].forEach((c) => {
+    if (c.nodeType !== 1) return;
+    clean(c);
+    if (!OK[c.tagName]) { c.replaceWith(...c.childNodes); return; }
+    const href = c.getAttribute("href");
+    [...c.attributes].forEach((a) => c.removeAttribute(a.name));
+    if (c.tagName === "A") {
+      if (href && /^https?:\/\//i.test(href)) { c.href = href; c.target = "_blank"; c.rel = "noopener"; }
+      else c.replaceWith(...c.childNodes);
+    }
+  });
+  clean(t.content);
+  const d = document.createElement("div"); d.appendChild(t.content); return d.innerHTML;
+}
 const FLICKR_USER = "205100593@N02";
 const FLICKR_ALBUMS = { "72177720336837184": "general" };   // General
 (() => {
@@ -1698,16 +1719,79 @@ const FLICKR_ALBUMS = { "72177720336837184": "general" };   // General
       b.setAttribute("aria-label", "View " + (it.title || "photo"));
       li.querySelector(".gi-cat").textContent = `Still · ${CAT_NAME[it.cat] || "General"}`;
       li.querySelector("h3").textContent = (it.title || "").trim() || "Untitled";
-      li.querySelector(".gi-desc").textContent = text;
+      if (it.description_html) { li.dataset.rich = "1"; li.querySelector(".gi-desc").innerHTML = safeHtml(it.description_html); }
+      else li.querySelector(".gi-desc").textContent = text;
       b.addEventListener("click", () => {
         const list = galItems().filter((x) => !x.classList.contains("gi-coll") && !x.classList.contains("gi-ext"));
         openView(list.map(pieceFromItem), list.indexOf(li));
       });
       grid.appendChild(li);
     });
+    flickrCollection(items, grid);
     renderGallery();
   });
 })();
+
+// "General" collection: one entry per photo; photos with the same name and a version number
+// (night, night2, night 3, night v4...) are grouped, version 1 first and used as that photo's cover.
+function flickrCollection(items, grid) {
+  gal.querySelector('.gi-coll[data-coll="flickr-general"]')?.remove();
+  const groups = new Map();
+  items.filter((it) => (it.category || "general") === "general").forEach((it) => {
+    const t = String(it.title || "Untitled").trim();
+    const m = t.match(/^(.*?)[\s_\-.]*(?:v|ver|version)?[\s_\-.]*(\d+)$/i);
+    const base = (m && m[1].trim()) || t;
+    const ver = m && m[1].trim() ? +m[2] : 1;
+    const key = base.toLowerCase();
+    if (!groups.has(key)) groups.set(key, { name: base, list: [] });
+    groups.get(key).list.push({ ...it, ver });
+  });
+  if (!groups.size) return;
+  const sets = [...groups.values()].map((g) => {
+    g.list.sort((x, y) => x.ver - y.ver);
+    g.newest = g.list.reduce((n, x) => (String(x.published) > n ? String(x.published) : n), "");
+    return g;
+  }).sort((x, y) => y.newest.localeCompare(x.newest));          // newest photos first
+  const li = document.createElement("li");
+  li.className = "gi gi-coll gi-flickr-coll";
+  Object.assign(li.dataset, { medium: "art", cat: "general", kind: "collection", orient: "wide", coll: "flickr-general",
+    year: (sets[0].newest || "").slice(0, 4), tools: "", unit: "Photo", units: "photos", piece: "Version", pieces: "versions",
+    photosOnly: "" });
+  li.innerHTML = `<button type="button" class="gi-media has-mosaic" aria-label="Open the General collection">
+      <span class="gi-stack" aria-hidden="true"></span><span class="gi-collbadge"></span></button>
+    <div class="gi-cap"><p class="gi-cat">General · Collection</p><h3>General</h3></div>
+    <p class="gi-desc" hidden></p><div class="coll-data" hidden></div>`;
+  const data = li.querySelector(".coll-data");
+  sets.forEach((g) => {
+    const sec = document.createElement("section");
+    sec.className = "loc";
+    sec.dataset.name = g.name;
+    sec.dataset.note = g.list[0].description || "";
+    g.list.forEach((it) => {
+      const a = document.createElement("div");
+      a.className = "ang";
+      Object.assign(a.dataset, { kind: "still", src: it.m.replace("_m.", "_b."), title: it.title || g.name,
+        orient: it.h > it.w * 1.1 ? "tall" : it.w > it.h * 1.1 ? "wide" : "square",
+        spec: `Version: ${it.ver}` });
+      a.textContent = it.description || "";
+      data.appendChild(sec).appendChild(a);
+    });
+  });
+  // cover: a puzzle of each photo's version 1, newest first
+  const mo = document.createElement("span");
+  const covers = sets.slice(0, 5);
+  mo.className = `gi-mosaic n${covers.length}`;
+  mo.setAttribute("aria-hidden", "true");
+  covers.forEach((g) => {
+    const t = document.createElement("i");
+    t.style.backgroundImage = `url("${g.list[0].m.replace("_m.", "_z.")}")`;
+    mo.appendChild(t);
+  });
+  li.querySelector(".gi-media").prepend(mo);
+  li.querySelector(".gi-media").addEventListener("click", () => openColl(li));
+  grid.insertBefore(li, grid.querySelector(".gi-flickr") || null);
+  refreshCollBadges();
+}
 
 /* ---------- Scroll guard ----------
    Outside players (SoundCloud / Spotify / YouTube) sometimes yank the page back up on iPad while they load.
