@@ -1711,11 +1711,17 @@ const FLICKR_ALBUMS = { "72177720336837184": "general" };   // General
 function flickrCollection(items, grid) {
   gal.querySelector('.gi-coll[data-coll="flickr-general"]')?.remove();
   const groups = new Map();
-  items.filter((it) => (it.category || "general") === "general").forEach((it) => {
+  items.filter((it) => (it.category || "general") === "general").forEach((it0) => {
+    let it = it0;
     const t = String(it.title || "Untitled").trim();
-    const m = t.match(/^(.*?)[\s_\-.]*(?:v|ver|version)?[\s_\-.]*(\d+)$/i);
+    // version from the description ("VERSION : 2"), otherwise from a number at the end of the title (night2)
+    const dv = String(it.description || "").match(/\bversion\s*:?\s*(\d+)/i);
+    const m = dv ? null : t.match(/^(.*?)[\s_\-.]*(?:v|ver|version)?[\s_\-.]*(\d+)$/i);
     const base = (m && m[1].trim()) || t;
-    const ver = m && m[1].trim() ? +m[2] : 1;
+    const ver = dv ? +dv[1] : m && m[1].trim() ? +m[2] : 1;
+    // the TITLE / VERSION labels are for sorting; whatever else you wrote is the description
+    it = { ...it, description: String(it.description || "").replace(/\btitle\s*:\s*.*?(?=\bversion\b|$)/i, "")
+      .replace(/\bversion\s*:?\s*\d+/i, "").replace(/\s+/g, " ").trim() };
     const key = base.toLowerCase();
     if (!groups.has(key)) groups.set(key, { name: base, list: [] });
     groups.get(key).list.push({ ...it, ver });
