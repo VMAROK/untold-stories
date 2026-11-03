@@ -533,6 +533,12 @@ function pieceFromItem(g) {
     spec: g.dataset.spec || "", tools: g.dataset.tools || "",
   };
 }
+// "2026-11-03T09:08:40-08:00" -> "Nov 3, 2026" (the date as the camera/Flickr recorded it, no time-zone shift)
+function fmtTaken(t) {
+  const m = String(t || "").match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return "";
+  return `${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m[2] - 1]} ${+m[3]}, ${m[1]}`;
+}
 function fillView(p) {
   const media = $v("vw-media");
   const isVideo = p.kind === "video";
@@ -552,7 +558,9 @@ function fillView(p) {
   $v("vw-spec").textContent = v.join(":").trim();
   $v("vw-tools").textContent = p.tools;
   $v("vw-tools").previousElementSibling.textContent = p.toolsLabel || "Made with";
-  $v("vw-year").parentElement.hidden = !p.year;
+  const taken = fmtTaken(p.taken);
+  if ($v("vw-taken")) { $v("vw-taken").textContent = taken; $v("vw-taken").parentElement.hidden = !taken; }
+  $v("vw-year").parentElement.hidden = !p.year || !!taken;          // the date taken already says the year
   $v("vw-tools").parentElement.hidden = !p.tools;
   $v("vw-prev").disabled = viewIdx === 0;
   $v("vw-next").disabled = viewIdx === viewList.length - 1;
@@ -609,6 +617,7 @@ function anglePiece(a, i, total, world, locName, base) {
     title: a.dataset.title || `${base.piece || "Angle"} ${i + 1}`,
     desc: a.textContent.trim(), year: base.year, spec: a.dataset.spec || "", tools: base.tools,
     countLabel: locName ? `${base.piece || "Angle"} ${i + 1} of ${total}` : "",
+    taken: a.dataset.taken || "",
   };
 }
 function angleTile(a, label, cap) {
@@ -637,7 +646,7 @@ function carouselRow(name, set, world, where, base, W) {
   }
   const list = set.map((a, i) => anglePiece(a, i, set.length, world, where, base));
   set.forEach((a, i) => {
-    const cap = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : "Still";
+    const cap = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : fmtTaken(a.dataset.taken) || "Still";
     const t = angleTile(a, `${name === "Videos" ? "Video" : W.piece} ${pad2(i + 1)}`, cap);
     if (a.dataset.orient === "tall") t.classList.add("is-tall");
     if (a.dataset.ratio) {                                   // shaped like the photo itself (no cropping)
@@ -1759,7 +1768,7 @@ function flickrCollection(items, grid) {
       a.className = "ang";
       Object.assign(a.dataset, { kind: "still", src: it.m.replace("_m.", "_b."), title: it.title || g.name,
         orient: it.h > it.w * 1.1 ? "tall" : it.w > it.h * 1.1 ? "wide" : "square",
-        spec: `Version: ${it.ver}`, ratio: ((it.w || 4) / (it.h || 3)).toFixed(4) });
+        spec: `Version: ${it.ver}`, taken: it.taken || "", ratio: ((it.w || 4) / (it.h || 3)).toFixed(4) });
       a.textContent = it.description || "";
       data.appendChild(sec).appendChild(a);
     });
