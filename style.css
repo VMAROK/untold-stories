@@ -2692,3 +2692,12 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .gallery.photo-mode .bokeh { opacity: 1; }
 .gallery .gal-inner { z-index: 1; }
 .gallery .site-foot { z-index: 1; }
+
+/* General: small "More on ArtStation" link under the grid */
+.gal-more { text-align: center; margin: 34px 0 0; }
+.gal-more a {
+  font-family: var(--body); font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; padding: 10px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12); transition: color 0.3s, border-color 0.3s;
+}
+.gal-more a:hover { color: #f2ede6; border-color: var(--crimson-bright); }

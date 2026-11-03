@@ -457,6 +457,8 @@ function renderGallery(scroll = false) {
   const grid = gal.querySelector(".gal-grid");
   grid.dataset.medium = galState.medium;
   gal.classList.toggle("photo-mode", galState.medium === "photo");
+  const more = gal.querySelector(".gal-more");
+  if (more) more.hidden = !(galState.medium === "mix" && galState.cat === "general");   // small ArtStation link under General
   window.bokehTick && bokehTick();
   grid.dataset.cat = galState.cat;
   const items = galItems();
