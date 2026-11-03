@@ -556,6 +556,7 @@ function fillView(p) {
   const [k, ...v] = (p.spec || "").split(":");
   $v("vw-spec-k").textContent = k || "";
   $v("vw-spec").textContent = v.join(":").trim();
+  $v("vw-spec").parentElement.hidden = !p.spec;
   $v("vw-tools").textContent = p.tools;
   $v("vw-tools").previousElementSibling.textContent = p.toolsLabel || "Made with";
   const taken = fmtTaken(p.taken);
@@ -1710,82 +1711,107 @@ const FLICKR_ALBUMS = { "72177720336837184": "general" };   // General
         description: [...tmp.querySelectorAll("p")].slice(2).map((p) => p.textContent.trim()).filter(Boolean).join(" "),
         category: cat };
     })))).then((l) => l.flat());
+  let albums = [];
   // first choice: data/flickr.json, copied from Flickr every 6 hours by the "Sync Flickr" GitHub job
   fetch("data/flickr.json", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null)
-    .then((d) => (d && d.photos && d.photos.length ? d.photos : live())).then((list) => {
+    .then((d) => { albums = (d && d.albums) || []; return d && d.photos && d.photos.length ? d.photos : live(); }).then((list) => {
     const items = (list || []).filter((it) => it.m).sort((a, b) => String(b.published).localeCompare(String(a.published)));
     if (!items.length) return;
     const grid = gal.querySelector(".gal-grid");
     // the photos live inside the "General" collection only (no loose tiles in the grid)
-    flickrCollection(items, grid);
+    flickrCollections(items, albums, grid);
     renderGallery();
   });
 })();
 
 // "General" collection: one entry per photo; photos with the same name and a version number
 // (night, night2, night 3, night v4...) are grouped, version 1 first and used as that photo's cover.
-function flickrCollection(items, grid) {
-  gal.querySelector('.gi-coll[data-coll="flickr-general"]')?.remove();
-  const groups = new Map();
-  items.filter((it) => (it.category || "general") === "general").forEach((it0) => {
-    let it = it0;
-    const t = String(it.title || "Untitled").trim();
-    // version from the description ("VERSION : 2"), otherwise from a number at the end of the title (night2)
-    const dv = String(it.description || "").match(/\bversion\s*:?\s*(\d+)/i);
-    const m = dv ? null : t.match(/^(.*?)[\s_\-.]*(?:v|ver|version)?[\s_\-.]*(\d+)$/i);
-    const base = (m && m[1].trim()) || t;
-    const ver = dv ? +dv[1] : m && m[1].trim() ? +m[2] : 1;
-    // the TITLE / VERSION labels are for sorting; whatever else you wrote is the description
-    it = { ...it, description: String(it.description || "").replace(/\btitle\s*:?\s*.*?(?=\bversion\b|$)/i, "")
-      .replace(/\bversion\s*:?\s*\d+/i, "").replace(/\s+/g, " ").trim() };
-    const key = base.toLowerCase();
-    if (!groups.has(key)) groups.set(key, { name: base, list: [] });
-    groups.get(key).list.push({ ...it, ver });
-  });
-  if (!groups.size) return;
-  const sets = [...groups.values()].map((g) => {
-    g.list.sort((x, y) => x.ver - y.ver);
-    g.newest = g.list.reduce((n, x) => (String(x.published) > n ? String(x.published) : n), "");
-    return g;
-  }).sort((x, y) => y.newest.localeCompare(x.newest));          // newest photos first
-  const li = document.createElement("li");
-  li.className = "gi gi-coll gi-flickr-coll";
-  Object.assign(li.dataset, { medium: "art", cat: "general", kind: "collection", orient: "wide", coll: "flickr-general",
-    year: (sets[0].newest || "").slice(0, 4), tools: "", unit: "Photo", units: "photos", piece: "Version", pieces: "versions",
-    photosOnly: "" });
-  li.innerHTML = `<button type="button" class="gi-media has-mosaic" aria-label="Open the General collection">
-      <span class="gi-stack" aria-hidden="true"></span><span class="gi-collbadge"></span></button>
-    <div class="gi-cap"><p class="gi-cat">General · Collection</p><h3>General</h3></div>
-    <p class="gi-desc" hidden></p><div class="coll-data" hidden></div>`;
-  const data = li.querySelector(".coll-data");
-  sets.forEach((g) => {
-    const sec = document.createElement("section");
-    sec.className = "loc";
-    sec.dataset.name = g.name;
-    sec.dataset.note = g.list[0].description || "";
-    g.list.forEach((it) => {
-      const a = document.createElement("div");
-      a.className = "ang";
-      Object.assign(a.dataset, { kind: "still", src: it.m.replace("_m.", "_b."), title: it.title || g.name,
-        orient: it.h > it.w * 1.1 ? "tall" : it.w > it.h * 1.1 ? "wide" : "square",
-        spec: `Version: ${it.ver}`, taken: it.taken || "", ratio: ((it.w || 4) / (it.h || 3)).toFixed(4) });
-      a.textContent = it.description || "";
-      data.appendChild(sec).appendChild(a);
+// Reads the labels you put in a Flickr description: TITLE, STORY, SCENE, VERSION ("SCENE The Pillar Halls",
+// "VERSION : 2", one per line or all on one line). Anything else you wrote is the photo's description.
+function flickrMeta(desc) {
+  const out = { rest: "" };
+  const parts = String(desc || "").split(/\b(TITLE|STORY|SCENE|VERSION)\b\s*:?\s*/i);
+  out.rest = parts[0].trim();
+  for (let i = 1; i < parts.length; i += 2) out[parts[i].toLowerCase()] = (parts[i + 1] || "").replace(/\s+/g, " ").trim();
+  return out;
+}
+// One collection per Flickr album, in the General tab.
+//   Standard album: one entry per photo name, its versions inside (version 1 first and as the cover).
+//   Story album ("Type: Story" in the album description): one entry per SCENE, every photo of that scene inside.
+function flickrCollections(items, albums, grid) {
+  gal.querySelectorAll(".gi-flickr-coll").forEach((x) => x.remove());
+  const list = (albums && albums.length) ? albums : [{ id: "general", title: "General", type: "standard" }];
+  const before = grid.querySelector('.gi[data-cat="general"]') || null;
+  list.forEach((al) => {
+    const mine = items.filter((it) => (it.album || "general") === al.id || (!it.album && al.id === "general"));
+    if (!mine.length) return;
+    const story = al.type === "story";
+    const groups = new Map();
+    mine.forEach((it0) => {
+      const meta = flickrMeta(it0.description);
+      const it = { ...it0, description: meta.rest };
+      let name, ver;
+      if (story) {
+        name = meta.scene || "Unsorted";
+        ver = +meta.version || 1;
+      } else {
+        const t = (meta.title || String(it.title || "Untitled")).trim();
+        const m = meta.version ? null : t.match(/^(.*?)[\s_\-.]*(?:v|ver|version)?[\s_\-.]*(\d+)$/i);
+        name = (m && m[1].trim()) || t;
+        ver = meta.version ? +meta.version : m && m[1].trim() ? +m[2] : 1;
+      }
+      const key = name.toLowerCase();
+      if (!groups.has(key)) groups.set(key, { name, list: [] });
+      groups.get(key).list.push({ ...it, ver });
     });
+    const sets = [...groups.values()].map((g) => {
+      // standard: by version; story: in the order you uploaded them (version only breaks ties)
+      g.list.sort((x, y) => story ? String(x.published).localeCompare(String(y.published)) || x.ver - y.ver : x.ver - y.ver);
+      g.newest = g.list.reduce((n, x) => (String(x.published) > n ? String(x.published) : n), "");
+      g.oldest = g.list.reduce((n, x) => (!n || String(x.published) < n ? String(x.published) : n), "");
+      return g;
+    }).sort((x, y) => story ? x.oldest.localeCompare(y.oldest) : y.newest.localeCompare(x.newest));
+    const li = document.createElement("li");
+    li.className = "gi gi-coll gi-flickr-coll";
+    Object.assign(li.dataset, { medium: "art", cat: "general", kind: "collection", orient: "wide", coll: "flickr-" + al.id,
+      year: (sets[0].newest || "").slice(0, 4), tools: "", photosOnly: "",
+      unit: story ? "Scene" : "Photo", units: story ? "scenes" : "photos",
+      piece: story ? "Shot" : "Version", pieces: story ? "shots" : "versions" });
+    li.innerHTML = `<button type="button" class="gi-media has-mosaic"><span class="gi-stack" aria-hidden="true"></span><span class="gi-collbadge"></span></button>
+      <div class="gi-cap"><p class="gi-cat"></p><h3></h3></div><p class="gi-desc" hidden></p><div class="coll-data" hidden></div>`;
+    li.querySelector(".gi-media").setAttribute("aria-label", `Open the ${al.title} collection`);
+    li.querySelector(".gi-cat").textContent = `${story ? "Story" : "General"} · Collection`;
+    li.querySelector("h3").textContent = al.title || "Album";
+    const data = li.querySelector(".coll-data");
+    sets.forEach((g) => {
+      const sec = document.createElement("section");
+      sec.className = "loc";
+      sec.dataset.name = g.name;
+      sec.dataset.note = story ? "" : g.list[0].description || "";
+      g.list.forEach((it) => {
+        const a = document.createElement("div");
+        a.className = "ang";
+        Object.assign(a.dataset, { kind: "still", src: it.m.replace("_m.", "_b."), title: story ? g.name : it.title || g.name,
+          orient: it.h > it.w * 1.1 ? "tall" : it.w > it.h * 1.1 ? "wide" : "square",
+          spec: story ? "" : `Version: ${it.ver}`, taken: it.taken || "", ratio: ((it.w || 4) / (it.h || 3)).toFixed(4) });
+        a.textContent = it.description || "";
+        data.appendChild(sec).appendChild(a);
+      });
+    });
+    // cover: a puzzle of each entry's first image
+    const mo = document.createElement("span");
+    const covers = sets.slice(0, 5);
+    mo.className = `gi-mosaic n${covers.length}`;
+    mo.setAttribute("aria-hidden", "true");
+    covers.forEach((g) => {
+      const t = document.createElement("i");
+      t.style.backgroundImage = `url("${g.list[0].m.replace("_m.", "_z.")}")`;
+      mo.appendChild(t);
+    });
+    li.querySelector(".gi-media").prepend(mo);
+    li.querySelector(".gi-media").addEventListener("click", () => openColl(li));
+    grid.insertBefore(li, before);
   });
-  // cover: a puzzle of each photo's version 1, newest first
-  const mo = document.createElement("span");
-  const covers = sets.slice(0, 5);
-  mo.className = `gi-mosaic n${covers.length}`;
-  mo.setAttribute("aria-hidden", "true");
-  covers.forEach((g) => {
-    const t = document.createElement("i");
-    t.style.backgroundImage = `url("${g.list[0].m.replace("_m.", "_z.")}")`;
-    mo.appendChild(t);
-  });
-  li.querySelector(".gi-media").prepend(mo);
-  li.querySelector(".gi-media").addEventListener("click", () => openColl(li));
-  grid.insertBefore(li, grid.querySelector('.gi[data-cat="general"]') || null);
   refreshCollBadges();
 }
 
@@ -2304,7 +2330,7 @@ function clSmallBuild(item, world) {
     b.style.backgroundImage = `url("${angs[0].dataset.src}")`;
     b.innerHTML = `<span class="cs-cap"><b></b><small></small></span>`;
     b.querySelector("b").textContent = loc.dataset.name;
-    b.querySelector("small").textContent = plural(angs.length, "version");
+    b.querySelector("small").textContent = plural(angs.length, collWords(item).piece.toLowerCase());
     b.addEventListener("click", () => csToggle(b, loc, angs, world, base, collWords(item)));
     small.appendChild(b);
   });
