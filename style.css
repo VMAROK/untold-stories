@@ -2788,3 +2788,6 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .cl-size button svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.5; }
 .cl-size button.on { color: #f2ede6; background: none; border-color: rgba(142, 37, 51, 0.7); }
 .cl-size button:hover { color: #f2ede6; }
+/* Mosaic: the next photo slides in beside an open drop-down, on either side, and keeps its normal height */
+.cl-small { grid-auto-flow: row dense; }
+.cl-small .cs-tile:not(.cs-tall) { align-self: start; height: var(--rowh, 240px); }
