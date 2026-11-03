@@ -2015,12 +2015,23 @@ body.mini-on .contact-inner { padding-bottom: 200px; }
   color: rgba(207, 198, 188, 0.55);
 }
 .sf-own {
-  font-family: var(--serif-2);
-  font-size: 15px;
-  letter-spacing: 0.5px;
-  color: rgba(240, 232, 222, 0.92);
-  padding-top: 14px;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  padding-top: 16px;
   position: relative;
+}
+.sf-own span { display: inline-block; }
+.so-me {                    /* your line: crimson glow */
+  color: #e0475e;
+  text-shadow: 0 0 12px rgba(224, 71, 94, 0.55);
+  margin-right: 10px;
+}
+.so-ai {                    /* the AI line: cold silver-blue */
+  color: #a9c4dc;
+  text-shadow: 0 0 12px rgba(169, 196, 220, 0.45);
 }
 .sf-own::before {          /* small crimson rule above */
   content: "";
@@ -2028,7 +2039,11 @@ body.mini-on .contact-inner { padding-bottom: 200px; }
   width: 40px; height: 1px; margin-left: -20px;
   background: #8e2533;
 }
-@media (max-width: 640px) { .sf-own { font-size: 13px; } }
+@media (max-width: 640px) {
+  .sf-own { font-size: 11px; letter-spacing: 3px; line-height: 2; }
+  .sf-own span { display: block; }
+  .so-me { margin-right: 0; }
+}
 .folio > .site-foot, .coll > .site-foot, .release > .site-foot { margin-top: 0; }
 body.mini-on .site-foot { padding-bottom: 130px; }
 
