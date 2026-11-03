@@ -1662,27 +1662,33 @@ const FLICKR_ALBUMS = { "72177720336837184": "general" };   // General
     sc.src = `https://www.flickr.com/services/feeds/photoset.gne?set=${set}&nsid=${encodeURIComponent(FLICKR_USER)}&format=json&lang=en-us&jsoncallback=${cb}`;
     document.head.appendChild(sc);
   });
-  Promise.all(Object.entries(FLICKR_ALBUMS).map(([set, cat]) => load(set).then((d) =>
-    ((d && d.items) || []).map((it) => ({ ...it, cat }))))).then((lists) => {
-    const items = lists.flat().sort((a, b) => String(b.published).localeCompare(String(a.published)));
-    if (!items.length) return;
-    const grid = gal.querySelector(".gal-grid");
-    const tmp = document.createElement("div");
-    items.forEach((it) => {
-      const m = (it.media && it.media.m) || "";
-      if (!m) return;
-      // the feed's description holds the small image (with its size) and then your own description
+  // live feed (backup): turned into the same shape as data/flickr.json
+  const live = () => Promise.all(Object.entries(FLICKR_ALBUMS).map(([set, cat]) => load(set).then((d) =>
+    ((d && d.items) || []).map((it) => {
+      const tmp = document.createElement("div");
       tmp.innerHTML = it.description || "";
       const img = tmp.querySelector("img");
-      const w = +(img && img.getAttribute("width")) || 4, h = +(img && img.getAttribute("height")) || 3;
-      const ps = [...tmp.querySelectorAll("p")];
-      const text = ps.slice(2).map((p) => p.textContent.trim()).filter(Boolean).join(" ");
+      return { title: it.title, m: (it.media && it.media.m) || "", published: it.published, taken: it.date_taken,
+        w: +(img && img.getAttribute("width")) || 4, h: +(img && img.getAttribute("height")) || 3,
+        description: [...tmp.querySelectorAll("p")].slice(2).map((p) => p.textContent.trim()).filter(Boolean).join(" "),
+        category: cat };
+    })))).then((l) => l.flat());
+  // first choice: data/flickr.json, copied from Flickr every 6 hours by the "Sync Flickr" GitHub job
+  fetch("data/flickr.json", { cache: "no-store" }).then((r) => (r.ok ? r.json() : null)).catch(() => null)
+    .then((d) => (d && d.photos && d.photos.length ? d.photos : live())).then((list) => {
+    const items = (list || []).filter((it) => it.m).sort((a, b) => String(b.published).localeCompare(String(a.published)));
+    if (!items.length) return;
+    const grid = gal.querySelector(".gal-grid");
+    gal.querySelectorAll(".gi-flickr").forEach((x) => x.remove());
+    items.forEach((it) => {
+      const m = it.m, w = it.w || 4, h = it.h || 3, text = it.description || "";
+      it.cat = it.category || "general";
       const li = document.createElement("li");
       li.className = "gi gi-flickr";
       Object.assign(li.dataset, {
         medium: "art", cat: it.cat, kind: "still",
         orient: h > w * 1.1 ? "tall" : w > h * 1.1 ? "wide" : "square",
-        src: m.replace("_m.", "_b."), year: (it.date_taken || it.published || "").slice(0, 4),
+        src: m.replace("_m.", "_b."), year: (it.taken || it.published || "").slice(0, 4),
         spec: "Posted on: Flickr", tools: "",
       });
       li.innerHTML = `<button type="button" class="gi-media" aria-label=""></button>
