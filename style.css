@@ -2644,3 +2644,8 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 
 /* screenplay text written in lines (The Chapel): keep the line breaks */
 .sp-poem { white-space: pre-line; }
+
+/* Psychedelic collections with nothing in them yet: blank black cover (the placeholder art classes stay in index.html) */
+.gi-coll.gi-soon[data-cat="psy"] .gi-media { background: #060505 !important; filter: none; border: 1px solid rgba(255, 255, 255, 0.07); }
+.gi-coll.gi-soon[data-cat="psy"] .gi-media::before,
+.gi-coll.gi-soon[data-cat="psy"] .gi-media::after { background: none !important; animation: none !important; }
