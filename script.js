@@ -456,6 +456,8 @@ function renderGallery(scroll = false) {
   setTimeout(() => window.sizeGalRows && sizeGalRows(), 0);
   const grid = gal.querySelector(".gal-grid");
   grid.dataset.medium = galState.medium;
+  gal.classList.toggle("photo-mode", galState.medium === "photo");
+  window.bokehTick && bokehTick();
   grid.dataset.cat = galState.cat;
   const items = galItems();
   const per = GAL_PER_PAGE[galState.medium];
@@ -2079,4 +2081,55 @@ sizeGalRows();
     c.addEventListener("touchend", hide, { passive: true });
     c.addEventListener("touchcancel", hide, { passive: true });
   });
+})();
+
+/* ---------- Photography tab: soft blue/cyan lens bubbles (bokeh) drifting behind the page ---------- */
+(() => {
+  const cv = gal && gal.querySelector("canvas.bokeh");
+  if (!cv) return;
+  const ctx = cv.getContext("2d");
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W = 0, H = 0, dpr = 1, dots = [], raf = 0, last = 0;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const make = (anyY) => {
+    const r = Math.random() < 0.25 ? rnd(70, 150) : rnd(14, 60);          // a few big, many small
+    return { x: rnd(0, W), y: anyY ? rnd(0, H) : H + r, r,
+      vx: rnd(-6, 6), vy: rnd(-14, -4) * (r < 50 ? 1.3 : 0.7),            // slow upward drift
+      hue: rnd(182, 212), a: rnd(0.14, 0.40) * (r > 70 ? 0.6 : 1),
+      ph: rnd(0, Math.PI * 2), sp: rnd(0.3, 0.9), ring: Math.random() < 0.55 };
+  };
+  const size = () => {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = Math.round(Math.min(34, Math.max(16, (W * H) / 42000)));
+    dots = Array.from({ length: n }, () => make(true));
+  };
+  const draw = (t) => {
+    const dt = Math.min(0.05, (t - (last || t)) / 1000); last = t;
+    ctx.clearRect(0, 0, W, H);
+    ctx.globalCompositeOperation = "lighter";
+    dots.forEach((d, i) => {
+      if (!still) { d.x += d.vx * dt; d.y += d.vy * dt; }
+      if (d.y < -d.r * 2 || d.x < -d.r * 2 || d.x > W + d.r * 2) dots[i] = d = make(false);
+      const a = d.a * (0.65 + 0.35 * Math.sin(t / 1000 * d.sp + d.ph));    // gentle shimmer
+      const g = ctx.createRadialGradient(d.x, d.y, 0, d.x, d.y, d.r);
+      g.addColorStop(0, `hsla(${d.hue}, 90%, 70%, ${a * 0.55})`);
+      g.addColorStop(d.ring ? 0.82 : 0.7, `hsla(${d.hue}, 90%, 65%, ${a * (d.ring ? 0.7 : 0.4)})`);
+      g.addColorStop(d.ring ? 0.94 : 1, `hsla(${d.hue}, 95%, 75%, ${d.ring ? a : 0})`);   // brighter rim, like a lens
+      g.addColorStop(1, `hsla(${d.hue}, 90%, 70%, 0)`);
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2); ctx.fill();
+    });
+    ctx.globalCompositeOperation = "source-over";
+    raf = still ? 0 : requestAnimationFrame(draw);
+  };
+  window.bokehTick = () => {
+    const on = gal.classList.contains("photo-mode") && !gal.hidden;
+    if (on && !raf) { if (!W) size(); last = 0; raf = requestAnimationFrame(draw); }
+    if (!on && raf) { cancelAnimationFrame(raf); raf = 0; }
+  };
+  addEventListener("resize", () => { if (W) size(); });
+  new MutationObserver(bokehTick).observe(gal, { attributes: true, attributeFilter: ["hidden"] });
 })();
