@@ -2791,3 +2791,9 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 /* Mosaic: the next photo slides in beside an open drop-down, on either side, and keeps its normal height */
 .cl-small { grid-auto-flow: row dense; }
 .cl-small .cs-tile:not(.cs-tall) { align-self: start; height: var(--rowh, 240px); }
+/* Mosaic drop-down: shots/versions big enough to see, still smaller than the main tiles */
+.cs-drop .car-track.fit { --ch: 220px; }
+.cs-drop .ang-cap h4 { font-size: 15px; }
+@media (max-width: 640px) { .cs-drop .car-track.fit { --ch: 150px; } }
+.cs-drop.cs-story .car-track.fit { --ch: 320px; }          /* story shots: taller, the scene tiles are tall too */
+@media (max-width: 640px) { .cs-drop.cs-story .car-track.fit { --ch: 220px; } }
