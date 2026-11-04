@@ -659,7 +659,7 @@ function carouselRow(name, set, world, where, base, W) {
   const list = set.map((a, i) => anglePiece(a, i, set.length, world, where, base));
   set.forEach((a, i) => {
     const cap = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : fmtTaken(a.dataset.taken) || "Still";
-    const t = angleTile(a, `${name === "Videos" ? "Video" : W.piece} ${pad2(i + 1)}`, cap);
+    const t = angleTile(a, `${name === "Videos" ? "Video" : /^Version/.test(a.dataset.spec || "") ? "Version" : W.piece} ${pad2(i + 1)}`, cap);
     if (a.dataset.orient === "tall") t.classList.add("is-tall");
     if (a.dataset.ratio) {                                   // shaped like the photo itself (no cropping)
       track.classList.add("fit");
@@ -911,20 +911,26 @@ if (coll) {
 // A collection's cover becomes a puzzle of its YouTube videos' thumbnails, newest first (up to 5).
 // 1 video fills the cover; 2 split it; 3+ = one big tile on the left and smaller ones on the right.
 function collMosaics(videos) {
+  if (videos) window._ytVideos = videos; else videos = window._ytVideos || [];
   const byUrl = new Map(videos.map((v) => [v.url, v]));
   document.querySelectorAll(".gi-coll:not(.gi-flickr-coll)").forEach((g) => {   // the Flickr collection builds its own cover
     const media = g.querySelector(".gi-media");
     media.querySelector(".gi-mosaic")?.remove();
-    const vids = [...g.querySelectorAll(".coll-data .ang[data-video]")].map((a) => byUrl.get(a.dataset.video)).filter(Boolean)
-      .sort((x, y) => String(y.published).localeCompare(String(x.published))).slice(0, 5);
-    media.classList.toggle("has-mosaic", vids.length > 0);
-    if (!vids.length) return;
+    // videos (their YouTube thumbnail) and photos from Flickr, newest first
+    const pics = [...g.querySelectorAll(".coll-data .ang")].map((a) => {
+      const v = a.dataset.video && byUrl.get(a.dataset.video);
+      if (v) return { img: ytThumbs(v), t: pubKey(v.published) };
+      if (a.dataset.src && /staticflickr/.test(a.dataset.src)) return { img: a.dataset.src.replace("_b.", "_z."), t: pubKey(a.dataset.published) };
+      return null;
+    }).filter(Boolean).sort((x, y) => y.t.localeCompare(x.t)).slice(0, 5);
+    media.classList.toggle("has-mosaic", pics.length > 0);
+    if (!pics.length) return;
     const m = document.createElement("span");
-    m.className = `gi-mosaic n${vids.length}`;
+    m.className = `gi-mosaic n${pics.length}`;
     m.setAttribute("aria-hidden", "true");
-    vids.forEach((v) => {
+    pics.forEach((p) => {
       const t = document.createElement("i");
-      t.style.backgroundImage = `url("${ytThumbs(v)}")`;
+      t.style.backgroundImage = `url("${p.img}")`;
       m.appendChild(t);
     });
     media.prepend(m);
@@ -1847,11 +1853,43 @@ const FLICKR_ALBUMS = { "72177720336837184": "general" };   // General
 
 // "General" collection: one entry per photo; photos with the same name and a version number
 // (night, night2, night 3, night v4...) are grouped, version 1 first and used as that photo's cover.
+// Liminal Spaces album: each photo goes into its Level ("LEVEL 0") and location ("SCENE Grass Hills"),
+// in that location's Photos row, by VERSION. A location that doesn't exist yet is added to the Level.
+function placeLiminal(photos) {
+  if (!gal) return;
+  gal.querySelectorAll(".ang.flickr-lim").forEach((a) => a.remove());
+  gal.querySelectorAll("section.loc.flickr-lim").forEach((l) => { if (!l.querySelector(".ang")) l.remove(); });
+  const key = (t) => String(t || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  photos.map((p) => ({ p, meta: flickrMeta(p.description) }))
+    .sort((x, y) => (+x.meta.version || 1) - (+y.meta.version || 1))
+    .forEach(({ p, meta }) => {
+      const lv = String(meta.level || "0").match(/\d+/)?.[0] || "0";
+      const data = gal.querySelector(`.gi-coll[data-coll="level-${lv}"] .coll-data`) || gal.querySelector('.gi-coll[data-coll="level-0"] .coll-data');
+      if (!data) return;
+      const name = (meta.scene || meta.title || p.title || "Untitled").trim();
+      let loc = [...data.querySelectorAll("section.loc")].find((l) => key(l.dataset.name) === key(name));
+      if (!loc) {
+        loc = document.createElement("section");
+        loc.className = "loc flickr-lim"; loc.dataset.name = name; loc.dataset.note = "";
+        data.appendChild(loc);
+      }
+      const rest = meta.rest && meta.rest !== String(p.title || "").trim() ? meta.rest : "";
+      const a = document.createElement("div");
+      a.className = "ang flickr-lim";
+      Object.assign(a.dataset, { kind: "still", src: p.m.replace("_m.", "_b."), title: (meta.title || p.title || name).trim(),
+        orient: p.h > p.w * 1.1 ? "tall" : p.w > p.h * 1.1 ? "wide" : "square", ratio: ((p.w || 4) / (p.h || 3)).toFixed(4),
+        spec: `Version: ${+meta.version || 1}`, taken: p.taken || "", published: p.published || "" });
+      a.textContent = rest;
+      loc.appendChild(a);
+    });
+  refreshCollBadges();
+  collMosaics();
+}
 // Reads the labels you put in a Flickr description: TITLE, STORY, SCENE, VERSION ("SCENE The Pillar Halls",
 // "VERSION : 2", one per line or all on one line). Anything else you wrote is the photo's description.
 function flickrMeta(desc) {
   const out = { rest: "" };
-  const parts = String(desc || "").split(/\b(TITLE|STORY|SCENE|VERSION)\b\s*:?\s*/i);
+  const parts = String(desc || "").split(/\b(TITLE|STORY|SCENE|VERSION|LEVEL)\b\s*:?\s*/i);
   out.rest = parts[0].trim();
   for (let i = 1; i < parts.length; i += 2) out[parts[i].toLowerCase()] = (parts[i + 1] || "").replace(/\s+/g, " ").trim();
   return out;
@@ -1938,6 +1976,7 @@ function flickrCollections(items, albums, grid) {
     });
     li.querySelector(".gi-media").prepend(mo);
     li.querySelector(".gi-media").addEventListener("click", () => openColl(li));
+    if (/liminal/i.test(al.title || "")) { placeLiminal(mine); return; }   // Liminal album: into the Level collections
     if (ALL_MODE === 1 && !/^photography$/i.test(al.title || "")) {   // option 1: each photo also on its own under All
       sets.forEach((g) => g.list.forEach((it) => {
         const t = document.createElement("li");
@@ -2716,7 +2755,8 @@ function buildAllEntries() {
       }
       m.setAttribute("aria-label", "Open " + e.name);
       const vids = e.angs.filter((a) => a.dataset.kind === "video").length;
-      const count = e.angs.length > 1 || !isVid ? plural(e.angs.length, (vids === e.angs.length ? "video" : W.piece).toLowerCase()) : "Video";
+      const word = vids === e.angs.length ? "video" : e.angs.every((a) => /^Version/.test(a.dataset.spec || "")) ? "version" : W.piece;
+      const count = e.angs.length > 1 || !isVid ? plural(e.angs.length, word.toLowerCase()) : "Video";
       li.querySelector(".gi-cat").textContent = `${world} · ${count}`;
       li.querySelector("h3").textContent = e.name;
       const list = e.angs.map((a, i) => anglePiece(a, i, e.angs.length, world, e.loose ? "" : e.name, base));
