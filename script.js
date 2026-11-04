@@ -2375,8 +2375,7 @@ function csToggle(tile, loc, angs, world, base, W) {
   const col = Math.round((tile.offsetLeft - small.offsetLeft) / (cw + gap)) + 1;
   const span = Math.max(1, Math.round((tile.offsetWidth + gap) / (cw + gap)));
   drop.classList.toggle("cs-story", W.unit === "Scene");
-  drop.style.gridColumn = W.unit === "Scene" ? "1 / -1"                     // story albums: the scene's shots take the whole row
-    : `${Math.min(col, cols)} / span ${Math.min(span, cols)}`;
+  drop.style.gridColumn = "1 / -1";                              // the versions / shots take the whole row (story and standard)
   tile.classList.add("on");
   setTimeout(() => drop.scrollIntoView({ behavior: "smooth", block: "nearest" }), 60);
 }
