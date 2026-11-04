@@ -806,8 +806,8 @@ function swipeSlides(box, slideSel, dotSel, onChange) {
     if (!drag || ev.pointerId !== drag.id) return;
     const dx = ev.clientX - drag.x0, dy = ev.clientY - drag.y0;
     if (!drag.axis) {
-      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-      drag.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      if (Math.abs(dx) < 3 && Math.abs(dy) < 3) return;          // react to the smallest touch
+      drag.axis = Math.abs(dx) >= Math.abs(dy) * 0.75 ? "x" : "y";   // sideways-ish counts as a swipe
       if (drag.axis === "y") { drag = null; return; }
       try { box.setPointerCapture(ev.pointerId); } catch (e) {}
       drag.cur = Math.max(0, drag.sl.findIndex((x) => x.classList.contains("on")));
@@ -828,8 +828,8 @@ function swipeSlides(box, slideSel, dotSel, onChange) {
     if (!drag || ev.pointerId !== drag.id || !drag.axis) { drag = null; return; }
     const { sl, cur, w, dx, nb, t0, sc } = drag; drag = null;
     if (Math.abs(dx) > 6) swiped = true;
-    const fast = Math.abs(dx) / Math.max(1, performance.now() - t0) > 0.5;
-    const go = nb != null && (Math.abs(dx) > w * 0.2 || (fast && Math.abs(dx) > 20));
+    const fast = Math.abs(dx) / Math.max(1, performance.now() - t0) > 0.2;   // a light flick is enough
+    const go = nb != null && (Math.abs(dx) > Math.min(w * 0.08, 40) || (fast && Math.abs(dx) > 8));   // a small swipe moves on
     const d = dx < 0 ? 1 : -1;
     let keep, gone;
     void box.offsetWidth;                                          // start the glide from exactly where the finger left it
@@ -2693,8 +2693,8 @@ function buildAllEntries() {
           if (!drag || ev.pointerId !== drag.id) return;
           const dx = ev.clientX - drag.x0, dy = ev.clientY - drag.y0;
           if (!drag.axis) {
-            if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
-            drag.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+            if (Math.abs(dx) < 3 && Math.abs(dy) < 3) return;          // react to the smallest touch
+            drag.axis = Math.abs(dx) >= Math.abs(dy) * 0.75 ? "x" : "y";   // sideways-ish counts as a swipe
             if (drag.axis === "y") { drag = null; return; }             // vertical: let the page scroll
             try { m.setPointerCapture(ev.pointerId); } catch (e) {}
             stopInline(); li._hold = Date.now();
@@ -2712,8 +2712,8 @@ function buildAllEntries() {
           if (!drag || ev.pointerId !== drag.id || !drag.axis) { drag = null; return; }
           const { sl, cur, w, dx, nb, t0 } = drag; drag = null;
           if (Math.abs(dx) > 6) swiped = true;
-          const fast = Math.abs(dx) / Math.max(1, performance.now() - t0) > 0.5;      // a flick counts too
-          const go = nb != null && (Math.abs(dx) > w * 0.2 || (fast && Math.abs(dx) > 20));
+          const fast = Math.abs(dx) / Math.max(1, performance.now() - t0) > 0.2;   // a light flick is enough      // a flick counts too
+          const go = nb != null && (Math.abs(dx) > Math.min(w * 0.08, 40) || (fast && Math.abs(dx) > 8));   // a small swipe moves on
           const d = dx < 0 ? 1 : -1;
           if (go) {
             void m.offsetWidth;
