@@ -787,7 +787,10 @@ function leaveColl() {
 // let go past ~20% (or flick) to move on, otherwise it springs back. Used by the collection covers.
 function swipeSlides(box, slideSel, dotSel, onChange) {
   let drag = null, swiped = false;
-  const setX = (el, x, anim) => { el.style.transition = anim ? "transform 0.32s cubic-bezier(.2,.7,.2,1), opacity 0s" : "none"; el.style.transform = `translateX(${x}px)`; };
+  const SLIDE = "transform 0.6s cubic-bezier(.22,.61,.36,1), opacity 0s";     // the glide after letting go
+  // each slide's current zoom (the slow Ken Burns), so dragging and letting go never jump in size
+  const scaleOf = (el) => { const m = getComputedStyle(el).transform; const v = m && m !== "none" ? m.match(/matrix\(([^,]+)/) : null; return v ? +v[1] : 1; };
+  const setX = (el, x, sc, anim) => { el.style.transition = anim ? SLIDE : "none"; el.style.transform = `translateX(${x}px) scale(${sc})`; };
   box.style.touchAction = "pan-y";
   box.addEventListener("pointerdown", (ev) => {
     if (ev.pointerType === "mouse" && ev.button !== 0) return;
@@ -795,8 +798,9 @@ function swipeSlides(box, slideSel, dotSel, onChange) {
     const sl = [...box.querySelectorAll(slideSel)];
     if (sl.length < 2) return;
     drag = { id: ev.pointerId, x0: ev.clientX, y0: ev.clientY, t0: performance.now(), dx: 0, sl,
-      cur: sl.findIndex((x) => x.classList.contains("on")), w: box.clientWidth, axis: null, nb: null };
+      cur: sl.findIndex((x) => x.classList.contains("on")), w: box.clientWidth, axis: null, nb: null, sc: null };
     swiped = false;
+    box._hold = Date.now();                                        // finger down: the slideshow waits
   });
   box.addEventListener("pointermove", (ev) => {
     if (!drag || ev.pointerId !== drag.id) return;
@@ -806,32 +810,50 @@ function swipeSlides(box, slideSel, dotSel, onChange) {
       drag.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
       if (drag.axis === "y") { drag = null; return; }
       try { box.setPointerCapture(ev.pointerId); } catch (e) {}
+      drag.cur = Math.max(0, drag.sl.findIndex((x) => x.classList.contains("on")));
+      drag.sc = drag.sl.map(scaleOf);                            // freeze the zoom where it is
+      drag.sl.forEach((x, i) => { if (i !== drag.cur) { x.style.transition = "none"; x.style.opacity = 0; } });   // nothing else peeking through
       box._hold = Date.now();
     }
     ev.preventDefault();
     drag.dx = dx;
-    const { sl, cur, w } = drag, n = sl.length;
+    const { sl, cur, w, sc } = drag, n = sl.length;
     const nbI = (cur + (dx < 0 ? 1 : -1) + n) % n;
-    if (drag.nb !== nbI && drag.nb != null) { sl[drag.nb].style.opacity = ""; sl[drag.nb].style.transform = ""; }
+    if (drag.nb !== nbI && drag.nb != null) { sl[drag.nb].style.transition = "none"; sl[drag.nb].style.opacity = ""; sl[drag.nb].style.transform = ""; }
     drag.nb = nbI;
     sl[cur].style.opacity = 1; sl[nbI].style.opacity = 1;
-    setX(sl[cur], dx, false); setX(sl[nbI], dx + (dx < 0 ? w : -w), false);
+    setX(sl[cur], dx, sc[cur], false); setX(sl[nbI], dx + (dx < 0 ? w : -w), sc[nbI], false);
   });
   const end = (ev) => {
     if (!drag || ev.pointerId !== drag.id || !drag.axis) { drag = null; return; }
-    const { sl, cur, w, dx, nb, t0 } = drag; drag = null;
+    const { sl, cur, w, dx, nb, t0, sc } = drag; drag = null;
     if (Math.abs(dx) > 6) swiped = true;
     const fast = Math.abs(dx) / Math.max(1, performance.now() - t0) > 0.5;
     const go = nb != null && (Math.abs(dx) > w * 0.2 || (fast && Math.abs(dx) > 20));
     const d = dx < 0 ? 1 : -1;
+    let keep, gone;
+    void box.offsetWidth;                                          // start the glide from exactly where the finger left it
     if (go) {
-      setX(sl[cur], -d * w, true); setX(sl[nb], 0, true);
-      sl[cur].classList.remove("on"); sl[nb].classList.add("on");
+      setX(sl[cur], -d * w, sc[cur], true); setX(sl[nb], 0, sc[nb], true);
+      sl.forEach((x) => x.classList.remove("on")); sl[nb].classList.add("on");
       const dots = [...box.querySelectorAll(dotSel)]; dots[cur]?.classList.remove("on"); dots[nb]?.classList.add("on");
+      keep = sl[nb]; gone = sl[cur];
       onChange && onChange(nb);
-    } else if (nb != null) { setX(sl[cur], 0, true); setX(sl[nb], d * w, true); }
-    setTimeout(() => sl.forEach((x) => { x.style.transition = "none"; x.style.transform = ""; x.style.opacity = ""; void x.offsetWidth; x.style.transition = ""; }), 340);
+    } else if (nb != null) {
+      setX(sl[cur], 0, sc[cur], true); setX(sl[nb], d * w, sc[nb], true);
+      keep = sl[cur]; gone = sl[nb];
+    }
     box._hold = Date.now();
+    // once the glide has finished: the one off screen is quietly reset; the one showing keeps its zoom and
+    // hands back to the normal slow zoom (no snap)
+    setTimeout(() => {
+      sl.forEach((x) => { if (x !== keep && x !== gone) { x.style.transition = "none"; x.style.opacity = ""; void x.offsetWidth; x.style.transition = ""; } });
+      if (gone) { gone.style.transition = "none"; gone.style.transform = ""; gone.style.opacity = ""; void gone.offsetWidth; gone.style.transition = ""; }
+      if (keep) {
+        keep.style.transition = "none"; keep.style.transform = `scale(${scaleOf(keep) || 1})`; void keep.offsetWidth;
+        keep.style.transition = ""; keep.style.transform = ""; keep.style.opacity = "";
+      }
+    }, 620);
   };
   box.addEventListener("pointerup", end);
   box.addEventListener("pointercancel", end);
@@ -2658,13 +2680,14 @@ function buildAllEntries() {
         // drag: the image follows the finger / mouse 1:1; let go past ~20% (or flick) to move on, otherwise it springs back
         let drag = null, swiped = false;
         const slides = () => [...m.querySelectorAll(".ge-slide")];
-        const setX = (el, x, anim) => { el.style.transition = anim ? "transform 0.32s cubic-bezier(.2,.7,.2,1)" : "none"; el.style.transform = `translateX(${x}px)`; };
+        const setX = (el, x, anim) => { el.style.transition = anim ? "transform 0.6s cubic-bezier(.22,.61,.36,1)" : "none"; el.style.transform = `translateX(${x}px)`; };
         m.addEventListener("pointerdown", (ev) => {
           if (ev.pointerType === "mouse" && ev.button !== 0) return;
           if (ev.target.closest(".gi-play")) return;
           const sl = slides(), cur = sl.findIndex((x) => x.classList.contains("on"));
           drag = { id: ev.pointerId, x0: ev.clientX, y0: ev.clientY, t0: performance.now(), dx: 0, cur, sl, w: m.clientWidth, axis: null, nb: null };
           swiped = false;
+          li._hold = Date.now();                                    // finger down: the slideshow waits
         });
         m.addEventListener("pointermove", (ev) => {
           if (!drag || ev.pointerId !== drag.id) return;
@@ -2693,14 +2716,15 @@ function buildAllEntries() {
           const go = nb != null && (Math.abs(dx) > w * 0.2 || (fast && Math.abs(dx) > 20));
           const d = dx < 0 ? 1 : -1;
           if (go) {
+            void m.offsetWidth;
             setX(sl[cur], -d * w, true); setX(sl[nb], 0, true);
-            sl[cur].classList.remove("on"); sl[nb].classList.add("on");
+            sl.forEach((x) => x.classList.remove("on")); sl[nb].classList.add("on");
             const dots = [...m.querySelectorAll(".ge-dots i")]; dots[cur]?.classList.remove("on"); dots[nb]?.classList.add("on");
             li._idx = nb; setVid();
           } else if (nb != null) {
             setX(sl[cur], 0, true); setX(sl[nb], d * w, true);
           }
-          setTimeout(() => sl.forEach((x) => { x.style.transition = "none"; x.style.transform = ""; x.style.opacity = ""; void x.offsetWidth; x.style.transition = ""; }), 340);
+          setTimeout(() => sl.forEach((x) => { x.style.transition = "none"; x.style.transform = ""; x.style.opacity = ""; void x.offsetWidth; x.style.transition = ""; }), 620);
           li._hold = Date.now();
         };
         m.addEventListener("pointerup", end);
