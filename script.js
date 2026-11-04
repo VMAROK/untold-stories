@@ -435,16 +435,19 @@ const GAL_PER_PAGE = { mix: 12, photo: 12 };   // pieces per page
 const galState = { medium: "mix", cat: "all", page: 1 };
 
 // Art & Film > All:
-//   1 = every video and every photo (Flickr photos from the collections too), each on its own   <- testing now
-//   2 = (not built yet) the entries of each collection (Pool Rooms, Grass Hills, The Chapel's scenes…) plus loose videos
-const ALL_MODE = 1;
+//   1 = every video and every photo (Flickr photos from the collections too), each on its own
+//   2 = one tile per entry of every collection (Pool Rooms, Night Grass, The Chapel's scenes…) plus videos that
+//       aren't in any collection. Tapping an entry opens its versions / shots / angles full screen.   <- in use
+const ALL_MODE = 2;
 function galItems() {
   return [...gal.querySelectorAll(".gi")].filter((g) =>
     // "Art & Film" shows both your 3D art and your films
     g.dataset.medium.split(" ").some((m) => (galState.medium === "mix" ? m === "film" || m === "art" : m === galState.medium)) &&
     (galState.cat === "all"
       ? (galState.medium === "mix"
-          ? (g.dataset.kind === "video" || (ALL_MODE === 1 && g.dataset.kind === "still")) && !g.classList.contains("gi-ext")   // Art & Film > All (see ALL_MODE)
+          ? (ALL_MODE === 2
+              ? (g.dataset.kind === "entry" || (g.dataset.kind === "video" && g.dataset.cat !== "liminal-yt")) && !g.classList.contains("gi-ext")
+              : (g.dataset.kind === "video" || g.dataset.kind === "still") && !g.classList.contains("gi-ext"))   // Art & Film > All (see ALL_MODE)
           : !g.classList.contains("gi-ext") || (g.classList.contains("gi-empty") && !gal.querySelector('.gi[data-medium="photo"]:not(.gi-ext)')))
       : g.dataset.cat === galState.cat));
 }
@@ -1645,6 +1648,7 @@ function updateMuFilter() {
     const vids = ((d && d.videos) || []).filter((v) => v.section === "general" || placed.has(v.id));
     if (typeof refreshCollBadges === "function") refreshCollBadges();
     collMosaics(d.videos || []);
+    buildAllEntries();
     if (!vids.length) { renderGallery(); return; }
     const grid = gal.querySelector(".gal-grid");
     const first = grid.querySelector('.gi[data-medium="film"]:not(.gi-ext)');
@@ -1860,6 +1864,7 @@ function flickrCollections(items, albums, grid) {
   // loose photos (option 1): newest date taken first, after everything else in the grid
   loose.sort((x, y) => y.dataset.sortKey.localeCompare(x.dataset.sortKey)).forEach((t) => grid.appendChild(t));
   refreshCollBadges();
+  buildAllEntries();
 }
 
 /* ---------- Scroll guard ----------
@@ -2510,3 +2515,47 @@ addEventListener("resize", clSizeRows);
   };
   addEventListener("resize", () => { if (raf) size(); });
 })();
+
+/* ---------- Art & Film > All, option 2: one tile per collection entry ----------
+   Every location / photo / scene that has something in it (Pool Rooms, Night Grass, The School Lunchroom…).
+   Rebuilt whenever the YouTube or Flickr content arrives. */
+function buildAllEntries() {
+  if (!gal || ALL_MODE !== 2) return;
+  const grid = gal.querySelector(".gal-grid");
+  grid.querySelectorAll(".gi-entry").forEach((x) => x.remove());
+  const colls = [...gal.querySelectorAll(".gi-coll")];
+  const flickr = colls.filter((c) => c.classList.contains("gi-flickr-coll"));
+  // the Flickr collections in the order they sit in the grid (newest first), after the other collections
+  [...colls.filter((c) => !c.classList.contains("gi-flickr-coll")), ...flickr].forEach((c) => {
+    const world = c.querySelector("h3").textContent.trim();
+    const W = collWords(c);
+    const base = { year: c.dataset.year || "", tools: c.dataset.tools || "", piece: W.piece };
+    const data = c.querySelector(".coll-data");
+    if (!data) return;
+    const entries = [...data.querySelectorAll(".loc")].map((loc) => ({ name: loc.dataset.name, angs: [...loc.querySelectorAll(".ang")] }));
+    [...data.children].filter((a) => a.classList.contains("ang"))                       // items placed straight in a collection
+      .forEach((a) => entries.push({ name: a.dataset.title || world, angs: [a], loose: true }));
+    entries.filter((e) => e.angs.length).forEach((e) => {
+      const first = e.angs[0];
+      const isVid = first.dataset.kind === "video";
+      const r = +first.dataset.ratio || (first.dataset.orient === "tall" ? 0.5625 : first.dataset.orient === "square" ? 1 : 1.78);
+      const li = document.createElement("li");
+      li.className = "gi gi-entry";
+      Object.assign(li.dataset, { medium: "film art", cat: "all-only", kind: "entry",
+        orient: r < 0.8 ? "tall" : r > 1.25 ? "wide" : "square" });
+      li.innerHTML = `<button type="button" class="gi-media" aria-label="">${isVid ? '<span class="gi-play" aria-hidden="true"></span>' : ""}</button>
+        <div class="gi-cap"><p class="gi-cat"></p><h3></h3></div><p class="gi-desc" hidden></p>`;
+      const m = li.querySelector(".gi-media");
+      const pic = first.dataset.poster || first.dataset.src;
+      m.style.background = pic ? `${bgLayers(pic.replace("_b.", "_z."))}, #0a0a0a` : "#0a0a0a";
+      m.setAttribute("aria-label", "Open " + e.name);
+      const vids = e.angs.filter((a) => a.dataset.kind === "video").length;
+      const count = e.angs.length > 1 || !isVid ? plural(e.angs.length, (vids === e.angs.length ? "video" : W.piece).toLowerCase()) : "Video";
+      li.querySelector(".gi-cat").textContent = `${world} · ${count}`;
+      li.querySelector("h3").textContent = e.name;
+      const list = e.angs.map((a, i) => anglePiece(a, i, e.angs.length, world, e.loose ? "" : e.name, base));
+      m.addEventListener("click", () => openView(list, 0, "coll"));
+      grid.appendChild(li);
+    });
+  });
+}
