@@ -1738,9 +1738,14 @@ function flickrMeta(desc) {
 // One collection per Flickr album, in the General tab.
 //   Standard album: one entry per photo name, its versions inside (version 1 first and as the cover).
 //   Story album ("Type: Story" in the album description): one entry per SCENE, every photo of that scene inside.
+// "date taken" as a sortable UTC timestamp (Flickr gives it with a time zone, e.g. 2025-10-08T08:26:00-08:00)
+const takenKey = (it) => { const d = Date.parse(it.taken || it.published || ""); return isNaN(d) ? String(it.taken || "") : new Date(d).toISOString(); };
 function flickrCollections(items, albums, grid) {
   gal.querySelectorAll(".gi-flickr-coll").forEach((x) => x.remove());
   const list = (albums && albums.length) ? albums : [{ id: "general", title: "General", type: "standard" }];
+  // albums: the one with the most recently taken photo first
+  const newestOf = (id) => items.filter((it) => (it.album || "general") === id).reduce((n, x) => (takenKey(x) > n ? takenKey(x) : n), "");
+  list.sort((x, y) => newestOf(y.id).localeCompare(newestOf(x.id)));
   const before = grid.querySelector('.gi[data-cat="general"]') || null;
   list.forEach((al) => {
     const mine = items.filter((it) => (it.album || "general") === al.id || (!it.album && al.id === "general"));
@@ -1766,11 +1771,11 @@ function flickrCollections(items, albums, grid) {
     });
     const sets = [...groups.values()].map((g) => {
       // standard: by version; story: in the order you uploaded them (version only breaks ties)
-      g.list.sort((x, y) => story ? String(x.published).localeCompare(String(y.published)) || x.ver - y.ver : x.ver - y.ver);
-      g.newest = g.list.reduce((n, x) => (String(x.published) > n ? String(x.published) : n), "");
-      g.oldest = g.list.reduce((n, x) => (!n || String(x.published) < n ? String(x.published) : n), "");
+      // story: most recent "date taken" first; standard: by version (version 1 first, it's the cover)
+      g.list.sort((x, y) => story ? takenKey(y).localeCompare(takenKey(x)) || x.ver - y.ver : x.ver - y.ver);
+      g.newest = g.list.reduce((n, x) => (takenKey(x) > n ? takenKey(x) : n), "");
       return g;
-    }).sort((x, y) => story ? x.oldest.localeCompare(y.oldest) : y.newest.localeCompare(x.newest));
+    }).sort((x, y) => y.newest.localeCompare(x.newest));          // scenes / photos: most recently taken first
     const li = document.createElement("li");
     li.className = "gi gi-coll gi-flickr-coll";
     Object.assign(li.dataset, { medium: "art", cat: "general", kind: "collection", orient: "wide", coll: "flickr-" + al.id,
