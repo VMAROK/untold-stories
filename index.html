@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500;600&family=Manrope:wght@300;400;500&family=Mrs+Saint+Delafield&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20261103193346" />
+  <link rel="stylesheet" href="style.css?v=20261103195342" />
 </head>
 <body>
 
@@ -296,7 +296,7 @@
       </header>
 
       <ul class="gal-grid" data-medium="mix">
-        <!-- Photography: filled automatically from your photo page (see script.js) -->
+        <!-- DESIGN (switched off): big 500px card in Photography. Now a small link under the photos (gal-more-500).
         <li class="gi gi-ext gi-empty" data-medium="photo" data-cat="all" data-kind="link">
           <a class="gi-media gx-card" href="https://500px.com/p/vmarok" target="_blank" rel="noopener">
             <span class="gx-t">500px</span>
@@ -304,6 +304,7 @@
             <span class="gx-go">View the photos ↗</span>
           </a>
         </li>
+        END DESIGN -->
         <!-- DESIGN (switched off): big ArtStation card in General. Now a small link under the grid (gal-more).
         <li class="gi gi-ext" data-medium="art" data-cat="general" data-kind="link">
           <a class="gi-media gx-card" href="https://passive-art.artstation.com" target="_blank" rel="noopener">
@@ -459,6 +460,8 @@
           </div>
         </li>
       </ul>
+      <div class="cl-small ph-mosaic" id="ph-mosaic" hidden></div>
+      <p class="gal-more gal-more-500" hidden><a href="https://500px.com/p/vmarok" target="_blank" rel="noopener">More on 500px <span>↗</span></a></p>
       <p class="gal-more" hidden><a href="https://passive-art.artstation.com" target="_blank" rel="noopener">More on ArtStation <span>↗</span></a></p>
       <nav class="gal-pages" aria-label="Gallery pages" hidden></nav>
     </div>
@@ -955,6 +958,6 @@
     <div class="fs-pages" id="fs-pages"></div>
   </section>
 
-  <script src="script.js?v=20261103193346"></script>
+  <script src="script.js?v=20261103195342"></script>
 </body>
 </html>

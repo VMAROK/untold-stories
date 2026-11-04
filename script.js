@@ -457,7 +457,11 @@ function renderGallery(scroll = false) {
   const grid = gal.querySelector(".gal-grid");
   grid.dataset.medium = galState.medium;
   gal.classList.toggle("photo-mode", galState.medium === "photo");
-  const more = gal.querySelector(".gal-more");
+  const phm = document.getElementById("ph-mosaic"), more5 = gal.querySelector(".gal-more-500");
+  if (phm) phm.hidden = galState.medium !== "photo";
+  if (more5) more5.hidden = galState.medium !== "photo";
+  setTimeout(clSizeRows, 0);
+  const more = gal.querySelector(".gal-more:not(.gal-more-500)");
   if (more) more.hidden = !(galState.medium === "mix" && galState.cat === "general");   // small ArtStation link under General
   window.bokehTick && bokehTick();
   grid.dataset.cat = galState.cat;
@@ -1754,7 +1758,7 @@ function flickrCollections(items, albums, grid) {
     const groups = new Map();
     mine.forEach((it0) => {
       const meta = flickrMeta(it0.description);
-      const it = { ...it0, description: meta.rest };
+      const it = { ...it0, description: meta.rest && meta.rest !== String(it0.title || "").trim() ? meta.rest : "" };
       let name, ver;
       if (story) {
         name = meta.scene || "Unsorted";
@@ -1815,6 +1819,11 @@ function flickrCollections(items, albums, grid) {
     });
     li.querySelector(".gi-media").prepend(mo);
     li.querySelector(".gi-media").addEventListener("click", () => openColl(li));
+    if (/^photography$/i.test(al.title || "")) {                 // the Photography album lives in the Photography tab, mosaic only
+      const ph = document.getElementById("ph-mosaic");
+      if (ph) { li.classList.remove("gi-coll"); fillMosaic(ph, li, al.title, { single: "view" }); }
+      return;
+    }
     grid.insertBefore(li, before);
   });
   refreshCollBadges();
@@ -2322,6 +2331,15 @@ function clSmallBuild(item, world) {
   bar.hidden = !photos;
   small.innerHTML = "";
   if (!photos) { clSetSize("large", false); return; }
+  fillMosaic(small, item, world);
+  let pref = "large";
+  try { pref = localStorage.getItem("clSize") || "large"; } catch (e) {}
+  clSetSize(pref, false);
+}
+// Mosaic tiles for a collection: one tile per photo / scene (its first image); tapping opens its versions.
+// opts.single = "view": an entry with just one image opens straight to full screen instead of a drop-down.
+function fillMosaic(small, item, world, opts = {}) {
+  small.innerHTML = "";
   const base = { year: item.dataset.year || "", tools: "", piece: collWords(item).piece };
   // one tile per photo (its version 1), same as the collection; tapping it opens that photo's versions
   item.querySelectorAll(".coll-data .loc").forEach((loc) => {
@@ -2335,17 +2353,17 @@ function clSmallBuild(item, world) {
     b.style.backgroundImage = `url("${angs[0].dataset.src}")`;
     b.innerHTML = `<span class="cs-cap"><b></b><small></small></span>`;
     b.querySelector("b").textContent = loc.dataset.name;
-    b.querySelector("small").textContent = plural(angs.length, collWords(item).piece.toLowerCase());
-    b.addEventListener("click", () => csToggle(b, loc, angs, world, base, collWords(item)));
+    b.querySelector("small").textContent = opts.single === "view" && angs.length === 1
+      ? fmtTaken(angs[0].dataset.taken) : plural(angs.length, collWords(item).piece.toLowerCase());   // single photos: their date
+    b.addEventListener("click", () => (opts.single === "view" && angs.length === 1
+      ? openView(list, 0, "coll") : csToggle(b, loc, angs, world, base, collWords(item))));
     small.appendChild(b);
   });
-  let pref = "large";
-  try { pref = localStorage.getItem("clSize") || "large"; } catch (e) {}
-  clSetSize(pref, false);
+  clSizeRows();
 }
 // Mosaic: tapping a photo opens its drop-down (name, note, versions row) right under that row of tiles
 function csToggle(tile, loc, angs, world, base, W) {
-  const small = document.getElementById("cl-small");
+  const small = tile.parentElement;
   const open = small.querySelector(".cs-drop");
   const same = open && open.dataset.for === loc.dataset.name;
   if (open) open.remove();
@@ -2389,12 +2407,13 @@ function clSetSize(size, save = true) {
   if (isSmall) clSizeRows();
 }
 function clSizeRows() {                                  // row height so a wide tile (2 columns) is 16:9
-  const small = document.getElementById("cl-small");
-  if (!small || small.hidden) return;
-  const cols = getComputedStyle(small).gridTemplateColumns.split(" ").length || 6;
-  const gap = parseFloat(getComputedStyle(small).columnGap) || 0;
-  const cw = (small.clientWidth - gap * (cols - 1)) / cols;
-  small.style.setProperty("--rowh", ((cw * 2 + gap) * 9 / 16) + "px");
+  document.querySelectorAll(".cl-small").forEach((small) => {
+    if (small.hidden || !small.clientWidth) return;
+    const cols = getComputedStyle(small).gridTemplateColumns.split(" ").length || 6;
+    const gap = parseFloat(getComputedStyle(small).columnGap) || 0;
+    const cw = (small.clientWidth - gap * (cols - 1)) / cols;
+    small.style.setProperty("--rowh", ((cw * 2 + gap) * 9 / 16) + "px");
+  });
 }
 document.getElementById("cl-size")?.addEventListener("click", (e) => {
   const b = e.target.closest("button[data-size]"); if (b) clSetSize(b.dataset.size);
