@@ -2543,11 +2543,21 @@ function buildAllEntries() {
       li.className = "gi gi-entry";
       Object.assign(li.dataset, { medium: "film art", cat: "all-only", kind: "entry",
         orient: r < 0.8 ? "tall" : r > 1.25 ? "wide" : "square" });
-      li.innerHTML = `<button type="button" class="gi-media" aria-label="">${isVid ? '<span class="gi-play" aria-hidden="true"></span>' : ""}</button>
+      li.innerHTML = `<button type="button" class="gi-media" aria-label=""></button>
         <div class="gi-cap"><p class="gi-cat"></p><h3></h3></div><p class="gi-desc" hidden></p>`;
       const m = li.querySelector(".gi-media");
       const pic = first.dataset.poster || first.dataset.src;
       m.style.background = pic ? `${bgLayers(pic.replace("_b.", "_z."))}, #0a0a0a` : "#0a0a0a";
+      // a video can play right in the tile (play button); tapping elsewhere or the title opens full screen
+      const setVid = () => {
+        const a = e.angs[li._idx || 0];
+        const v = a && a.dataset.kind === "video" ? a.dataset.video : "";
+        if (v) li.dataset.video = v; else delete li.dataset.video;
+        let pb = m.querySelector(".gi-play");
+        if (v && !pb) m.insertAdjacentHTML("beforeend", '<span class="gi-play" aria-hidden="true"></span>');
+        if (!v && pb) pb.remove();
+      };
+      setVid();
       // more than one image: they fade from one to the next, and can be swiped
       const pics = e.angs.map((a) => a.dataset.poster || a.dataset.src).filter(Boolean);
       if (pics.length > 1) {
@@ -2555,13 +2565,25 @@ function buildAllEntries() {
         m.insertAdjacentHTML("afterbegin", pics.map((p, i) =>
           `<span class="ge-slide${i ? "" : " on"}" style='background-image:url("${p.replace("_b.", "_z.")}")'></span>`).join("")
           + `<span class="ge-dots">${pics.map((_, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</span>`);
-        li._step = (d) => {
+        // auto = fade; a swipe = the images slide across like a carousel
+        li._step = (d, how = "fade") => {
           const sl = [...m.querySelectorAll(".ge-slide")], dots = [...m.querySelectorAll(".ge-dots i")];
           const cur = sl.findIndex((x) => x.classList.contains("on"));
           const nx = (cur + d + sl.length) % sl.length;
-          sl[cur].classList.remove("on"); sl[nx].classList.add("on");
+          const A = sl[cur], B = sl[nx];
+          if (how === "slide") {
+            [A, B].forEach((x) => (x.style.transition = "none"));
+            B.style.transform = `translateX(${d * 100}%)`; B.style.opacity = 1;
+            void B.offsetWidth;
+            [A, B].forEach((x) => (x.style.transition = "transform 0.45s cubic-bezier(.2,.7,.2,1)"));
+            A.style.transform = `translateX(${-d * 100}%)`; B.style.transform = "translateX(0)";
+            setTimeout(() => { A.style.transition = "none"; A.style.opacity = ""; A.style.transform = ""; void A.offsetWidth;
+              A.style.transition = ""; B.style.transition = ""; B.style.opacity = ""; }, 470);
+          }
+          A.classList.remove("on"); B.classList.add("on");
           dots[cur]?.classList.remove("on"); dots[nx]?.classList.add("on");
           li._idx = nx;
+          setVid();
         };
         li._idx = 0;
         let x0 = null, y0 = 0, swiped = false;
@@ -2569,7 +2591,7 @@ function buildAllEntries() {
         m.addEventListener("touchend", (ev) => {
           if (x0 == null) return;
           const dx = ev.changedTouches[0].clientX - x0, dy = ev.changedTouches[0].clientY - y0;
-          if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { li._step(dx < 0 ? 1 : -1); li._hold = Date.now(); swiped = true; }
+          if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { stopInline(); li._step(dx < 0 ? 1 : -1, "slide"); li._hold = Date.now(); swiped = true; }
           x0 = null;
         });
         m.addEventListener("click", (ev) => { if (swiped) { ev.stopImmediatePropagation(); swiped = false; } }, true);
@@ -2590,7 +2612,8 @@ function buildAllEntries() {
 setInterval(() => {
   if (!gal || gal.hidden || document.hidden) return;
   gal.querySelectorAll(".gi-entry.ge-multi.show").forEach((li, i) => {
-    if (li._hold && Date.now() - li._hold < 8000) return;
+    if (li._hold && Date.now() - li._hold < 5000) return;          // after a swipe: wait 5 seconds
+    if (typeof inlineAll !== "undefined" && [...inlineAll].some((x) => li.contains(x.tile))) return;   // a video is playing in it
     if (!li._tick) li._tick = i % 3;                          // staggered so they don't all change at once
     if (++li._tick % 3 === 0 && li._step) li._step(1);
   });
