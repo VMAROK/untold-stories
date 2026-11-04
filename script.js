@@ -785,6 +785,22 @@ function leaveColl() {
 }
 // Finger / mouse swipe for a stack of slides (one has class "on"): the image follows the drag 1:1,
 // let go past ~20% (or flick) to move on, otherwise it springs back. Used by the collection covers.
+// While a sideways swipe is going, iPad / phone must not scroll the page up or down.
+// (A sideways-ish first move decides it; until then the page scrolls normally.)
+function noScrollWhileSwiping(el) {
+  let x0 = 0, y0 = 0, mode = null;
+  el.addEventListener("touchstart", (e) => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; mode = null; }, { passive: true });
+  el.addEventListener("touchmove", (e) => {
+    if (e.touches.length > 1) return;                              // pinch zoom: leave alone
+    if (!mode) {
+      const dx = Math.abs(e.touches[0].clientX - x0), dy = Math.abs(e.touches[0].clientY - y0);
+      if (dx < 3 && dy < 3) return;
+      mode = dx >= dy * 0.75 ? "x" : "y";
+    }
+    if (mode === "x" || el._swiping) e.preventDefault();
+  }, { passive: false });
+  el.addEventListener("touchend", () => { mode = null; }, { passive: true });
+}
 function swipeSlides(box, slideSel, dotSel, onChange) {
   let drag = null, swiped = false;
   const SLIDE = "transform 0.6s cubic-bezier(.22,.61,.36,1), opacity 0s";     // the glide after letting go
@@ -792,6 +808,7 @@ function swipeSlides(box, slideSel, dotSel, onChange) {
   const scaleOf = (el) => { const m = getComputedStyle(el).transform; const v = m && m !== "none" ? m.match(/matrix\(([^,]+)/) : null; return v ? +v[1] : 1; };
   const setX = (el, x, sc, anim) => { el.style.transition = anim ? SLIDE : "none"; el.style.transform = `translateX(${x}px) scale(${sc})`; };
   box.style.touchAction = "pan-y";
+  noScrollWhileSwiping(box);
   box.addEventListener("pointerdown", (ev) => {
     if (ev.pointerType === "mouse" && ev.button !== 0) return;
     if (ev.target.closest("button, .gi-play, .loc-cta")) return;
@@ -810,6 +827,7 @@ function swipeSlides(box, slideSel, dotSel, onChange) {
       drag.axis = Math.abs(dx) >= Math.abs(dy) * 0.75 ? "x" : "y";   // sideways-ish counts as a swipe
       if (drag.axis === "y") { drag = null; return; }
       try { box.setPointerCapture(ev.pointerId); } catch (e) {}
+      box._swiping = true;                                         // touch devices: the page must not scroll now
       drag.cur = Math.max(0, drag.sl.findIndex((x) => x.classList.contains("on")));
       drag.sc = drag.sl.map(scaleOf);                            // freeze the zoom where it is
       drag.sl.forEach((x, i) => { if (i !== drag.cur) { x.style.transition = "none"; x.style.opacity = 0; } });   // nothing else peeking through
@@ -825,6 +843,7 @@ function swipeSlides(box, slideSel, dotSel, onChange) {
     setX(sl[cur], dx, sc[cur], false); setX(sl[nbI], dx + (dx < 0 ? w : -w), sc[nbI], false);
   });
   const end = (ev) => {
+    box._swiping = false;
     if (!drag || ev.pointerId !== drag.id || !drag.axis) { drag = null; return; }
     const { sl, cur, w, dx, nb, t0, sc } = drag; drag = null;
     if (Math.abs(dx) > 6) swiped = true;
@@ -2679,6 +2698,7 @@ function buildAllEntries() {
         li._idx = 0;
         // drag: the image follows the finger / mouse 1:1; let go past ~20% (or flick) to move on, otherwise it springs back
         let drag = null, swiped = false;
+        noScrollWhileSwiping(m);
         const slides = () => [...m.querySelectorAll(".ge-slide")];
         const setX = (el, x, anim) => { el.style.transition = anim ? "transform 0.6s cubic-bezier(.22,.61,.36,1)" : "none"; el.style.transform = `translateX(${x}px)`; };
         m.addEventListener("pointerdown", (ev) => {
@@ -2697,6 +2717,7 @@ function buildAllEntries() {
             drag.axis = Math.abs(dx) >= Math.abs(dy) * 0.75 ? "x" : "y";   // sideways-ish counts as a swipe
             if (drag.axis === "y") { drag = null; return; }             // vertical: let the page scroll
             try { m.setPointerCapture(ev.pointerId); } catch (e) {}
+            m._swiping = true;
             stopInline(); li._hold = Date.now();
           }
           ev.preventDefault();
@@ -2709,6 +2730,7 @@ function buildAllEntries() {
           setX(sl[cur], dx, false); setX(sl[nbI], dx + (dx < 0 ? w : -w), false);
         });
         const end = (ev) => {
+          m._swiping = false;
           if (!drag || ev.pointerId !== drag.id || !drag.axis) { drag = null; return; }
           const { sl, cur, w, dx, nb, t0 } = drag; drag = null;
           if (Math.abs(dx) > 6) swiped = true;
