@@ -2586,15 +2586,58 @@ function buildAllEntries() {
           setVid();
         };
         li._idx = 0;
-        let x0 = null, y0 = 0, swiped = false;
-        m.addEventListener("touchstart", (ev) => { x0 = ev.touches[0].clientX; y0 = ev.touches[0].clientY; swiped = false; }, { passive: true });
-        m.addEventListener("touchend", (ev) => {
-          if (x0 == null) return;
-          const dx = ev.changedTouches[0].clientX - x0, dy = ev.changedTouches[0].clientY - y0;
-          if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { stopInline(); li._step(dx < 0 ? 1 : -1, "slide"); li._hold = Date.now(); swiped = true; }
-          x0 = null;
+        // drag: the image follows the finger / mouse 1:1; let go past ~20% (or flick) to move on, otherwise it springs back
+        let drag = null, swiped = false;
+        const slides = () => [...m.querySelectorAll(".ge-slide")];
+        const setX = (el, x, anim) => { el.style.transition = anim ? "transform 0.32s cubic-bezier(.2,.7,.2,1)" : "none"; el.style.transform = `translateX(${x}px)`; };
+        m.addEventListener("pointerdown", (ev) => {
+          if (ev.pointerType === "mouse" && ev.button !== 0) return;
+          if (ev.target.closest(".gi-play")) return;
+          const sl = slides(), cur = sl.findIndex((x) => x.classList.contains("on"));
+          drag = { id: ev.pointerId, x0: ev.clientX, y0: ev.clientY, t0: performance.now(), dx: 0, cur, sl, w: m.clientWidth, axis: null, nb: null };
+          swiped = false;
         });
-        m.addEventListener("click", (ev) => { if (swiped) { ev.stopImmediatePropagation(); swiped = false; } }, true);
+        m.addEventListener("pointermove", (ev) => {
+          if (!drag || ev.pointerId !== drag.id) return;
+          const dx = ev.clientX - drag.x0, dy = ev.clientY - drag.y0;
+          if (!drag.axis) {
+            if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+            drag.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+            if (drag.axis === "y") { drag = null; return; }             // vertical: let the page scroll
+            try { m.setPointerCapture(ev.pointerId); } catch (e) {}
+            stopInline(); li._hold = Date.now();
+          }
+          ev.preventDefault();
+          drag.dx = dx;
+          const { sl, cur, w } = drag, n = sl.length;
+          const nbI = (cur + (dx < 0 ? 1 : -1) + n) % n;               // the neighbour on the side we're dragging towards
+          if (drag.nb !== nbI) { if (drag.nb != null && drag.nb !== cur) { sl[drag.nb].style.opacity = ""; sl[drag.nb].style.transform = ""; } drag.nb = nbI; }
+          sl[cur].style.opacity = 1; sl[nbI].style.opacity = 1;
+          sl.forEach((x) => (x.style.transition = "none"));
+          setX(sl[cur], dx, false); setX(sl[nbI], dx + (dx < 0 ? w : -w), false);
+        });
+        const end = (ev) => {
+          if (!drag || ev.pointerId !== drag.id || !drag.axis) { drag = null; return; }
+          const { sl, cur, w, dx, nb, t0 } = drag; drag = null;
+          if (Math.abs(dx) > 6) swiped = true;
+          const fast = Math.abs(dx) / Math.max(1, performance.now() - t0) > 0.5;      // a flick counts too
+          const go = nb != null && (Math.abs(dx) > w * 0.2 || (fast && Math.abs(dx) > 20));
+          const d = dx < 0 ? 1 : -1;
+          if (go) {
+            setX(sl[cur], -d * w, true); setX(sl[nb], 0, true);
+            sl[cur].classList.remove("on"); sl[nb].classList.add("on");
+            const dots = [...m.querySelectorAll(".ge-dots i")]; dots[cur]?.classList.remove("on"); dots[nb]?.classList.add("on");
+            li._idx = nb; setVid();
+          } else if (nb != null) {
+            setX(sl[cur], 0, true); setX(sl[nb], d * w, true);
+          }
+          setTimeout(() => sl.forEach((x) => { x.style.transition = "none"; x.style.transform = ""; x.style.opacity = ""; void x.offsetWidth; x.style.transition = ""; }), 340);
+          li._hold = Date.now();
+        };
+        m.addEventListener("pointerup", end);
+        m.addEventListener("pointercancel", end);
+        m.addEventListener("dragstart", (ev) => ev.preventDefault());
+        m.addEventListener("click", (ev) => { if (swiped) { ev.stopImmediatePropagation(); ev.preventDefault(); swiped = false; } }, true);
       }
       m.setAttribute("aria-label", "Open " + e.name);
       const vids = e.angs.filter((a) => a.dataset.kind === "video").length;
