@@ -2445,8 +2445,8 @@ addEventListener("resize", clSizeRows);
   const flick = (t, s) => 0.72 + 0.12 * Math.sin(t * 7.1 + s) + 0.08 * Math.sin(t * 13.7 + s * 2) + 0.06 * Math.sin(t * 3.3 + s * 3) + rnd(-0.03, 0.03);
   const glow = (x, y, rad, a, inner) => {
     const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
-    g.addColorStop(0, `rgba(255, ${inner}, 60, ${a})`);
-    g.addColorStop(0.35, `rgba(200, 80, 20, ${a * 0.45})`);
+    g.addColorStop(0, `rgba(255, ${inner}, 60, ${a * 0.6})`);       // dimmer flame at the centre…
+    g.addColorStop(0.35, `rgba(200, 80, 20, ${a * 0.45})`);        // …same glow around it
     g.addColorStop(1, "rgba(60, 10, 0, 0)");
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   };
