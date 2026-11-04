@@ -2824,3 +2824,11 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .coll.coll-chapel .cs-tile.on { border-color: #d9893a; box-shadow: 0 0 0 1px #d9893a, 0 0 30px -6px rgba(255, 130, 40, 0.5); }
 .coll.coll-chapel .cl-size button.on { border-color: #c8742a; }
 .coll.coll-chapel .cs-drop { border-top-color: rgba(200, 116, 42, 0.5); }
+
+/* All tab: entries that hold several images fade between them */
+.gi-entry .ge-slide { position: absolute; inset: 0; background: #0a0a0a center / cover no-repeat; opacity: 0; transition: opacity 1.4s ease; pointer-events: none; }
+.gi-entry .ge-slide.on { opacity: 1; }
+.gi-entry .gi-play { z-index: 2; }
+.gi-entry .ge-dots { position: absolute; z-index: 2; top: 12px; right: 12px; display: flex; gap: 5px; pointer-events: none; }
+.gi-entry .ge-dots i { width: 5px; height: 5px; border-radius: 50%; background: rgba(255, 255, 255, 0.35); transition: background 0.4s; }
+.gi-entry .ge-dots i.on { background: #f2ede6; }

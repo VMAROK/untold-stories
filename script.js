@@ -2548,14 +2548,50 @@ function buildAllEntries() {
       const m = li.querySelector(".gi-media");
       const pic = first.dataset.poster || first.dataset.src;
       m.style.background = pic ? `${bgLayers(pic.replace("_b.", "_z."))}, #0a0a0a` : "#0a0a0a";
+      // more than one image: they fade from one to the next, and can be swiped
+      const pics = e.angs.map((a) => a.dataset.poster || a.dataset.src).filter(Boolean);
+      if (pics.length > 1) {
+        li.classList.add("ge-multi");
+        m.insertAdjacentHTML("afterbegin", pics.map((p, i) =>
+          `<span class="ge-slide${i ? "" : " on"}" style='background-image:url("${p.replace("_b.", "_z.")}")'></span>`).join("")
+          + `<span class="ge-dots">${pics.map((_, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</span>`);
+        li._step = (d) => {
+          const sl = [...m.querySelectorAll(".ge-slide")], dots = [...m.querySelectorAll(".ge-dots i")];
+          const cur = sl.findIndex((x) => x.classList.contains("on"));
+          const nx = (cur + d + sl.length) % sl.length;
+          sl[cur].classList.remove("on"); sl[nx].classList.add("on");
+          dots[cur]?.classList.remove("on"); dots[nx]?.classList.add("on");
+          li._idx = nx;
+        };
+        li._idx = 0;
+        let x0 = null, y0 = 0, swiped = false;
+        m.addEventListener("touchstart", (ev) => { x0 = ev.touches[0].clientX; y0 = ev.touches[0].clientY; swiped = false; }, { passive: true });
+        m.addEventListener("touchend", (ev) => {
+          if (x0 == null) return;
+          const dx = ev.changedTouches[0].clientX - x0, dy = ev.changedTouches[0].clientY - y0;
+          if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) { li._step(dx < 0 ? 1 : -1); li._hold = Date.now(); swiped = true; }
+          x0 = null;
+        });
+        m.addEventListener("click", (ev) => { if (swiped) { ev.stopImmediatePropagation(); swiped = false; } }, true);
+      }
       m.setAttribute("aria-label", "Open " + e.name);
       const vids = e.angs.filter((a) => a.dataset.kind === "video").length;
       const count = e.angs.length > 1 || !isVid ? plural(e.angs.length, (vids === e.angs.length ? "video" : W.piece).toLowerCase()) : "Video";
       li.querySelector(".gi-cat").textContent = `${world} · ${count}`;
       li.querySelector("h3").textContent = e.name;
       const list = e.angs.map((a, i) => anglePiece(a, i, e.angs.length, world, e.loose ? "" : e.name, base));
-      m.addEventListener("click", () => openView(list, 0, "coll"));
+      m.addEventListener("click", () => openView(list, li._idx || 0, "coll"));   // opens on the image showing
       grid.appendChild(li);
     });
   });
 }
+
+// All tab: entries with several images fade to the next one every few seconds (paused for a while after a swipe)
+setInterval(() => {
+  if (!gal || gal.hidden || document.hidden) return;
+  gal.querySelectorAll(".gi-entry.ge-multi.show").forEach((li, i) => {
+    if (li._hold && Date.now() - li._hold < 8000) return;
+    if (!li._tick) li._tick = i % 3;                          // staggered so they don't all change at once
+    if (++li._tick % 3 === 0 && li._step) li._step(1);
+  });
+}, 1400);
