@@ -2843,3 +2843,12 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 4px; }
 /* keep the line breaks you write in a Flickr description */
 .cs-cap .cs-desc, #vw-desc { white-space: pre-line; }
+
+/* iPad / phone: big cover photos were being drawn in broken pieces (Safari struggles with a slowly zooming,
+   colour-filtered full-width image). On touch screens the covers stay still and unfiltered; the dimming is
+   done by a plain dark layer instead. Desktop keeps the slow zoom. */
+.loc-cover::before { content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none; background: rgba(0, 0, 0, 0.1); }
+@media (hover: none), (pointer: coarse) {
+  .loc-slide, .loc-slide.on { filter: none; transform: none; inset: 0; transition: opacity 1.6s ease; }
+  .gi-entry .ge-slide { filter: none; }
+}
