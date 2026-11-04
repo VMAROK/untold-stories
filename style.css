@@ -2801,5 +2801,3 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 /* Large view (photo collections): everything in a landscape frame; portrait images sit whole inside it on black */
 .coll-photos .loc-cover { aspect-ratio: 16 / 9 !important; width: 100%; background: #000; }
 .coll-photos .loc-slide { background-color: #000 !important; }
-#cl-locs .car-track.fit > .ang-btn { width: calc(var(--ch) * 16 / 9); }
-#cl-locs .car-track.fit .ang-tile { aspect-ratio: 16 / 9 !important; background-color: #000 !important; background-size: contain !important; }
