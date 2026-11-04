@@ -2497,6 +2497,10 @@ function fillMosaic(small, item, world, opts = {}) {
     b.style.backgroundImage = `url("${angs[0].dataset.src}")`;
     b.innerHTML = `<span class="cs-cap"><b></b><small></small></span>`;
     b.querySelector("b").textContent = loc.dataset.name;
+    if (opts.single === "view" && loc.dataset.note) {                // Photography: your Flickr description under the name
+      const d = document.createElement("em"); d.className = "cs-desc"; d.textContent = loc.dataset.note;
+      b.querySelector(".cs-cap").appendChild(d);
+    }
     b.querySelector("small").textContent = opts.single === "view" && angs.length === 1
       ? fmtTaken(angs[0].dataset.taken) : plural(angs.length, collWords(item).piece.toLowerCase());   // single photos: their date
     b.addEventListener("click", () => (opts.single === "view" && angs.length === 1
