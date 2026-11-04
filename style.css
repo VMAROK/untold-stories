@@ -2835,3 +2835,5 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .gi-entry .gi-media { overflow: hidden; }
 .gi-entry.ge-multi .gi-media { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 .gi-entry .ge-slide { will-change: transform, opacity; }
+.loc-cover { user-select: none; -webkit-user-select: none; }
+.loc-cover .loc-slide { will-change: transform, opacity; }

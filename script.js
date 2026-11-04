@@ -748,6 +748,7 @@ function openColl(item, push = true) {
       cover.insertBefore(sl, cover.querySelector(".loc-dots"));
       cover.querySelector(".loc-dots").insertAdjacentHTML("beforeend", `<i${k === 0 ? ' class="on"' : ""}></i>`);
     });
+    swipeSlides(cover, ".loc-slide", ".loc-dots i");          // swipe through the cover's images with a finger / mouse
     const toggle = sec.querySelector(".loc-toggle");
     const flip = () => {
       const open = sec.classList.toggle("open");
@@ -782,6 +783,61 @@ function leaveColl() {
   if (history.state && history.state.coll) history.back();
   else closeColl();
 }
+// Finger / mouse swipe for a stack of slides (one has class "on"): the image follows the drag 1:1,
+// let go past ~20% (or flick) to move on, otherwise it springs back. Used by the collection covers.
+function swipeSlides(box, slideSel, dotSel, onChange) {
+  let drag = null, swiped = false;
+  const setX = (el, x, anim) => { el.style.transition = anim ? "transform 0.32s cubic-bezier(.2,.7,.2,1), opacity 0s" : "none"; el.style.transform = `translateX(${x}px)`; };
+  box.style.touchAction = "pan-y";
+  box.addEventListener("pointerdown", (ev) => {
+    if (ev.pointerType === "mouse" && ev.button !== 0) return;
+    if (ev.target.closest("button, .gi-play, .loc-cta")) return;
+    const sl = [...box.querySelectorAll(slideSel)];
+    if (sl.length < 2) return;
+    drag = { id: ev.pointerId, x0: ev.clientX, y0: ev.clientY, t0: performance.now(), dx: 0, sl,
+      cur: sl.findIndex((x) => x.classList.contains("on")), w: box.clientWidth, axis: null, nb: null };
+    swiped = false;
+  });
+  box.addEventListener("pointermove", (ev) => {
+    if (!drag || ev.pointerId !== drag.id) return;
+    const dx = ev.clientX - drag.x0, dy = ev.clientY - drag.y0;
+    if (!drag.axis) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      drag.axis = Math.abs(dx) > Math.abs(dy) ? "x" : "y";
+      if (drag.axis === "y") { drag = null; return; }
+      try { box.setPointerCapture(ev.pointerId); } catch (e) {}
+      box._hold = Date.now();
+    }
+    ev.preventDefault();
+    drag.dx = dx;
+    const { sl, cur, w } = drag, n = sl.length;
+    const nbI = (cur + (dx < 0 ? 1 : -1) + n) % n;
+    if (drag.nb !== nbI && drag.nb != null) { sl[drag.nb].style.opacity = ""; sl[drag.nb].style.transform = ""; }
+    drag.nb = nbI;
+    sl[cur].style.opacity = 1; sl[nbI].style.opacity = 1;
+    setX(sl[cur], dx, false); setX(sl[nbI], dx + (dx < 0 ? w : -w), false);
+  });
+  const end = (ev) => {
+    if (!drag || ev.pointerId !== drag.id || !drag.axis) { drag = null; return; }
+    const { sl, cur, w, dx, nb, t0 } = drag; drag = null;
+    if (Math.abs(dx) > 6) swiped = true;
+    const fast = Math.abs(dx) / Math.max(1, performance.now() - t0) > 0.5;
+    const go = nb != null && (Math.abs(dx) > w * 0.2 || (fast && Math.abs(dx) > 20));
+    const d = dx < 0 ? 1 : -1;
+    if (go) {
+      setX(sl[cur], -d * w, true); setX(sl[nb], 0, true);
+      sl[cur].classList.remove("on"); sl[nb].classList.add("on");
+      const dots = [...box.querySelectorAll(dotSel)]; dots[cur]?.classList.remove("on"); dots[nb]?.classList.add("on");
+      onChange && onChange(nb);
+    } else if (nb != null) { setX(sl[cur], 0, true); setX(sl[nb], d * w, true); }
+    setTimeout(() => sl.forEach((x) => { x.style.transition = "none"; x.style.transform = ""; x.style.opacity = ""; void x.offsetWidth; x.style.transition = ""; }), 340);
+    box._hold = Date.now();
+  };
+  box.addEventListener("pointerup", end);
+  box.addEventListener("pointercancel", end);
+  box.addEventListener("dragstart", (ev) => ev.preventDefault());
+  box.addEventListener("click", (ev) => { if (swiped) { ev.stopPropagation(); ev.preventDefault(); swiped = false; } }, true);
+}
 // location covers: advance every few seconds, only while the collection is open
 const COVER_SECONDS = 4;
 setInterval(() => {
@@ -791,6 +847,7 @@ setInterval(() => {
     if (slides.length < 2) return;
     const r = cv.getBoundingClientRect();
     if (r.bottom < 0 || r.top > innerHeight) return;            // off screen: leave it
+    if (cv._hold && Date.now() - cv._hold < 5000) return;        // just swiped: wait 5 seconds
     const dots = cv.querySelectorAll(".loc-dots i");
     const cur = [...slides].findIndex((x) => x.classList.contains("on"));
     const nxt = (cur + 1) % slides.length;
