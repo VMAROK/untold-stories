@@ -434,13 +434,17 @@ const viewer = document.getElementById("viewer");
 const GAL_PER_PAGE = { mix: 12, photo: 12 };   // pieces per page
 const galState = { medium: "mix", cat: "all", page: 1 };
 
+// Art & Film > All:
+//   1 = every video and every photo (Flickr photos from the collections too), each on its own   <- testing now
+//   2 = (not built yet) the entries of each collection (Pool Rooms, Grass Hills, The Chapel's scenes…) plus loose videos
+const ALL_MODE = 1;
 function galItems() {
   return [...gal.querySelectorAll(".gi")].filter((g) =>
     // "Art & Film" shows both your 3D art and your films
     g.dataset.medium.split(" ").some((m) => (galState.medium === "mix" ? m === "film" || m === "art" : m === galState.medium)) &&
     (galState.cat === "all"
       ? (galState.medium === "mix"
-          ? g.dataset.kind === "video" && !g.classList.contains("gi-ext")      // Art & Film > All: every video you've made, nothing else
+          ? (g.dataset.kind === "video" || (ALL_MODE === 1 && g.dataset.kind === "still")) && !g.classList.contains("gi-ext")   // Art & Film > All (see ALL_MODE)
           : !g.classList.contains("gi-ext") || (g.classList.contains("gi-empty") && !gal.querySelector('.gi[data-medium="photo"]:not(.gi-ext)')))
       : g.dataset.cat === galState.cat));
 }
@@ -534,7 +538,7 @@ function pieceFromItem(g) {
     cat: g.querySelector(".gi-cat").textContent, title: g.querySelector("h3").textContent,
     desc: g.querySelector(".gi-desc")?.textContent || "", year: g.dataset.year || "",
     descHtml: g.dataset.rich ? g.querySelector(".gi-desc").innerHTML : "",
-    spec: g.dataset.spec || "", tools: g.dataset.tools || "",
+    spec: g.dataset.spec || "", tools: g.dataset.tools || "", taken: g.dataset.taken || "",
   };
 }
 // "2026-11-03T09:08:40-08:00" -> "Nov 3, 2026" (the date as the camera/Flickr recorded it, no time-zone shift)
@@ -1754,6 +1758,8 @@ function flickrCollections(items, albums, grid) {
   const newestOf = (id) => items.filter((it) => (it.album || "general") === id).reduce((n, x) => (takenKey(x) > n ? takenKey(x) : n), "");
   list.sort((x, y) => newestOf(y.id).localeCompare(newestOf(x.id)));
   const before = grid.querySelector('.gi[data-cat="general"]') || null;
+  gal.querySelectorAll(".gi-flickr").forEach((x) => x.remove());
+  const loose = [];
   list.forEach((al) => {
     const mine = items.filter((it) => (it.album || "general") === al.id || (!it.album && al.id === "general"));
     if (!mine.length) return;
@@ -1822,6 +1828,28 @@ function flickrCollections(items, albums, grid) {
     });
     li.querySelector(".gi-media").prepend(mo);
     li.querySelector(".gi-media").addEventListener("click", () => openColl(li));
+    if (ALL_MODE === 1 && !/^photography$/i.test(al.title || "")) {   // option 1: each photo also on its own under All
+      sets.forEach((g) => g.list.forEach((it) => {
+        const t = document.createElement("li");
+        t.className = "gi gi-flickr";
+        Object.assign(t.dataset, { medium: "art", cat: "all-only", kind: "still",
+          orient: it.h > it.w * 1.1 ? "tall" : it.w > it.h * 1.1 ? "wide" : "square",
+          src: it.m.replace("_m.", "_b."), year: "", taken: it.taken || "", spec: "", tools: "", sortKey: takenKey(it) });
+        t.innerHTML = `<button type="button" class="gi-media" aria-label=""></button>
+          <div class="gi-cap"><p class="gi-cat"></p><h3></h3></div><p class="gi-desc" hidden></p>`;
+        const bt = t.querySelector(".gi-media");
+        bt.style.background = `${bgLayers(it.m.replace("_m.", "_z."))}, #0a0a0a`;
+        bt.setAttribute("aria-label", "View " + (story ? g.name : it.title || g.name));
+        t.querySelector(".gi-cat").textContent = `Still · ${al.title}`;
+        t.querySelector("h3").textContent = story ? g.name : g.name;
+        t.querySelector(".gi-desc").textContent = it.description || "";
+        bt.addEventListener("click", () => {
+          const lst = galItems().filter((x) => !x.classList.contains("gi-coll") && !x.classList.contains("gi-ext"));
+          openView(lst.map(pieceFromItem), lst.indexOf(t));
+        });
+        loose.push(t);
+      }));
+    }
     if (/^photography$/i.test(al.title || "")) {                 // the Photography album lives in the Photography tab, mosaic only
       const ph = document.getElementById("ph-mosaic");
       if (ph) { li.classList.remove("gi-coll"); fillMosaic(ph, li, al.title, { single: "view" }); }
@@ -1829,6 +1857,8 @@ function flickrCollections(items, albums, grid) {
     }
     grid.insertBefore(li, before);
   });
+  // loose photos (option 1): newest date taken first, after everything else in the grid
+  loose.sort((x, y) => y.dataset.sortKey.localeCompare(x.dataset.sortKey)).forEach((t) => grid.appendChild(t));
   refreshCollBadges();
 }
 
