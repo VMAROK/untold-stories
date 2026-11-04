@@ -2834,9 +2834,9 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .gi-entry .ge-dots i.on { background: #f2ede6; }
 .gi-entry .gi-media { overflow: hidden; }
 .gi-entry.ge-multi .gi-media { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
-.gi-entry .ge-slide { will-change: transform, opacity; }
+/* (no will-change on slides: on iPad Safari it made big images draw in broken pieces) */
 .loc-cover { user-select: none; -webkit-user-select: none; }
-.loc-cover .loc-slide { will-change: transform, opacity; }
+
 
 /* Photography tiles: the Flickr description under the name */
 .cs-cap .cs-desc { order: 3; font-style: normal; font-family: var(--body); font-size: 12.5px; line-height: 1.5; color: rgba(242, 237, 230, 0.75);
