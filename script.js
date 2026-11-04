@@ -1629,7 +1629,7 @@ function updateMuFilter() {
       Object.assign(a.dataset, {
         kind: "video", video: v.url, orient: v.short ? "tall" : "wide", title: v.title,
         poster: ytThumbs(v),
-        spec: v.short ? "Format: Short" : "Format: Video",
+        spec: v.short ? "Format: Short" : "Format: Video", published: v.published || "",
       });
       a.textContent = v.description || "";
       return a;
@@ -1658,7 +1658,7 @@ function updateMuFilter() {
       Object.assign(li.dataset, {
         medium: "film", cat: v.section === "general" && !placed.has(v.id) ? "general" : "liminal-yt", kind: "video",
         orient: v.short ? "tall" : "wide", video: v.url, year: (v.published || "").slice(0, 4),
-        spec: v.short ? "Format: Short" : "Format: Video", tools: "",
+        spec: v.short ? "Format: Short" : "Format: Video", tools: "", published: v.published || "",
       });
       const thumb = ytThumbs(v);
       li.innerHTML = `<button type="button" class="gi-media" aria-label=""><span class="gi-play" aria-hidden="true"></span>${v.short ? '<span class="gi-dur">Short</span>' : ""}</button>
@@ -1675,6 +1675,7 @@ function updateMuFilter() {
       });
       grid.insertBefore(li, first);
     });
+    sortAllTab();
     renderGallery();
   }).catch(() => {});
 })();
@@ -1815,7 +1816,7 @@ function flickrCollections(items, albums, grid) {
         a.className = "ang";
         Object.assign(a.dataset, { kind: "still", src: it.m.replace("_m.", "_b."), title: story ? g.name : it.title || g.name,
           orient: it.h > it.w * 1.1 ? "tall" : it.w > it.h * 1.1 ? "wide" : "square",
-          spec: story ? "" : `Version: ${it.ver}`, taken: it.taken || "", ratio: ((it.w || 4) / (it.h || 3)).toFixed(4) });
+          spec: story ? "" : `Version: ${it.ver}`, taken: it.taken || "", published: it.published || "", ratio: ((it.w || 4) / (it.h || 3)).toFixed(4) });
         a.textContent = it.description || "";
         data.appendChild(sec).appendChild(a);
       });
@@ -2519,6 +2520,16 @@ addEventListener("resize", clSizeRows);
 /* ---------- Art & Film > All, option 2: one tile per collection entry ----------
    Every location / photo / scene that has something in it (Pool Rooms, Night Grass, The School Lunchroom…).
    Rebuilt whenever the YouTube or Flickr content arrives. */
+// upload date as a sortable UTC timestamp
+const pubKey = (d) => { const t = Date.parse(d || ""); return isNaN(t) ? "" : new Date(t).toISOString(); };
+// All tab: whatever was uploaded most recently (a video, or the newest photo in an entry) comes first
+function sortAllTab() {
+  if (!gal) return;
+  const grid = gal.querySelector(".gal-grid");
+  const items = [...grid.querySelectorAll(".gi-entry, .gi-yt")];
+  items.sort((a, b) => pubKey(b.dataset.published).localeCompare(pubKey(a.dataset.published)))
+    .forEach((x) => grid.appendChild(x));
+}
 function buildAllEntries() {
   if (!gal || ALL_MODE !== 2) return;
   const grid = gal.querySelector(".gal-grid");
@@ -2541,6 +2552,7 @@ function buildAllEntries() {
       const r = +first.dataset.ratio || (first.dataset.orient === "tall" ? 0.5625 : first.dataset.orient === "square" ? 1 : 1.78);
       const li = document.createElement("li");
       li.className = "gi gi-entry";
+      li.dataset.published = e.angs.reduce((n, a) => (pubKey(a.dataset.published) > n ? pubKey(a.dataset.published) : n), "");
       Object.assign(li.dataset, { medium: "film art", cat: "all-only", kind: "entry",
         orient: r < 0.8 ? "tall" : r > 1.25 ? "wide" : "square" });
       li.innerHTML = `<button type="button" class="gi-media" aria-label=""></button>
@@ -2649,6 +2661,7 @@ function buildAllEntries() {
       grid.appendChild(li);
     });
   });
+  sortAllTab();
 }
 
 // All tab: entries with several images fade to the next one every few seconds (paused for a while after a swipe)
