@@ -678,6 +678,8 @@ function collCounts(item) {
 function openColl(item, push = true) {
   if (!coll) return;
   collItem = item;
+  coll.classList.toggle("coll-chapel", /^the chapel$/i.test(item.querySelector("h3").textContent.trim()));   // torch-lit look
+  setTimeout(() => window.chapelFire && chapelFire(), 0);          // after the page is shown
   coll.classList.toggle("coll-photos", "photosOnly" in item.dataset);   // photo collections: show each image whole, at its own shape
   setTimeout(() => clSmallBuild(item, world0(item)), 0);
   const world = item.querySelector("h3").textContent;
@@ -766,6 +768,7 @@ function openColl(item, push = true) {
 function closeColl() {
   if (!coll || coll.hidden) return;
   coll.classList.remove("open");
+  setTimeout(() => window.chapelFire && chapelFire(), 460);
   setTimeout(() => { if (!coll.classList.contains("open")) coll.hidden = true; }, 450);
 }
 function leaveColl() {
@@ -2419,3 +2422,59 @@ document.getElementById("cl-size")?.addEventListener("click", (e) => {
   const b = e.target.closest("button[data-size]"); if (b) clSetSize(b.dataset.size);
 });
 addEventListener("resize", clSizeRows);
+
+/* ---------- The Chapel: a dark, torch-lit, medieval background ----------
+   Two torches low on the left and right and a hearth glow from below, all flickering on their own,
+   with embers drifting up through the dark. Runs only while The Chapel collection is open. */
+(() => {
+  const cv = coll && coll.querySelector("canvas.chapel-fire");
+  if (!cv) return;
+  const ctx = cv.getContext("2d");
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let W = 0, H = 0, raf = 0, embers = [], t0 = 0;
+  const rnd = (a, b) => a + Math.random() * (b - a);
+  const size = () => {
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    W = innerWidth; H = innerHeight;
+    cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    embers = Array.from({ length: Math.round(Math.min(90, Math.max(35, W / 16))) }, () => ember(true));
+  };
+  const ember = (any) => ({ x: rnd(0, W), y: any ? rnd(0, H) : H + 10, r: rnd(0.6, 2.2), vy: rnd(18, 55), sway: rnd(8, 30),
+    ph: rnd(0, 6.28), life: rnd(0.55, 1), hue: rnd(18, 42) });
+  // flicker: layered waves plus a little noise, so no two torches move together
+  const flick = (t, s) => 0.72 + 0.12 * Math.sin(t * 7.1 + s) + 0.08 * Math.sin(t * 13.7 + s * 2) + 0.06 * Math.sin(t * 3.3 + s * 3) + rnd(-0.03, 0.03);
+  const glow = (x, y, rad, a, inner) => {
+    const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
+    g.addColorStop(0, `rgba(255, ${inner}, 60, ${a})`);
+    g.addColorStop(0.35, `rgba(200, 80, 20, ${a * 0.45})`);
+    g.addColorStop(1, "rgba(60, 10, 0, 0)");
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+  };
+  const draw = (now) => {
+    const t = now / 1000, dt = Math.min(0.05, t - (t0 || t)); t0 = t;
+    ctx.globalCompositeOperation = "source-over";
+    ctx.fillStyle = "#060302"; ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = "lighter";
+    const R = Math.max(W, H);
+    glow(W * 0.06, H * 0.72, R * 0.46 * flick(t, 0.3), 0.42 * flick(t, 1.1), 170);   // left torch
+    glow(W * 0.94, H * 0.70, R * 0.46 * flick(t, 2.4), 0.42 * flick(t, 3.7), 165);   // right torch
+    glow(W * 0.5, H * 1.08, R * 0.6 * flick(t, 5.2), 0.3 * flick(t, 4.4), 140);    // hearth below
+    embers.forEach((e, i) => {
+      if (!still) { e.y -= e.vy * dt; e.x += Math.sin(t * 1.3 + e.ph) * e.sway * dt; }
+      const k = e.y / H;                                         // fade out as they rise
+      if (e.y < -10 || k < 0.05) { embers[i] = ember(false); return; }
+      const a = Math.min(1, k * 1.4) * e.life * (0.6 + 0.4 * Math.sin(t * 9 + e.ph));
+      ctx.fillStyle = `hsla(${e.hue}, 100%, 62%, ${a})`;
+      ctx.shadowColor = `hsla(${e.hue}, 100%, 55%, ${a})`; ctx.shadowBlur = 8;
+      ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, 6.283); ctx.fill();
+    });
+    ctx.shadowBlur = 0;
+    raf = still ? 0 : requestAnimationFrame(draw);
+  };
+  window.chapelFire = () => {
+    const on = coll.classList.contains("coll-chapel") && !coll.hidden;
+    if (on && !raf) { size(); t0 = 0; raf = requestAnimationFrame(draw); }
+    if (!on && raf) { cancelAnimationFrame(raf); raf = 0; }
+  };
+  addEventListener("resize", () => { if (raf) size(); });
+})();

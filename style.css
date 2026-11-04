@@ -2801,3 +2801,26 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 /* Large view (photo collections): everything in a landscape frame; portrait images sit whole inside it on black */
 .coll-photos .loc-cover { aspect-ratio: 16 / 9 !important; width: 100%; background: #000; }
 .coll-photos .loc-slide { background-color: #000 !important; }
+
+/* ================= The Chapel: torch-lit, dark and medieval ================= */
+.coll .chapel-fire { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; display: none; }
+.coll.coll-chapel .chapel-fire { display: block; }
+.coll.coll-chapel { background: #060302; }
+.coll.coll-chapel::before {                       /* stone-dark vignette over the firelight */
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse 85% 75% at 50% 45%, transparent 35%, rgba(0, 0, 0, 0.78) 100%),
+              linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 30%);
+}
+.coll.coll-chapel .coll-inner { position: relative; z-index: 1; }
+.coll.coll-chapel .coll-head h2 {
+  font-family: "Cinzel", var(--serif-2); font-weight: 500; letter-spacing: 6px;
+  color: #f3dfc0; text-shadow: 0 0 18px rgba(255, 140, 40, 0.45), 0 0 40px rgba(200, 70, 10, 0.3);
+}
+.coll.coll-chapel .coll-head .rule { background: linear-gradient(90deg, transparent, #c8742a, transparent); }
+.coll.coll-chapel .folio-kicker, .coll.coll-chapel .coll-stats, .coll.coll-chapel .gi-cat { color: #d9893a; }
+.coll.coll-chapel .loc-head h3, .coll.coll-chapel .cs-cap b { font-family: "Cinzel", var(--serif-2); letter-spacing: 1px; }
+.coll.coll-chapel .cs-cap small, .coll.coll-chapel .loc-num { color: #e0913f; }
+.coll.coll-chapel .cs-tile, .coll.coll-chapel .loc-cover, .coll.coll-chapel .ang-tile { border-color: rgba(200, 116, 42, 0.28); box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.9), 0 0 24px -10px rgba(255, 120, 30, 0.25); }
+.coll.coll-chapel .cs-tile.on { border-color: #d9893a; box-shadow: 0 0 0 1px #d9893a, 0 0 30px -6px rgba(255, 130, 40, 0.5); }
+.coll.coll-chapel .cl-size button.on { border-color: #c8742a; }
+.coll.coll-chapel .cs-drop { border-top-color: rgba(200, 116, 42, 0.5); }
