@@ -1,6 +1,17 @@
 {
-  "synced_at": "2026-11-03T14:28:31Z",
+  "synced_at": "2026-11-04T16:58:38Z",
   "videos": [
+    {
+      "id": "P0UphEE6B8s",
+      "title": "Spinning Earth",
+      "url": "https://www.youtube.com/watch?v=P0UphEE6B8s",
+      "short": false,
+      "published": "2026-11-03T17:40:07+00:00",
+      "description": "Made in 2023",
+      "thumb": "https://i1.ytimg.com/vi/P0UphEE6B8s/hqdefault.jpg",
+      "hashtags": [],
+      "section": "general"
+    },
     {
       "id": "70MD6kQ5hHM",
       "title": "He crouches and throws a peace sign",
