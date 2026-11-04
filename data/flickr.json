@@ -27,6 +27,32 @@
  ],
  "photos": [
   {
+   "title": "Priesthood and the Heavens",
+   "url": "https://www.flickr.com/photos/205100593@N02/55629738012/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55629738012_a92cec460c_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2025-10-27T06:13:00-08:00",
+   "published": "2026-11-04T17:09:05Z",
+   "description": "TITLE Priesthood and the Heavens\n STORY The Chapel\n SCENE The Pillars\n TIME Day\n VERSION 1",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "Morning School Lunchroom",
+   "url": "https://www.flickr.com/photos/205100593@N02/55631239182/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55631239182_047eabae85_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-04T09:08:13-08:00",
+   "published": "2026-11-04T17:08:16Z",
+   "description": "TITLE Morning School Lunchroom\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Day\n VERSION 1",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
    "title": "Playroom",
    "url": "https://www.flickr.com/photos/205100593@N02/55631312644/in/set-72177720336674185/",
    "m": "https://live.staticflickr.com/65535/55631312644_bbf83e73f2_m.jpg",
@@ -130,7 +156,7 @@
    "h": 240,
    "taken": "2025-10-08T08:26:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 2",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -143,7 +169,7 @@
    "h": 240,
    "taken": "2025-10-27T07:07:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Masonry and the Chapel\n STORY The Chapel\n SCENE The Pillar Halls\n VERSION 1",
+   "description": "TITLE Masonry and the Chapel\n STORY The Chapel\n SCENE The Pillar Halls\n TIME Night\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -156,7 +182,7 @@
    "h": 240,
    "taken": "2025-10-07T01:29:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE He Watches Me\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "description": "TITLE He Watches Me\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 2",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -169,7 +195,7 @@
    "h": 240,
    "taken": "2025-10-08T00:11:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 1",
+   "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -182,7 +208,7 @@
    "h": 240,
    "taken": "2025-10-08T08:26:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 3",
+   "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 3",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -195,7 +221,7 @@
    "h": 240,
    "taken": "2025-10-07T03:52:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE He Watches Me\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 3",
+   "description": "TITLE He Watches Me\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 3",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -208,7 +234,7 @@
    "h": 240,
    "taken": "2025-10-08T12:34:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Midnight Prayers\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 1",
+   "description": "TITLE Midnight Prayers\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -221,7 +247,7 @@
    "h": 240,
    "taken": "2025-10-08T14:38:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Candles For Lunch\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "description": "TITLE Candles For Lunch\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 2",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -234,7 +260,7 @@
    "h": 240,
    "taken": "2025-10-08T17:49:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE The School Lunchroom\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 1",
+   "description": "TITLE The School Lunchroom\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -247,7 +273,7 @@
    "h": 240,
    "taken": "2025-10-07T09:05:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE He Watches Me Hunched\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "description": "TITLE He Watches Me Hunched\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 2",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -260,7 +286,7 @@
    "h": 240,
    "taken": "2025-10-08T20:51:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE The School Lunchroom\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 2",
+   "description": "TITLE The School Lunchroom\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 2",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -273,7 +299,7 @@
    "h": 240,
    "taken": "2025-10-06T23:25:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE He Watches Me\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 1",
+   "description": "TITLE He Watches Me\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -286,7 +312,7 @@
    "h": 240,
    "taken": "2025-10-06T08:01:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE He Watches Me Hunched\n STORY The Chapel\n SCENE The School Lunchroom\n VERSION 1",
+   "description": "TITLE He Watches Me Hunched\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
