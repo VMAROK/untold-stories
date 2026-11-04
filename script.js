@@ -2456,9 +2456,11 @@ addEventListener("resize", clSizeRows);
     ctx.fillStyle = "#060302"; ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = "lighter";
     const R = Math.max(W, H);
-    glow(W * 0.06, H * 0.72, R * 0.46 * flick(t, 0.3), 0.42 * flick(t, 1.1), 170);   // left torch
-    glow(W * 0.94, H * 0.70, R * 0.46 * flick(t, 2.4), 0.42 * flick(t, 3.7), 165);   // right torch
-    glow(W * 0.5, H * 1.08, R * 0.6 * flick(t, 5.2), 0.3 * flick(t, 4.4), 140);    // hearth below
+    // the glows breathe slowly and faintly (like the Photography bubbles) instead of flickering; size stays put
+    const calm = (s) => 0.85 + 0.15 * Math.sin(t * 0.55 + s) * Math.sin(t * 0.23 + s * 1.7);
+    glow(W * 0.06, H * 0.72, R * 0.4, 0.24 * calm(0.3), 170);    // left torch
+    glow(W * 0.94, H * 0.70, R * 0.4, 0.24 * calm(2.4), 165);    // right torch
+    glow(W * 0.5, H * 1.08, R * 0.5, 0.16 * calm(5.2), 140);     // hearth below
     embers.forEach((e, i) => {
       if (!still) { e.y -= e.vy * dt; e.x += Math.sin(t * 1.3 + e.ph) * e.sway * dt; }
       const k = e.y / H;                                         // fade out as they rise
