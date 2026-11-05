@@ -686,7 +686,8 @@ function openColl(item, push = true) {
   if (!coll) return;
   collItem = item;
   coll.classList.toggle("coll-chapel", /^the chapel$/i.test(item.querySelector("h3").textContent.trim()));   // torch-lit look
-  coll.dataset.atmo = item.dataset.time === "day" ? "day" : "night";   // day: clouds instead of fire
+  coll.dataset.atmo = item.dataset.time === "day" ? "day" : "night";   // day: the same glow, in daylight colours
+  coll.dataset.atmoImg = item.dataset.timeImg || "";
   setTimeout(() => window.chapelFire && chapelFire(), 0);          // after the page is shown
   coll.classList.toggle("coll-photos", "photosOnly" in item.dataset);   // photo collections: show each image whole, at its own shape
   setTimeout(() => clSmallBuild(item, world0(item)), 0);
@@ -1950,6 +1951,7 @@ function flickrCollections(items, albums, grid) {
     // atmosphere: the TIME of the most recently taken photo — "day" = clouds, "night" = firelight
     const latest = mine.reduce((n, x) => (!n || takenKey(x) > takenKey(n) ? x : n), null);
     li.dataset.time = /day/i.test(flickrMeta(latest && latest.description).time || "") ? "day" : "night";
+    if (latest) li.dataset.timeImg = latest.m;
     li.querySelector(".gi-cat").textContent = `${story ? "Story" : "General"} · Collection`;
     li.querySelector("h3").textContent = al.title || "Album";
     const data = li.querySelector(".coll-data");
@@ -2631,71 +2633,44 @@ addEventListener("resize", clSizeRows);
     ph: rnd(0, 6.28), life: rnd(0.55, 1), hue: rnd(18, 42) });
   // flicker: layered waves plus a little noise, so no two torches move together
   const flick = (t, s) => 0.72 + 0.12 * Math.sin(t * 7.1 + s) + 0.08 * Math.sin(t * 13.7 + s * 2) + 0.06 * Math.sin(t * 3.3 + s * 3) + rnd(-0.03, 0.03);
+  let P = null;                                            // the colours in use (set each frame)
   const glow = (x, y, rad, a, inner) => {
     const g = ctx.createRadialGradient(x, y, 0, x, y, rad);
-    g.addColorStop(0, `rgba(255, ${inner}, 60, ${a * 0.6})`);       // dimmer flame at the centre…
-    g.addColorStop(0.35, `rgba(200, 80, 20, ${a * 0.45})`);        // …same glow around it
-    g.addColorStop(1, "rgba(60, 10, 0, 0)");
+    const c = P === NIGHT ? [255, inner, 60] : P.core;
+    g.addColorStop(0, `rgba(${c[0]}, ${c[1]}, ${c[2]}, ${a * 0.6})`);       // dimmer centre…
+    g.addColorStop(0.35, `rgba(${P.mid[0]}, ${P.mid[1]}, ${P.mid[2]}, ${a * 0.45})`);   // …same glow around it
+    g.addColorStop(1, `rgba(${P.edge[0]}, ${P.edge[1]}, ${P.edge[2]}, 0)`);
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   };
-  // day: a real-looking blue sky — soft sunlight in one corner and natural clouds (made from layered noise, not
-  // circles) drifting slowly in two layers. Calm, like the Photography bubbles.
-  let clouds = null;
-  const cloudLayer = (seed, cw, ch, cover) => {          // one horizontally-tileable cloud texture
-    let a = seed * 9301 + 49297;
-    const R = () => ((a = (a * 9301 + 49297) % 233280) / 233280);
-    const P = 64, grid = Array.from({ length: P * P }, R);
-    const val = (x, y, f) => {                            // smooth value noise, wraps every f cells horizontally
-      const xi = Math.floor(x), yi = Math.floor(y), xf = x - xi, yf = y - yi;
-      const u = xf * xf * (3 - 2 * xf), v = yf * yf * (3 - 2 * yf);
-      const g = (i, j) => grid[(((j % P) + P) % P) * P + ((((i % f) + f) % f) % P)];
-      const x0 = g(xi, yi) + (g(xi + 1, yi) - g(xi, yi)) * u, x1 = g(xi, yi + 1) + (g(xi + 1, yi + 1) - g(xi, yi + 1)) * u;
-      return x0 + (x1 - x0) * v;
+  // colours: night = firelight; day = the same soft glows and drifting specks, tinted by the newest photo's colour
+  const NIGHT = { bg: "#060302", core: [255, 165, 60], mid: [200, 80, 20], edge: [60, 10, 0], hue: [18, 42], sat: 100, lig: 62 };
+  let DAY = { bg: "#0b0a08", core: [255, 240, 205], mid: [200, 178, 135], edge: [40, 34, 24], hue: [40, 52], sat: 70, lig: 82 };
+  let dayFor = "";
+  const tintDay = (src) => {                                 // sample the photo's average colour (falls back to warm daylight)
+    if (!src || src === dayFor) return; dayFor = src;
+    const im = new Image(); im.crossOrigin = "anonymous";
+    im.onload = () => {
+      try {
+        const c = document.createElement("canvas"); c.width = c.height = 12; const g = c.getContext("2d");
+        g.drawImage(im, 0, 0, 12, 12); const d = g.getImageData(0, 0, 12, 12).data;
+        let r = 0, gg = 0, b = 0; for (let k = 0; k < d.length; k += 4) { r += d[k]; gg += d[k + 1]; b += d[k + 2]; }
+        const n = d.length / 4; r /= n; gg /= n; b /= n;
+        const mx = Math.max(r, gg, b, 1), lift = (v, f) => Math.min(255, Math.round(v / mx * 255 * f + 255 * (1 - f)));
+        const hsl = (() => { const R = r / 255, G = gg / 255, B = b / 255, M = Math.max(R, G, B), m = Math.min(R, G, B); let h = 0;
+          if (M !== m) { const dd = M - m; h = M === R ? ((G - B) / dd) % 6 : M === G ? (B - R) / dd + 2 : (R - G) / dd + 4; h *= 60; if (h < 0) h += 360; } return h; })();
+        DAY = { bg: `rgb(${Math.round(r * 0.06)}, ${Math.round(gg * 0.06)}, ${Math.round(b * 0.06)})`,
+          core: [lift(r, 0.55), lift(gg, 0.55), lift(b, 0.55)], mid: [lift(r, 0.85) * 0.8, lift(gg, 0.85) * 0.8, lift(b, 0.85) * 0.8].map(Math.round),
+          edge: [Math.round(r * 0.2), Math.round(gg * 0.2), Math.round(b * 0.2)], hue: [hsl - 8, hsl + 8], sat: 60, lig: 80 };
+        coll.style.setProperty("--day-accent", `rgb(${lift(r, 0.6)}, ${lift(gg, 0.6)}, ${lift(b, 0.6)})`);
+      } catch (e) { /* the photo host didn't allow reading colours: keep warm daylight */ }
     };
-    const fbm = (x, y) => { let s = 0, amp = 0.55, f = 4; for (let o = 0; o < 6; o++) { s += amp * val(x * f, y * f * 0.5 + o * 7, f); amp *= 0.5; f *= 2; } return s; };
-    const c = document.createElement("canvas"); c.width = cw; c.height = ch;
-    const g = c.getContext("2d"), img = g.createImageData(cw, ch), d = img.data;
-    for (let y = 0; y < ch; y++) for (let x = 0; x < cw; x++) {
-      const nx = x / cw, ny = y / ch;
-      const n = fbm(nx, ny), nb = fbm(nx, ny + 0.012);
-      const fade = Math.sin(Math.PI * ny);                // thin out at the top and bottom of the band
-      let al = Math.min(1, Math.max(0, (n * (0.55 + 0.45 * fade) - (1 - cover)) / 0.22));
-      al = al * al * (3 - 2 * al);
-      const lit = Math.min(1, Math.max(0, 0.72 + (n - nb) * 9 + (1 - ny) * 0.12));   // brighter tops, soft grey undersides
-      const k = (y * cw + x) * 4;
-      d[k] = 168 + 87 * lit; d[k + 1] = 176 + 79 * lit; d[k + 2] = 192 + 63 * lit; d[k + 3] = al * 245;
-    }
-    g.putImageData(img, 0, 0);
-    return c;
-  };
-  const drawDay = (t, dt) => {
-    if (!clouds) clouds = { far: cloudLayer(3, 640, 220, 0.6), near: cloudLayer(11, 640, 240, 0.56), x1: 0, x2: 0 };
-    ctx.globalCompositeOperation = "source-over";
-    const sky = ctx.createLinearGradient(0, 0, 0, H);      // deep blue overhead, paler towards the horizon
-    sky.addColorStop(0, "#1f5fb8"); sky.addColorStop(0.5, "#4e8fd6"); sky.addColorStop(1, "#a9cdee");
-    ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
-    const sx = W * 0.84, sy = H * 0.08, R = Math.max(W, H);   // sunlight, softly, no cartoon rays
-    const sun = ctx.createRadialGradient(sx, sy, 0, sx, sy, R * 0.6);
-    sun.addColorStop(0, "rgba(255, 252, 235, 0.85)"); sun.addColorStop(0.03, "rgba(255, 245, 215, 0.6)");
-    sun.addColorStop(0.18, "rgba(255, 236, 200, 0.22)"); sun.addColorStop(1, "rgba(255, 236, 200, 0)");
-    ctx.fillStyle = sun; ctx.fillRect(0, 0, W, H);
-    // two cloud layers, the nearer one a little faster, each tiling seamlessly as it drifts
-    if (!still) { clouds.x1 += dt * 6; clouds.x2 += dt * 11; }
-    ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
-    const layer = (img, x, y, h, alpha) => {
-      const w = h * (img.width / img.height) * 1.6, off = x % w;
-      ctx.globalAlpha = alpha;
-      for (let k = -1; k * w - off < W; k++) ctx.drawImage(img, k * w - off, y, w + 1, h);
-      ctx.globalAlpha = 1;
-    };
-    layer(clouds.far, clouds.x1, -H * 0.04, H * 0.42, 0.75);
-    layer(clouds.near, clouds.x2, H * 0.28, H * 0.55, 0.85);
+    im.src = src;
   };
   const draw = (now) => {
     const t = now / 1000, dt = Math.min(0.05, t - (t0 || t)); t0 = t;
-    if (coll.dataset.atmo === "day") { drawDay(t, dt); raf = still ? 0 : requestAnimationFrame(draw); return; }
+    P = coll.dataset.atmo === "day" ? DAY : NIGHT;
     ctx.globalCompositeOperation = "source-over";
-    ctx.fillStyle = "#060302"; ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = P.bg; ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = "lighter";
     const R = Math.max(W, H);
     // the glows breathe slowly and faintly (like the Photography bubbles) instead of flickering; size stays put
@@ -2708,8 +2683,9 @@ addEventListener("resize", clSizeRows);
       const k = e.y / H;                                         // fade out as they rise
       if (e.y < -10 || k < 0.05) { embers[i] = ember(false); return; }
       const a = Math.min(1, k * 1.4) * e.life * (0.6 + 0.4 * Math.sin(t * 9 + e.ph));
-      ctx.fillStyle = `hsla(${e.hue}, 100%, 62%, ${a})`;
-      ctx.shadowColor = `hsla(${e.hue}, 100%, 55%, ${a})`; ctx.shadowBlur = 8;
+      const hue = P === NIGHT ? e.hue : P.hue[0] + (e.hue - 18) / 24 * (P.hue[1] - P.hue[0]);
+      ctx.fillStyle = `hsla(${hue}, ${P.sat}%, ${P.lig}%, ${a})`;
+      ctx.shadowColor = `hsla(${hue}, ${P.sat}%, ${P.lig - 7}%, ${a})`; ctx.shadowBlur = 8;
       ctx.beginPath(); ctx.arc(e.x, e.y, e.r, 0, 6.283); ctx.fill();
     });
     ctx.shadowBlur = 0;
@@ -2717,6 +2693,7 @@ addEventListener("resize", clSizeRows);
   };
   window.chapelFire = () => {
     const on = coll.classList.contains("coll-chapel") && !coll.hidden;
+    if (on && coll.dataset.atmo === "day") tintDay(coll.dataset.atmoImg);
     if (on && !raf) { size(); t0 = 0; raf = requestAnimationFrame(draw); }
     if (!on && raf) { cancelAnimationFrame(raf); raf = 0; }
   };

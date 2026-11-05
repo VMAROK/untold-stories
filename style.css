@@ -2853,15 +2853,14 @@ body.mini-on .site-foot { padding-bottom: 130px; }
   .gi-entry .ge-slide { filter: none; }
 }
 
-/* The Chapel by day: a bright fantasy landscape (drawn on the canvas). Text gets soft shadows so it reads on the sky. */
-.coll.coll-chapel[data-atmo="day"] { background: #4e8fd6; }
-.coll.coll-chapel[data-atmo="day"]::before { background: linear-gradient(180deg, rgba(10, 25, 50, 0.15), transparent 35%, transparent 75%, rgba(10, 25, 50, 0.2)); }
-.coll.coll-chapel[data-atmo="day"] .coll-head h2 { color: #fffaf0; text-shadow: 0 2px 18px rgba(20, 40, 80, 0.55), 0 0 2px rgba(20, 40, 80, 0.6); }
-.coll.coll-chapel[data-atmo="day"] .coll-head .rule { background: linear-gradient(90deg, transparent, #fff3d0, transparent); }
-.coll.coll-chapel[data-atmo="day"] .folio-kicker, .coll.coll-chapel[data-atmo="day"] .coll-stats { color: #fff3d0; text-shadow: 0 1px 8px rgba(20, 40, 80, 0.7); }
-.coll.coll-chapel[data-atmo="day"] .loc-head h3, .coll.coll-chapel[data-atmo="day"] .loc-head p, .coll.coll-chapel[data-atmo="day"] .loc-count,
-.coll.coll-chapel[data-atmo="day"] .loc-num, .coll.coll-chapel[data-atmo="day"] .loc-row-h h4, .coll.coll-chapel[data-atmo="day"] .ang-cap h4,
-.coll.coll-chapel[data-atmo="day"] .ang-cap p { color: #fffaf0; text-shadow: 0 1px 10px rgba(15, 30, 60, 0.75); }
-.coll.coll-chapel[data-atmo="day"] .cs-tile, .coll.coll-chapel[data-atmo="day"] .loc-cover, .coll.coll-chapel[data-atmo="day"] .ang-tile { border-color: rgba(255, 255, 255, 0.35); box-shadow: 0 18px 40px -16px rgba(10, 25, 50, 0.55); }
-.coll.coll-chapel[data-atmo="day"] .cs-tile.on { border-color: #fff3d0; box-shadow: 0 0 0 1px #fff3d0, 0 0 30px -6px rgba(255, 230, 160, 0.6); }
-.coll.coll-chapel[data-atmo="day"] .cl-size button { color: #fffaf0; } .coll.coll-chapel[data-atmo="day"] .cl-size button.on { border-color: #fff3d0; }
+/* The Chapel by day: the same dark, glowing design as night, in daylight colours taken from the newest photo
+   (--day-accent is set from that photo; warm pale gold if it can't be read) */
+.coll.coll-chapel[data-atmo="day"] { --da: var(--day-accent, #e8d7b0); background: #0b0a08; }
+.coll.coll-chapel[data-atmo="day"] .coll-head h2 { color: #fbf4e6; text-shadow: 0 0 18px color-mix(in srgb, var(--da) 55%, transparent), 0 0 40px color-mix(in srgb, var(--da) 25%, transparent); }
+.coll.coll-chapel[data-atmo="day"] .coll-head .rule { background: linear-gradient(90deg, transparent, var(--da), transparent); }
+.coll.coll-chapel[data-atmo="day"] .folio-kicker, .coll.coll-chapel[data-atmo="day"] .coll-stats, .coll.coll-chapel[data-atmo="day"] .gi-cat,
+.coll.coll-chapel[data-atmo="day"] .cs-cap small, .coll.coll-chapel[data-atmo="day"] .loc-num { color: var(--da); }
+.coll.coll-chapel[data-atmo="day"] .cs-tile, .coll.coll-chapel[data-atmo="day"] .loc-cover, .coll.coll-chapel[data-atmo="day"] .ang-tile { border-color: color-mix(in srgb, var(--da) 28%, transparent); box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.9), 0 0 24px -10px color-mix(in srgb, var(--da) 30%, transparent); }
+.coll.coll-chapel[data-atmo="day"] .cs-tile.on { border-color: var(--da); box-shadow: 0 0 0 1px var(--da); }
+.coll.coll-chapel[data-atmo="day"] .cl-size button.on { border-color: var(--da); }
+.coll.coll-chapel[data-atmo="day"] .cs-drop { border-top-color: color-mix(in srgb, var(--da) 50%, transparent); }
