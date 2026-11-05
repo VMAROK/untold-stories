@@ -686,7 +686,9 @@ function openColl(item, push = true) {
   if (!coll) return;
   collItem = item;
   coll.classList.toggle("coll-chapel", /^the chapel$/i.test(item.querySelector("h3").textContent.trim()));   // torch-lit look
-  coll.dataset.atmo = item.dataset.time === "day" ? "day" : "night";   // day: the same glow, in daylight colours
+  // Day/night switching is turned off: The Chapel always keeps its firelight. (To bring it back, use:
+  // item.dataset.time === "day" ? "day" : "night")
+  coll.dataset.atmo = "night";
   coll.dataset.atmoImg = item.dataset.timeImg || "";
   setTimeout(() => window.chapelFire && chapelFire(), 0);          // after the page is shown
   coll.classList.toggle("coll-photos", "photosOnly" in item.dataset);   // photo collections: show each image whole, at its own shape
