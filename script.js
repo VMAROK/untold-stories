@@ -659,7 +659,7 @@ function carouselRow(name, set, world, where, base, W) {
   const list = set.map((a, i) => anglePiece(a, i, set.length, world, where, base));
   set.forEach((a, i) => {
     const cap = a.dataset.kind === "video" ? (a.dataset.spec || "").replace(/^[^:]*:\s*/, "") : fmtTaken(a.dataset.taken) || "Still";
-    const t = angleTile(a, `${name === "Videos" ? "Video" : /^Version/.test(a.dataset.spec || "") ? "Version" : W.piece} ${pad2(i + 1)}`, cap);
+    const t = angleTile(a, `${name === "Videos" || a.dataset.kind === "video" ? "Video" : /^Version/.test(a.dataset.spec || "") ? "Version" : W.piece} ${pad2(i + 1)}`, cap);
     if (a.dataset.orient === "tall") t.classList.add("is-tall");
     if (a.dataset.ratio) {                                   // shaped like the photo itself (no cropping)
       track.classList.add("fit");
@@ -2510,7 +2510,8 @@ const world0 = (item) => item.querySelector("h3").textContent;
 function clSmallBuild(item, world) {
   const bar = document.getElementById("cl-size"), small = document.getElementById("cl-small");
   if (!bar || !small) return;
-  const photos = "photosOnly" in item.dataset;
+  // the Large / Mosaic switch: photo collections, and any other collection that has something in it (e.g. Level 0)
+  const photos = "photosOnly" in item.dataset || !!item.querySelector(".coll-data .ang");
   bar.hidden = !photos;
   small.innerHTML = "";
   if (!photos) { clSetSize("large", false); return; }
@@ -2529,11 +2530,11 @@ function fillMosaic(small, item, world, opts = {}) {
     const angs = [...loc.querySelectorAll(".ang")];
     if (!angs.length) return;
     const list = angs.map((a, i) => anglePiece(a, i, angs.length, world, loc.dataset.name, base));
-    const r = +angs[0].dataset.ratio || 1.5;
+    const o0 = angs[0].dataset.orient, r = +angs[0].dataset.ratio || (o0 === "tall" ? 0.5625 : o0 === "square" ? 1 : 1.78);
     const b = document.createElement("button");
     b.type = "button";
-    b.className = "cs-tile " + (r > 1.25 ? "cs-wide" : r < 0.8 ? "cs-tall" : "cs-sq");
-    b.style.backgroundImage = `url("${angs[0].dataset.src}")`;
+    b.className = "cs-tile " + (r > 1.25 ? "cs-wide" : r < 0.86 ? "cs-tall" : "cs-sq");
+    b.style.backgroundImage = `url("${angs[0].dataset.src || angs[0].dataset.poster}")`;   // a video shows its thumbnail
     b.innerHTML = `<span class="cs-cap"><b></b><small></small></span>`;
     b.querySelector("b").textContent = loc.dataset.name;
     if (opts.single === "view" && loc.dataset.note) {                // Photography: your Flickr description under the name
@@ -2686,6 +2687,7 @@ function sortAllTab() {
 // "1 version · 1 video" when an entry holds both photos and videos
 function mixCount(angs, piece) {
   const v = angs.filter((a) => a.dataset.kind === "video").length, p = angs.length - v;
+  if (p && angs.filter((a) => a.dataset.kind !== "video").every((a) => /^Version/.test(a.dataset.spec || ""))) piece = "Version";
   return [p ? plural(p, piece.toLowerCase()) : "", v ? plural(v, "video") : ""].filter(Boolean).join(" · ");
 }
 // A YouTube video with the same title as an entry in a collection (e.g. "Spinning Earth" photo + video) joins
