@@ -1,12 +1,15 @@
-# Updates the Film section from the Tim Amarok YouTube channel (public feed) every 6 hours.
+# Updates the Film section from the Tim Amarok YouTube channel (public feed) every 10 minutes.
 # Approved by the site owner. Turn it off any time: Actions > "Sync YouTube" > ... > Disable workflow.
 name: Sync YouTube
 on:
   schedule:
-    - cron: "23 */6 * * *"
+    - cron: "*/10 * * * *"
   workflow_dispatch:
   push:
     paths: [".github/workflows/youtube.yml", ".github/scripts/youtube.py"]
+concurrency:
+  group: youtube-sync      # never two at once (a slow run just finishes before the next starts)
+  cancel-in-progress: false
 permissions:
   contents: write
 jobs:
