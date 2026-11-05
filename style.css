@@ -2854,8 +2854,8 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 }
 
 /* The Chapel by day: a bright fantasy landscape (drawn on the canvas). Text gets soft shadows so it reads on the sky. */
-.coll.coll-chapel[data-atmo="day"] { background: #6fb0ec; }
-.coll.coll-chapel[data-atmo="day"]::before { background: linear-gradient(180deg, rgba(10, 20, 40, 0.18), transparent 30%, transparent 70%, rgba(10, 25, 10, 0.25)); }
+.coll.coll-chapel[data-atmo="day"] { background: #4e8fd6; }
+.coll.coll-chapel[data-atmo="day"]::before { background: linear-gradient(180deg, rgba(10, 25, 50, 0.15), transparent 35%, transparent 75%, rgba(10, 25, 50, 0.2)); }
 .coll.coll-chapel[data-atmo="day"] .coll-head h2 { color: #fffaf0; text-shadow: 0 2px 18px rgba(20, 40, 80, 0.55), 0 0 2px rgba(20, 40, 80, 0.6); }
 .coll.coll-chapel[data-atmo="day"] .coll-head .rule { background: linear-gradient(90deg, transparent, #fff3d0, transparent); }
 .coll.coll-chapel[data-atmo="day"] .folio-kicker, .coll.coll-chapel[data-atmo="day"] .coll-stats { color: #fff3d0; text-shadow: 0 1px 8px rgba(20, 40, 80, 0.7); }
