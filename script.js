@@ -2638,31 +2638,122 @@ addEventListener("resize", clSizeRows);
     g.addColorStop(1, "rgba(60, 10, 0, 0)");
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   };
-  // day: an overcast sky with soft clouds drifting slowly across (calm, like the Photography bubbles)
-  let clouds = [];
+  // day: a bright fantasy landscape — blue sky, warm sun with slow rays, drifting white clouds, a hazy castle on a
+  // hill, rolling green hills with grass swaying in the breeze, and sunlit specks floating up. Calm, like the bubbles.
+  let clouds = [], scene = null, blades = [], motes = [];
   const cloud = (any) => {
-    const r = rnd(0.18, 0.42) * Math.max(W, H);
-    return { x: any ? rnd(-r, W + r) : -r * 1.6, y: rnd(-0.05, 0.75) * H, r, vx: rnd(4, 11), a: rnd(0.05, 0.12),
-      puffs: Array.from({ length: 6 }, () => ({ dx: rnd(-0.9, 0.9), dy: rnd(-0.28, 0.22), s: rnd(0.35, 0.7) })) };
+    const r = rnd(0.05, 0.1) * W + 50;
+    return { x: any ? rnd(-r, W + r) : -r * 2, y: rnd(0.05, 0.42) * H, r, vx: rnd(5, 12), a: rnd(0.55, 0.8),
+      puffs: Array.from({ length: 7 }, (_, k) => ({ dx: (k - 3) * 0.32 + rnd(-0.1, 0.1), dy: rnd(-0.32, 0.05) - (k === 3 ? 0.2 : 0), s: rnd(0.36, 0.6) })) };
   };
+  const hill = (g, y0, amp, freq, phase, c1, c2) => {   // a rolling hill line filled to the bottom
+    g.beginPath(); g.moveTo(0, H);
+    for (let x = 0; x <= W + 10; x += 10) g.lineTo(x, y0 + Math.sin(x / W * freq + phase) * amp + Math.sin(x / W * freq * 2.3 + phase * 1.7) * amp * 0.35);
+    g.lineTo(W, H); g.closePath();
+    const gr = g.createLinearGradient(0, y0 - amp, 0, H); gr.addColorStop(0, c1); gr.addColorStop(1, c2);
+    g.fillStyle = gr; g.fill();
+  };
+  const castle = (g, cx, by, s) => {                     // a slender fairy-tale castle, hazy with distance
+    const col = g.createLinearGradient(0, by - 330 * s, 0, by);
+    col.addColorStop(0, "rgba(96, 108, 160, 0.92)"); col.addColorStop(1, "rgba(70, 82, 132, 0.95)");
+    const rect = (x, y, w, h) => g.fillRect(cx + x * s, by - (y + h) * s, w * s, h * s);
+    const crenel = (x, y, w) => { for (let k = 0; k <= w - 5; k += 9) rect(x + k, y, 5, 6); };
+    const spire = (x, y, w, h) => { g.beginPath(); g.moveTo(cx + (x - 3) * s, by - y * s);
+      g.quadraticCurveTo(cx + (x + w * 0.35) * s, by - (y + h * 0.55) * s, cx + (x + w / 2) * s, by - (y + h) * s);
+      g.quadraticCurveTo(cx + (x + w * 0.65) * s, by - (y + h * 0.55) * s, cx + (x + w + 3) * s, by - y * s); g.closePath(); g.fill(); };
+    const tower = (x, w, h, roofH) => { rect(x, 0, w, h); rect(x - 3, h - 6, w + 6, 6); spire(x, h, w, roofH); };
+    g.fillStyle = col;
+    g.beginPath(); g.ellipse(cx, by + 6 * s, 210 * s, 26 * s, 0, Math.PI, 0); g.fill();   // the rock it stands on
+    rect(-150, 0, 300, 58); crenel(-150, 58, 300);                    // outer wall
+    rect(-60, 0, 120, 120); crenel(-60, 120, 120);                     // great hall
+    tower(-168, 30, 112, 70); tower(138, 30, 112, 70);                // corner towers
+    tower(-96, 22, 150, 64); tower(74, 22, 150, 64);                  // inner towers
+    tower(-14, 28, 205, 120);                                          // the tall central spire
+    tower(-46, 16, 160, 46); tower(30, 16, 160, 46);
+    // flags
+    g.fillStyle = "rgba(170, 40, 55, 0.85)";
+    [[-1, 325], [-154, 182], [152, 182]].forEach(([x, y]) => { rect(x, y, 1.5, 22); g.beginPath();
+      g.moveTo(cx + (x + 1.5) * s, by - (y + 22) * s); g.lineTo(cx + (x + 18) * s, by - (y + 18) * s); g.lineTo(cx + (x + 1.5) * s, by - (y + 13) * s); g.fill(); });
+    // sunlit edge on the right side, warm windows
+    g.fillStyle = "rgba(255, 236, 200, 0.18)"; rect(150, 0, 4, 112); rect(54, 0, 4, 120); rect(10, 0, 3, 205);
+    g.fillStyle = "rgba(255, 228, 170, 0.5)";
+    [[-6, 230], [-6, 175], [-40, 80], [26, 80], [-158, 70], [146, 70], [-90, 110], [80, 110]].forEach(([x, y]) => g.fillRect(cx + x * s, by - y * s, 5 * s, 9 * s));
+  };
+  const buildScene = () => {
+    const c = document.createElement("canvas"); c.width = W; c.height = H; const g = c.getContext("2d");
+    const sky = g.createLinearGradient(0, 0, 0, H * 0.75);
+    sky.addColorStop(0, "#2f6fd0"); sky.addColorStop(0.45, "#6fb0ec"); sky.addColorStop(0.8, "#cfe6f7"); sky.addColorStop(1, "#f6e6c4");
+    g.fillStyle = sky; g.fillRect(0, 0, W, H);
+    // distant mountain ranges: soft ridges fading into blue haze
+    const ridge = (base, amp, seed, c1, c2) => {
+      g.beginPath(); g.moveTo(0, H);
+      for (let x = 0; x <= W + 8; x += 8) {
+        const u = x / W;
+        const y = base - amp * (0.55 * Math.abs(Math.sin(u * 5.1 + seed)) + 0.3 * Math.abs(Math.sin(u * 11.7 + seed * 2.3)) + 0.15 * Math.sin(u * 23 + seed * 4));
+        g.lineTo(x, y);
+      }
+      g.lineTo(W, H); g.closePath();
+      const gr = g.createLinearGradient(0, base - amp, 0, base + H * 0.1); gr.addColorStop(0, c1); gr.addColorStop(1, c2);
+      g.fillStyle = gr; g.fill();
+    };
+    ridge(H * 0.64, H * 0.2, 1.3, "rgba(150, 178, 222, 0.75)", "rgba(196, 214, 236, 0.9)");
+    ridge(H * 0.69, H * 0.13, 4.1, "rgba(118, 150, 196, 0.8)", "rgba(170, 196, 226, 0.95)");
+    const sc = Math.min(W, H) / 900;
+    hill(g, H * 0.70, H * 0.03, 3.2, 1.2, "#7fae74", "#5d8f5a");      // far hill (castle sits on it)
+    castle(g, W * 0.72, H * 0.705, sc * 0.75);
+    hill(g, H * 0.78, H * 0.035, 2.4, 3.1, "#5f9a4f", "#3f7a3a");      // middle hill
+    hill(g, H * 0.86, H * 0.03, 1.8, 0.4, "#4a8a3c", "#2c5e2a");       // front hill (grass grows on it)
+    return c;
+  };
+  const frontY = (x) => H * 0.86 + Math.sin(x / W * 1.8 + 0.4) * H * 0.03 + Math.sin(x / W * 1.8 * 2.3 + 0.68) * H * 0.0105;
   const drawDay = (t, dt) => {
+    if (!scene || scene.width !== W || scene.height !== H) {
+      scene = buildScene();
+      blades = Array.from({ length: Math.round(W / 5) }, () => ({ x: rnd(0, W), h: rnd(10, 26) * Math.min(1.4, H / 700), ph: rnd(0, 6.28), c: rnd(0, 1) }));
+      motes = Array.from({ length: 26 }, () => ({ x: rnd(0, W), y: rnd(0, H), r: rnd(0.8, 2), vy: rnd(4, 12), ph: rnd(0, 6.28) }));
+    }
     ctx.globalCompositeOperation = "source-over";
-    const sky = ctx.createLinearGradient(0, 0, 0, H);
-    sky.addColorStop(0, "#2a2f38"); sky.addColorStop(0.45, "#16181d"); sky.addColorStop(1, "#08080a");
-    ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
-    const sun = ctx.createRadialGradient(W * 0.72, -H * 0.05, 0, W * 0.72, -H * 0.05, Math.max(W, H) * 0.7);   // light behind the clouds
-    sun.addColorStop(0, `rgba(235, 228, 210, ${0.16 + 0.03 * Math.sin(t * 0.3)})`); sun.addColorStop(1, "rgba(235, 228, 210, 0)");
+    ctx.drawImage(scene, 0, 0, W, H);
+    // the sun and its slow rays
+    const sx = W * 0.82, sy = H * 0.12, R = Math.max(W, H);
+    ctx.globalCompositeOperation = "lighter";
+    const sun = ctx.createRadialGradient(sx, sy, 0, sx, sy, R * 0.45);
+    sun.addColorStop(0, "rgba(255, 248, 220, 0.9)"); sun.addColorStop(0.035, "rgba(255, 236, 180, 0.5)"); sun.addColorStop(0.3, "rgba(255, 222, 160, 0.1)"); sun.addColorStop(1, "rgba(255, 220, 150, 0)");
     ctx.fillStyle = sun; ctx.fillRect(0, 0, W, H);
-    if (!clouds.length) clouds = Array.from({ length: 7 }, () => cloud(true));
+    ctx.save(); ctx.translate(sx, sy); ctx.rotate(t * 0.015);
+    for (let k = 0; k < 12; k++) {
+      ctx.rotate(Math.PI / 6);
+      const a = 0.02 + 0.012 * Math.sin(t * 0.4 + k);
+      const gr = ctx.createLinearGradient(0, 0, R * 0.8, 0); gr.addColorStop(0, `rgba(255, 240, 200, ${a})`); gr.addColorStop(1, "rgba(255, 240, 200, 0)");
+      ctx.fillStyle = gr; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(R * 0.8, -R * 0.045); ctx.lineTo(R * 0.8, R * 0.045); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore();
+    ctx.globalCompositeOperation = "source-over";
+    // white clouds drifting
+    if (!clouds.length) clouds = Array.from({ length: 5 }, () => cloud(true));
     clouds.forEach((c, i) => {
       if (!still) c.x += c.vx * dt;
-      if (c.x - c.r * 1.6 > W) clouds[i] = c = cloud(false);
+      if (c.x - c.r * 2 > W) clouds[i] = c = cloud(false);
       c.puffs.forEach((p) => {
-        const x = c.x + p.dx * c.r, y = c.y + p.dy * c.r, rr = c.r * p.s;
-        const g = ctx.createRadialGradient(x, y, 0, x, y, rr);
-        g.addColorStop(0, `rgba(205, 208, 214, ${c.a})`); g.addColorStop(0.6, `rgba(170, 175, 185, ${c.a * 0.45})`); g.addColorStop(1, "rgba(150, 155, 165, 0)");
+        const x = c.x + p.dx * c.r * 2, y = c.y + p.dy * c.r, rr = c.r * p.s;
+        const g = ctx.createRadialGradient(x, y - rr * 0.2, 0, x, y, rr);
+        g.addColorStop(0, `rgba(255, 255, 255, ${c.a})`); g.addColorStop(0.65, `rgba(245, 248, 255, ${c.a * 0.7})`); g.addColorStop(1, "rgba(235, 242, 255, 0)");
         ctx.fillStyle = g; ctx.fillRect(x - rr, y - rr, rr * 2, rr * 2);
       });
+    });
+    // grass along the front hill, swaying
+    ctx.lineCap = "round";
+    blades.forEach((b) => {
+      const y = frontY(b.x) + 3, sway = Math.sin(t * 1.3 + b.ph + b.x * 0.01) * b.h * 0.35;
+      ctx.strokeStyle = b.c > 0.5 ? "rgba(98, 158, 74, 0.95)" : "rgba(70, 128, 58, 0.95)"; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(b.x, y); ctx.quadraticCurveTo(b.x + sway * 0.3, y - b.h * 0.6, b.x + sway, y - b.h); ctx.stroke();
+    });
+    // sunlit specks floating up
+    motes.forEach((m) => {
+      if (!still) { m.y -= m.vy * dt; m.x += Math.sin(t * 0.8 + m.ph) * 6 * dt; }
+      if (m.y < -5) { m.y = H + 5; m.x = rnd(0, W); }
+      ctx.fillStyle = `rgba(255, 245, 200, ${0.35 + 0.3 * Math.sin(t * 2 + m.ph)})`;
+      ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, 6.283); ctx.fill();
     });
   };
   const draw = (now) => {
@@ -2691,7 +2782,7 @@ addEventListener("resize", clSizeRows);
   };
   window.chapelFire = () => {
     const on = coll.classList.contains("coll-chapel") && !coll.hidden;
-    if (on && !raf) { size(); clouds = []; t0 = 0; raf = requestAnimationFrame(draw); }
+    if (on && !raf) { size(); clouds = []; scene = null; t0 = 0; raf = requestAnimationFrame(draw); }
     if (!on && raf) { cancelAnimationFrame(raf); raf = 0; }
   };
   addEventListener("resize", () => { if (raf) size(); });
