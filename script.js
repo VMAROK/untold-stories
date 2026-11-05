@@ -446,7 +446,7 @@ function galItems() {
     (galState.cat === "all"
       ? (galState.medium === "mix"
           ? (ALL_MODE === 2
-              ? (g.dataset.kind === "entry" || (g.dataset.kind === "video" && g.dataset.cat !== "liminal-yt")) && !g.classList.contains("gi-ext")
+              ? (g.dataset.kind === "entry" || (g.dataset.kind === "video" && g.dataset.cat !== "liminal-yt" && g.dataset.cat !== "merged")) && !g.classList.contains("gi-ext")
               : (g.dataset.kind === "video" || g.dataset.kind === "still") && !g.classList.contains("gi-ext"))   // Art & Film > All (see ALL_MODE)
           : !g.classList.contains("gi-ext") || (g.classList.contains("gi-empty") && !gal.querySelector('.gi[data-medium="photo"]:not(.gi-ext)')))
       : g.dataset.cat === galState.cat));
@@ -686,6 +686,7 @@ function openColl(item, push = true) {
   if (!coll) return;
   collItem = item;
   coll.classList.toggle("coll-chapel", /^the chapel$/i.test(item.querySelector("h3").textContent.trim()));   // torch-lit look
+  coll.dataset.atmo = item.dataset.time === "day" ? "day" : "night";   // day: clouds instead of fire
   setTimeout(() => window.chapelFire && chapelFire(), 0);          // after the page is shown
   coll.classList.toggle("coll-photos", "photosOnly" in item.dataset);   // photo collections: show each image whole, at its own shape
   setTimeout(() => clSmallBuild(item, world0(item)), 0);
@@ -721,7 +722,7 @@ function openColl(item, push = true) {
     const gid = `loc-grid-${li}`;
     sec.innerHTML = `<div class="loc-toggle" role="button" tabindex="0" aria-expanded="false" aria-controls="${gid}">
         <div class="loc-head"><span class="loc-num">${W.unit} ${pad2(li + 1)}</span><h3></h3><p></p>
-          <span class="loc-count">${"photosOnly" in item.dataset ? plural(angs.length, W.piece.toLowerCase())
+          <span class="loc-count">${"photosOnly" in item.dataset ? mixCount(angs, W.piece)
             : `${plural(angs.filter((a) => a.dataset.kind === "video").length, "video")} · ${plural(angs.filter((a) => a.dataset.kind !== "video").length, "photo")}`}</span></div>
         <div class="loc-cover"><div class="loc-dots"></div>
           <span class="loc-cta"><span class="open-t">Open</span><span class="close-t">Close</span><i>⌄</i></span></div>
@@ -761,7 +762,7 @@ function openColl(item, push = true) {
     // inside the drop-down: a Videos row, then a Photos row, each a swipeable carousel
     const body = sec.querySelector(".loc-body-in");
     [["Videos", angs.filter((a) => a.dataset.kind === "video")], ["Photos", angs.filter((a) => a.dataset.kind !== "video")]]
-      .filter(([name]) => !(name === "Videos" && "photosOnly" in item.dataset))           // photo collections: no Videos row
+      .filter(([name, set]) => !(name === "Videos" && "photosOnly" in item.dataset && !set.length))   // photo collections: Videos row only if it has some
       .forEach(([name, set]) => body.appendChild(carouselRow(name, set, world, loc.dataset.name, base, W)));   // both sections always show
     wrap.appendChild(sec);
   });
@@ -1786,7 +1787,7 @@ function updateMuFilter() {
       });
       grid.insertBefore(li, first);
     });
-    sortAllTab();
+    buildAllEntries();                                              // merges same-title videos into their collection, then sorts
     renderGallery();
   }).catch(() => {});
 })();
@@ -1889,7 +1890,7 @@ function placeLiminal(photos) {
 // "VERSION : 2", one per line or all on one line). Anything else you wrote is the photo's description.
 function flickrMeta(desc) {
   const out = { rest: "" };
-  const parts = String(desc || "").split(/\b(TITLE|STORY|SCENE|VERSION|LEVEL)\b\s*:?\s*/i);
+  const parts = String(desc || "").split(/\b(TITLE|STORY|SCENE|VERSION|LEVEL|TIME)\b\s*:?\s*/i);
   out.rest = parts[0].trim();
   for (let i = 1; i < parts.length; i += 2) out[parts[i].toLowerCase()] = (parts[i + 1] || "").replace(/\s+/g, " ").trim();
   return out;
@@ -1946,6 +1947,9 @@ function flickrCollections(items, albums, grid) {
     li.innerHTML = `<button type="button" class="gi-media has-mosaic"><span class="gi-stack" aria-hidden="true"></span><span class="gi-collbadge"></span></button>
       <div class="gi-cap"><p class="gi-cat"></p><h3></h3></div><p class="gi-desc" hidden></p><div class="coll-data" hidden></div>`;
     li.querySelector(".gi-media").setAttribute("aria-label", `Open the ${al.title} collection`);
+    // atmosphere: the TIME of the most recently taken photo — "day" = clouds, "night" = firelight
+    const latest = mine.reduce((n, x) => (!n || takenKey(x) > takenKey(n) ? x : n), null);
+    li.dataset.time = /day/i.test(flickrMeta(latest && latest.description).time || "") ? "day" : "night";
     li.querySelector(".gi-cat").textContent = `${story ? "Story" : "General"} · Collection`;
     li.querySelector("h3").textContent = al.title || "Album";
     const data = li.querySelector(".coll-data");
@@ -2541,7 +2545,7 @@ function fillMosaic(small, item, world, opts = {}) {
       b.querySelector(".cs-cap").appendChild(d);
     }
     b.querySelector("small").textContent = opts.single === "view" && angs.length === 1
-      ? fmtTaken(angs[0].dataset.taken) : plural(angs.length, collWords(item).piece.toLowerCase());   // single photos: their date
+      ? fmtTaken(angs[0].dataset.taken) : mixCount(angs, collWords(item).piece);   // single photos: their date
     b.addEventListener("click", () => (opts.single === "view" && angs.length === 1
       ? openView(list, 0, "coll") : csToggle(b, loc, angs, world, base, collWords(item))));
     small.appendChild(b);
@@ -2634,8 +2638,36 @@ addEventListener("resize", clSizeRows);
     g.addColorStop(1, "rgba(60, 10, 0, 0)");
     ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
   };
+  // day: an overcast sky with soft clouds drifting slowly across (calm, like the Photography bubbles)
+  let clouds = [];
+  const cloud = (any) => {
+    const r = rnd(0.18, 0.42) * Math.max(W, H);
+    return { x: any ? rnd(-r, W + r) : -r * 1.6, y: rnd(-0.05, 0.75) * H, r, vx: rnd(4, 11), a: rnd(0.05, 0.12),
+      puffs: Array.from({ length: 6 }, () => ({ dx: rnd(-0.9, 0.9), dy: rnd(-0.28, 0.22), s: rnd(0.35, 0.7) })) };
+  };
+  const drawDay = (t, dt) => {
+    ctx.globalCompositeOperation = "source-over";
+    const sky = ctx.createLinearGradient(0, 0, 0, H);
+    sky.addColorStop(0, "#2a2f38"); sky.addColorStop(0.45, "#16181d"); sky.addColorStop(1, "#08080a");
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+    const sun = ctx.createRadialGradient(W * 0.72, -H * 0.05, 0, W * 0.72, -H * 0.05, Math.max(W, H) * 0.7);   // light behind the clouds
+    sun.addColorStop(0, `rgba(235, 228, 210, ${0.16 + 0.03 * Math.sin(t * 0.3)})`); sun.addColorStop(1, "rgba(235, 228, 210, 0)");
+    ctx.fillStyle = sun; ctx.fillRect(0, 0, W, H);
+    if (!clouds.length) clouds = Array.from({ length: 7 }, () => cloud(true));
+    clouds.forEach((c, i) => {
+      if (!still) c.x += c.vx * dt;
+      if (c.x - c.r * 1.6 > W) clouds[i] = c = cloud(false);
+      c.puffs.forEach((p) => {
+        const x = c.x + p.dx * c.r, y = c.y + p.dy * c.r, rr = c.r * p.s;
+        const g = ctx.createRadialGradient(x, y, 0, x, y, rr);
+        g.addColorStop(0, `rgba(205, 208, 214, ${c.a})`); g.addColorStop(0.6, `rgba(170, 175, 185, ${c.a * 0.45})`); g.addColorStop(1, "rgba(150, 155, 165, 0)");
+        ctx.fillStyle = g; ctx.fillRect(x - rr, y - rr, rr * 2, rr * 2);
+      });
+    });
+  };
   const draw = (now) => {
     const t = now / 1000, dt = Math.min(0.05, t - (t0 || t)); t0 = t;
+    if (coll.dataset.atmo === "day") { drawDay(t, dt); raf = still ? 0 : requestAnimationFrame(draw); return; }
     ctx.globalCompositeOperation = "source-over";
     ctx.fillStyle = "#060302"; ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = "lighter";
@@ -2659,7 +2691,7 @@ addEventListener("resize", clSizeRows);
   };
   window.chapelFire = () => {
     const on = coll.classList.contains("coll-chapel") && !coll.hidden;
-    if (on && !raf) { size(); t0 = 0; raf = requestAnimationFrame(draw); }
+    if (on && !raf) { size(); clouds = []; t0 = 0; raf = requestAnimationFrame(draw); }
     if (!on && raf) { cancelAnimationFrame(raf); raf = 0; }
   };
   addEventListener("resize", () => { if (raf) size(); });
@@ -2678,8 +2710,37 @@ function sortAllTab() {
   items.sort((a, b) => pubKey(b.dataset.published).localeCompare(pubKey(a.dataset.published)))
     .forEach((x) => grid.appendChild(x));
 }
+// "1 version · 1 video" when an entry holds both photos and videos
+function mixCount(angs, piece) {
+  const v = angs.filter((a) => a.dataset.kind === "video").length, p = angs.length - v;
+  return [p ? plural(p, piece.toLowerCase()) : "", v ? plural(v, "video") : ""].filter(Boolean).join(" · ");
+}
+// A YouTube video with the same title as an entry in a collection (e.g. "Spinning Earth" photo + video) joins
+// that entry, so it shows once — inside the collection — instead of twice.
+function mergeByTitle() {
+  if (!gal) return;
+  const key = (t) => String(t || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  const locs = [...gal.querySelectorAll(".gi-coll .coll-data section.loc")];
+  gal.querySelectorAll(".gal-grid .gi-yt").forEach((li) => {
+    const title = li.querySelector("h3")?.textContent || "";
+    const loc = locs.find((l) => key(l.dataset.name) === key(title));
+    if (!loc) { if (li.dataset.cat === "merged") li.dataset.cat = li.dataset.origCat || "general"; return; }
+    if (![...loc.querySelectorAll(".ang")].some((a) => a.dataset.video === li.dataset.video)) {
+      const a = document.createElement("div");
+      a.className = "ang";
+      Object.assign(a.dataset, { kind: "video", video: li.dataset.video, orient: li.dataset.orient || "wide", title,
+        poster: (li.querySelector(".gi-media").style.backgroundImage.match(/url\("?([^")]+)"?\)/) || [])[1] || "",
+        spec: li.dataset.spec || "Format: Video", published: li.dataset.published || "" });
+      a.textContent = li.querySelector(".gi-desc")?.textContent || "";
+      loc.appendChild(a);
+    }
+    if (li.dataset.cat !== "merged") { li.dataset.origCat = li.dataset.cat; li.dataset.cat = "merged"; }
+  });
+  refreshCollBadges();
+}
 function buildAllEntries() {
   if (!gal || ALL_MODE !== 2) return;
+  mergeByTitle();
   const grid = gal.querySelector(".gal-grid");
   grid.querySelectorAll(".gi-entry").forEach((x) => x.remove());
   const colls = [...gal.querySelectorAll(".gi-coll")];
@@ -2755,8 +2816,9 @@ function buildAllEntries() {
       }
       m.setAttribute("aria-label", "Open " + e.name);
       const vids = e.angs.filter((a) => a.dataset.kind === "video").length;
-      const word = vids === e.angs.length ? "video" : e.angs.every((a) => /^Version/.test(a.dataset.spec || "")) ? "version" : W.piece;
-      const count = e.angs.length > 1 || !isVid ? plural(e.angs.length, word.toLowerCase()) : "Video";
+      const word = vids === e.angs.length ? "video" : e.angs.filter((a) => a.dataset.kind !== "video").every((a) => /^Version/.test(a.dataset.spec || "")) ? "version" : W.piece;
+      const count = vids && vids < e.angs.length ? mixCount(e.angs, word)
+        : e.angs.length > 1 || !isVid ? plural(e.angs.length, word.toLowerCase()) : "Video";
       li.querySelector(".gi-cat").textContent = `${world} · ${count}`;
       li.querySelector("h3").textContent = e.name;
       const list = e.angs.map((a, i) => anglePiece(a, i, e.angs.length, world, e.loose ? "" : e.name, base));
