@@ -555,7 +555,7 @@ function fillView(p) {
   const isVideo = p.kind === "video";
   if (isVideo && p.video) media.innerHTML = embedFor(p.video);
   else if (p.src) {                                           // photos carry a faint © VMAROK mark, so screenshots do too
-    media.innerHTML = `<span class="wm-wrap"><img src="${p.src}" alt="" /><span class="wm" aria-hidden="true"><img class="wm-logo" src="images/amarok-mark-nav.svg" alt="" /><i></i><span>© VMAROK</span></span></span>`;
+    media.innerHTML = `<span class="wm-wrap"><img src="${p.src}" alt="" /><span class="wm" aria-hidden="true"><b>Tim</b><span>© VMAROK</span></span></span>`;
     media.querySelector("img").alt = p.title;
   }
   else {
