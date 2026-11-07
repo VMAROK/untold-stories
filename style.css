@@ -2880,7 +2880,7 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 /* a faint dark haze behind the signature, so the gold reads on bright photos */
 .vw-media .wm::before {
   content: ""; position: absolute; z-index: -1; inset: -45% -22% -40% -22%; pointer-events: none;
-  background: radial-gradient(ellipse at 55% 60%, rgba(70, 38, 6, 0.6) 0%, rgba(90, 52, 12, 0.32) 42%, transparent 72%);   /* dark amber haze */
-  filter: blur(6px);
+  background: radial-gradient(ellipse at 55% 60%, rgba(240, 205, 130, 0.32) 0%, rgba(225, 180, 100, 0.16) 45%, transparent 75%);   /* light, faint gold glow */
+  filter: blur(10px);
 }
 .vw-media .wm { isolation: isolate; }
