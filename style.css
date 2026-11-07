@@ -2860,3 +2860,12 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 }
 .vw-media { position: relative; }
 .vw-media img { pointer-events: none; }                 /* the full-screen photo can't be grabbed directly */
+
+/* Watermark on full-screen photos */
+.vw-media > .wm-wrap { position: relative; display: inline-block; line-height: 0; box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.06); }
+.vw-media .wm-wrap img { display: block; max-width: 100%; max-height: 72vh; box-shadow: none; }
+.vw-media .wm {
+  position: absolute; right: 2.2%; bottom: 2.6%; line-height: 1; pointer-events: none;
+  font-family: var(--body); font-size: clamp(9px, 1.1vw, 13px); font-weight: 500; letter-spacing: 3px;
+  color: rgba(255, 255, 255, 0.42); text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6); mix-blend-mode: normal;
+}

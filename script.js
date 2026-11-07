@@ -554,7 +554,10 @@ function fillView(p) {
   const media = $v("vw-media");
   const isVideo = p.kind === "video";
   if (isVideo && p.video) media.innerHTML = embedFor(p.video);
-  else if (p.src) { media.innerHTML = `<img src="${p.src}" alt="" />`; media.querySelector("img").alt = p.title; }
+  else if (p.src) {                                           // photos carry a faint © VMAROK mark, so screenshots do too
+    media.innerHTML = `<span class="wm-wrap"><img src="${p.src}" alt="" /><span class="wm" aria-hidden="true">© VMAROK</span></span>`;
+    media.querySelector("img").alt = p.title;
+  }
   else {
     const shape = p.shape === "tall" ? "tall" : p.shape === "square" ? "square" : "";
     media.innerHTML = `<div class="ph ${p.ph || ""} ${shape}"><span>${isVideo ? "Your film plays here" : "Your render shows here"}</span></div>`;
