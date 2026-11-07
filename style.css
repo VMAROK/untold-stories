@@ -2871,7 +2871,7 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 }
 .vw-media .wm b {
   font-family: "Mrs Saint Delafield", cursive; font-weight: 400; font-size: clamp(22px, 2.6vw, 34px); line-height: 0.8;
-  color: #e3b25e; margin: 0 0.35em -0.18em 0; transform: rotate(-6deg);   /* antique gold */ transform-origin: right bottom;
+  color: #e3b25e; margin: 0 0.2em -0.12em 0;   /* antique gold, written straight */
 }
 .vw-media .wm span {
   font-family: "Cinzel", var(--serif-2); font-size: clamp(8px, 0.9vw, 11.5px); font-weight: 600; letter-spacing: 0.32em;
