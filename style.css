@@ -2867,7 +2867,7 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .vw-media .wm {                     /* signature: "Kim Tim" handwritten over the stage name in carved capitals */
   position: absolute; right: 2.6%; bottom: 2.4%; line-height: 1; pointer-events: none;
   display: flex; flex-direction: column; align-items: flex-end;
-  opacity: 0.85; filter: drop-shadow(0 0 1px rgba(156, 90, 23, 0.95)) drop-shadow(0 1px 4px rgba(120, 62, 12, 0.75));   /* deep amber outline */   /* dark edge: reads on bright photos */
+  opacity: 0.85;   /* dark edge: reads on bright photos */
 }
 .vw-media .wm b {
   font-family: "Mrs Saint Delafield", cursive; font-weight: 400; font-size: clamp(22px, 2.6vw, 34px); line-height: 0.8;
@@ -2880,7 +2880,13 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 /* a faint dark haze behind the signature, so the gold reads on bright photos */
 .vw-media .wm::before {
   content: ""; position: absolute; z-index: -1; inset: -45% -22% -40% -22%; pointer-events: none;
-  background: radial-gradient(ellipse at 55% 60%, rgba(240, 205, 130, 0.32) 0%, rgba(225, 180, 100, 0.16) 45%, transparent 75%);   /* light, faint gold glow */
+  background: radial-gradient(ellipse at 55% 60%, rgba(240, 205, 130, 0.18) 0%, rgba(225, 180, 100, 0.08) 45%, transparent 75%);   /* very faint gold glow */
   filter: blur(10px);
 }
 .vw-media .wm { isolation: isolate; }
+/* a crisp, thin amber outline around the gold letters (no blur) */
+.vw-media .wm b, .vw-media .wm span {
+  text-shadow: 1px 0 0 #9c5a17, -1px 0 0 #9c5a17, 0 1px 0 #9c5a17, 0 -1px 0 #9c5a17,
+               0.7px 0.7px 0 #9c5a17, -0.7px -0.7px 0 #9c5a17, 0.7px -0.7px 0 #9c5a17, -0.7px 0.7px 0 #9c5a17;
+}
+.vw-media .wm span { box-shadow: 0 -1px 0 #9c5a17; }
