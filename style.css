@@ -2871,11 +2871,11 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 }
 .vw-media .wm b {
   font-family: "Mrs Saint Delafield", cursive; font-weight: 400; font-size: clamp(22px, 2.6vw, 34px); line-height: 0.8;
-  color: #e3b25e; margin: 0 0.2em -0.12em 0;   /* antique gold, written straight */
+  color: #c98a2e; margin: 0 0.2em -0.12em 0;   /* dark gold / amber, written straight */
 }
 .vw-media .wm span {
   font-family: "Cinzel", var(--serif-2); font-size: clamp(8px, 0.9vw, 11.5px); font-weight: 600; letter-spacing: 0.32em;
-  color: #d9a650; padding-top: 0.5em; border-top: 1px solid rgba(217, 166, 80, 0.7);
+  color: #b97a25; padding-top: 0.5em; border-top: 1px solid rgba(185, 122, 37, 0.75);
 }
 /* a faint dark haze behind the signature, so the gold reads on bright photos */
 .vw-media .wm::before {
