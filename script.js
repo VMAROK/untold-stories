@@ -2814,3 +2814,15 @@ setInterval(() => {
     if (++li._tick % 3 === 0 && li._step) li._step(1);
   });
 }, 1400);
+
+/* ---------- No saving photos / videos ----------
+   Blocks the right-click menu, dragging images out, and the long-press "Save" menu on pictures and videos.
+   (Text and links elsewhere work normally.) */
+(() => {
+  const media = "img, video, canvas, .gi-media, .loc-cover, .ang-tile, .cs-tile, .vw-media, .ge-slide, .loc-slide, .inline-play";
+  document.addEventListener("contextmenu", (e) => { if (e.target.closest(media)) e.preventDefault(); });
+  document.addEventListener("dragstart", (e) => { if (e.target.closest(media)) e.preventDefault(); });
+  document.addEventListener("keydown", (e) => {               // Ctrl/Cmd+S (save page) while looking at a photo
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "s") e.preventDefault();
+  });
+})();
