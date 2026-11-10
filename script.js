@@ -580,11 +580,43 @@ function fillView(p) {
   $v("vw-prev").disabled = viewIdx === 0;
   $v("vw-next").disabled = viewIdx === viewList.length - 1;
   $v("vw-count").textContent = p.countLabel || `${viewIdx + 1} / ${viewList.length}`;
+  markStrip();
+}
+// thumbnail strip under the full-screen piece: tap any one to jump straight to it
+function stripThumb(p) {
+  const yt = (p.video || "").match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
+  if (p.kind === "video" && yt) return `https://i.ytimg.com/vi/${yt[1]}/mqdefault.jpg`;
+  if (p.src) return /staticflickr/.test(p.src) ? p.src.replace(/_[a-z]\.(jpe?g|png)$/i, "_q.$1") : p.src;
+  return "";
+}
+function buildStrip() {
+  const st = $v("vw-strip");
+  if (!st) return;
+  st.innerHTML = "";
+  st.hidden = viewList.length < 2;
+  if (st.hidden) return;
+  viewList.forEach((p, i) => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "vw-th" + (p.kind === "video" ? " is-video" : "");
+    b.setAttribute("aria-label", `${p.title || "Piece"} (${i + 1} of ${viewList.length})`);
+    const src = stripThumb(p);
+    b.innerHTML = src ? `<img src="${src}" alt="" loading="lazy" draggable="false" />` : `<span class="vw-th-ph ${p.ph || ""}"></span>`;
+    b.addEventListener("click", () => { if (i !== viewIdx) stepView(i - viewIdx); });
+    st.appendChild(b);
+  });
+}
+function markStrip() {
+  const st = $v("vw-strip");
+  if (!st || st.hidden) return;
+  [...st.children].forEach((b, i) => b.classList.toggle("on", i === viewIdx));
+  const on = st.children[viewIdx];
+  if (on) st.scrollTo({ left: on.offsetLeft - (st.clientWidth - on.offsetWidth) / 2, behavior: "smooth" });
 }
 function openView(list, i, ctx = null, push = true) {
   if (!viewer || !list.length) return;
   viewList = list; viewCtx = ctx;
   viewIdx = Math.max(0, Math.min(i, list.length - 1));
+  buildStrip();
   fillView(viewList[viewIdx]);
   const fol = (history.state && history.state.folio) || "animation";
   if (push) history.pushState({ ...(history.state || {}), folio: fol, view: viewIdx }, "", "#" + fol);

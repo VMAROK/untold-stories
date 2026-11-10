@@ -1299,6 +1299,21 @@ body.folio-open { overflow: hidden; }
 .vw-arrow:hover:not(:disabled) { background: rgba(142, 37, 51, 0.4); border-color: var(--crimson-bright); }
 .vw-arrow:disabled { opacity: 0.2; cursor: default; }
 .vw-arrow.prev { left: -70px; } .vw-arrow.next { right: -70px; }
+/* thumbnail strip under the full-screen piece */
+.vw-strip {
+  max-width: 1180px; margin: 22px auto 0; display: flex; gap: 8px; overflow-x: auto; overscroll-behavior-x: contain;
+  padding: 4px 2px 8px; scrollbar-width: thin; scrollbar-color: rgba(227, 178, 94, 0.35) transparent; -webkit-overflow-scrolling: touch;
+}
+.vw-strip[hidden] { display: none; }
+.vw-th {
+  position: relative; flex: 0 0 auto; width: 64px; height: 64px; padding: 0; border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 3px; overflow: hidden; background: #0b0908; cursor: pointer; opacity: 0.45; transition: opacity 0.2s, border-color 0.2s;
+}
+.vw-th img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; -webkit-touch-callout: none; user-select: none; }
+.vw-th-ph { position: absolute; inset: 0; }
+.vw-th.is-video::after { content: "▶"; position: absolute; inset: 0; display: grid; place-items: center; font-size: 13px; color: #fff; text-shadow: 0 1px 4px #000; }
+.vw-th:hover { opacity: 0.8; }
+.vw-th.on { opacity: 1; border-color: #e3b25e; box-shadow: 0 0 0 1px #e3b25e; }
 .vw-info {
   max-width: 1180px; margin: 34px auto 0; display: grid; grid-template-columns: 1.5fr 1fr; gap: 50px;
   padding-top: 26px; border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -1330,6 +1345,8 @@ body.folio-open { overflow: hidden; }
   .viewer { padding: 76px 14px 34px; }
   .vw-arrow { width: 40px; height: 40px; font-size: 20px; }
   .vw-main h2 { font-size: 28px; }
+  .vw-strip { margin-top: 16px; gap: 6px; }
+  .vw-th { width: 54px; height: 54px; }
   .vw-desc { font-size: 14px; }
   .vw-facts { grid-template-columns: 1fr 1fr; }
 }
