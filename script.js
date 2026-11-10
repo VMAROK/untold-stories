@@ -580,6 +580,7 @@ function fillView(p) {
   $v("vw-prev").disabled = viewIdx === 0;
   $v("vw-next").disabled = viewIdx === viewList.length - 1;
   $v("vw-count").textContent = p.countLabel || `${viewIdx + 1} / ${viewList.length}`;
+  vwMarkRow();
   const dots = $v("vw-dots");
   if (dots) {
     dots.hidden = viewList.length < 2;
@@ -587,12 +588,57 @@ function fillView(p) {
     [...dots.children].forEach((d, i) => d.classList.toggle("on", i === viewIdx));
   }
 }
+// at the bottom of the full screen: the same Photos row as in the collections, to skim and jump to any one
+function vwBuildRow() {
+  const box = $v("vw-row");
+  if (!box) return;
+  box.innerHTML = "";
+  box.hidden = viewList.length < 2;
+  if (box.hidden) return;
+  const vids = viewList.every((p) => p.kind === "video");
+  const name = vids ? "Videos" : "Photos";
+  const row = document.createElement("div");
+  row.className = "loc-row loc-row-" + name.toLowerCase();
+  row.innerHTML = `<div class="loc-row-h"><h4>${name}</h4><span>${viewList.length}</span>
+      <div class="car-nav"><button type="button" class="car-prev" aria-label="Previous">‹</button><button type="button" class="car-next" aria-label="Next">›</button></div></div>
+    <div class="car-track"></div>`;
+  const track = row.querySelector(".car-track");
+  viewList.forEach((p, i) => {
+    const pic = p.poster || p.src;
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "ang-btn";
+    b.innerHTML = `<div class="ang-tile ${pic ? "" : p.ph || ""}"${pic ? ` style='background:${bgLayers(pic)}, #0a0a0a'` : ""}>
+        <span class="ang-no">${p.label || (vids || p.kind === "video" ? "Video" : "Photo") + " " + pad2(i + 1)}</span>${p.kind === "video" ? '<span class="gi-play"></span>' : ""}</div>
+      <div class="ang-cap"><h4></h4><p>${p.kind === "video" ? (p.spec || "").replace(/^[^:]*:\s*/, "") : fmtTaken(p.taken) || "Still"}</p></div>`;
+    b.querySelector("h4").textContent = p.title || "";
+    if (p.orient === "tall") b.classList.add("is-tall");
+    if (p.ratio) { track.classList.add("fit"); b.style.setProperty("--r", p.ratio); }
+    b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      if (i !== viewIdx) stepView(i - viewIdx);
+      viewer.scrollTop = 0;                                   // straight back up to the big photo
+    });
+    track.appendChild(b);
+  });
+  const step = (d) => track.scrollBy({ left: d * track.clientWidth * 0.8, behavior: "smooth" });
+  row.querySelector(".car-prev").addEventListener("click", () => step(-1));
+  row.querySelector(".car-next").addEventListener("click", () => step(1));
+  box.appendChild(row);
+}
+function vwMarkRow() {
+  const track = document.querySelector("#vw-row .car-track");
+  if (!track) return;
+  [...track.children].forEach((b, i) => b.classList.toggle("on", i === viewIdx));
+  const on = track.children[viewIdx];
+  if (on) track.scrollTo({ left: on.offsetLeft - track.offsetLeft - (track.clientWidth - on.offsetWidth) / 2, behavior: "smooth" });
+}
 function openView(list, i, ctx = null, push = true) {
   if (!viewer || !list.length) return;
   viewList = list; viewCtx = ctx;
   viewIdx = Math.max(0, Math.min(i, list.length - 1));
   if ($v("vw-dots")) $v("vw-dots").innerHTML = "";
   viewer._opened = Date.now();
+  vwBuildRow();
   fillView(viewList[viewIdx]);
   const fol = (history.state && history.state.folio) || "animation";
   if (push) history.pushState({ ...(history.state || {}), folio: fol, view: viewIdx }, "", "#" + fol);
@@ -626,7 +672,8 @@ if (viewer) {
     if (e.key === "ArrowLeft") { vwHold(); stepView(-1); }
     if (e.key === "ArrowRight") { vwHold(); stepView(1); }
   });
-  ["vw-prev", "vw-next"].forEach((id) => $v(id).addEventListener("click", vwHold));
+  viewer.addEventListener("click", () => vwHold());          // any tap (arrows, the Photos row) holds the slideshow
+  viewer.addEventListener("touchstart", () => vwHold(), { passive: true });
   // slideshow, the way the collections play: the photo fades to the next on its own, and can be swiped
   let vwHeld = 0, vwBusy = false, vwLast = 0;
   function vwHold() { vwHeld = Date.now(); }
@@ -642,12 +689,17 @@ if (viewer) {
     if (viewList[viewIdx].kind === "video") return;           // a film is never skipped past
     const el = vwPic(); if (!el) return;
     vwBusy = true; vwLast = Date.now();
+    const from = viewIdx, at = Date.now();
     el.style.transition = "opacity 0.5s ease"; el.style.opacity = 0;
     setTimeout(() => {
+      vwBusy = false;
+      if (vwHeld > at || viewIdx !== from) {                 // tapped meanwhile: leave it where the tap put it
+        const c = vwPic(); if (c) { c.style.transition = "opacity 0.3s ease"; c.style.opacity = 1; }
+        return;
+      }
       vwGoTo(vwWrap(1));
       const n = vwPic();
       if (n) { n.style.opacity = 0; void n.offsetWidth; n.style.transition = "opacity 0.6s ease"; n.style.opacity = 1; }
-      vwBusy = false;
     }, 500);
   }, 250);
   const stage = $v("vw-media");
@@ -707,6 +759,8 @@ function anglePiece(a, i, total, world, locName, base) {
     desc: a.textContent.trim(), year: base.year, spec: a.dataset.spec || "", tools: base.tools,
     countLabel: locName ? `${base.piece || "Angle"} ${i + 1} of ${total}` : "",
     taken: a.dataset.taken || "",
+    ratio: a.dataset.ratio || "", poster: a.dataset.poster || "", orient: a.dataset.orient || "",
+    label: `${a.dataset.kind === "video" ? "Video" : /^Version/.test(a.dataset.spec || "") ? "Version" : base.piece || "Angle"} ${pad2(i + 1)}`,
   };
 }
 function angleTile(a, label, cap) {
