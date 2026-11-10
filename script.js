@@ -580,11 +580,19 @@ function fillView(p) {
   $v("vw-prev").disabled = viewIdx === 0;
   $v("vw-next").disabled = viewIdx === viewList.length - 1;
   $v("vw-count").textContent = p.countLabel || `${viewIdx + 1} / ${viewList.length}`;
+  const dots = $v("vw-dots");
+  if (dots) {
+    dots.hidden = viewList.length < 2;
+    if (dots.children.length !== viewList.length) dots.innerHTML = viewList.map(() => "<i></i>").join("");
+    [...dots.children].forEach((d, i) => d.classList.toggle("on", i === viewIdx));
+  }
 }
 function openView(list, i, ctx = null, push = true) {
   if (!viewer || !list.length) return;
   viewList = list; viewCtx = ctx;
   viewIdx = Math.max(0, Math.min(i, list.length - 1));
+  if ($v("vw-dots")) $v("vw-dots").innerHTML = "";
+  viewer._opened = Date.now();
   fillView(viewList[viewIdx]);
   const fol = (history.state && history.state.folio) || "animation";
   if (push) history.pushState({ ...(history.state || {}), folio: fol, view: viewIdx }, "", "#" + fol);
@@ -615,9 +623,75 @@ if (viewer) {
   $v("vw-next").addEventListener("click", () => stepView(1));
   document.addEventListener("keydown", (e) => {
     if (viewer.hidden) return;
-    if (e.key === "ArrowLeft") stepView(-1);
-    if (e.key === "ArrowRight") stepView(1);
+    if (e.key === "ArrowLeft") { vwHold(); stepView(-1); }
+    if (e.key === "ArrowRight") { vwHold(); stepView(1); }
   });
+  ["vw-prev", "vw-next"].forEach((id) => $v(id).addEventListener("click", vwHold));
+  // slideshow, the way the collections play: the photo fades to the next on its own, and can be swiped
+  let vwHeld = 0, vwBusy = false, vwLast = 0;
+  function vwHold() { vwHeld = Date.now(); }
+  const vwPic = () => $v("vw-media").firstElementChild;
+  const vwWrap = (d) => (viewIdx + d + viewList.length) % viewList.length;
+  function vwGoTo(j) {
+    viewIdx = j;
+    history.replaceState({ ...(history.state || {}), view: j }, "", location.hash || "#animation");
+    fillView(viewList[j]);
+  }
+  setInterval(() => {                                         // every 5 s, after 5 s of no touching
+    if (viewer.hidden || vwBusy || viewList.length < 2 || Date.now() - Math.max(vwHeld, vwLast, viewer._opened || 0) < 5000) return;
+    if (viewList[viewIdx].kind === "video") return;           // a film is never skipped past
+    const el = vwPic(); if (!el) return;
+    vwBusy = true; vwLast = Date.now();
+    el.style.transition = "opacity 0.5s ease"; el.style.opacity = 0;
+    setTimeout(() => {
+      vwGoTo(vwWrap(1));
+      const n = vwPic();
+      if (n) { n.style.opacity = 0; void n.offsetWidth; n.style.transition = "opacity 0.6s ease"; n.style.opacity = 1; }
+      vwBusy = false;
+    }, 500);
+  }, 250);
+  const stage = $v("vw-media");
+  let sw = null;
+  stage.addEventListener("touchstart", (e) => {
+    if (e.touches.length !== 1 || viewList.length < 2) { sw = null; return; }
+    const t = e.touches[0]; vwHold();
+    sw = { x0: t.clientX, y0: t.clientY, t0: performance.now(), dx: 0, axis: null };
+  }, { passive: true });
+  stage.addEventListener("touchmove", (e) => {
+    if (!sw || vwBusy) return;
+    const t = e.touches[0], dx = t.clientX - sw.x0, dy = t.clientY - sw.y0;
+    if (!sw.axis) {
+      if (Math.abs(dx) < 3 && Math.abs(dy) < 3) return;
+      sw.axis = Math.abs(dx) >= Math.abs(dy) * 0.75 ? "x" : "y";
+      if (sw.axis === "y") { sw = null; return; }
+    }
+    e.preventDefault(); sw.dx = dx;
+    const el = vwPic(); if (el) { el.style.transition = "none"; el.style.transform = `translateX(${dx}px)`; }
+  }, { passive: false });
+  const swEnd = () => {
+    if (!sw || sw.axis !== "x") { sw = null; return; }
+    const { dx, t0 } = sw; sw = null; vwHold();
+    const w = stage.clientWidth, el = vwPic();
+    const v = Math.abs(dx) / Math.max(1, performance.now() - t0);
+    if (!el) return;
+    if (Math.abs(dx) < Math.min(w * 0.08, 40) && !(v > 0.2 && Math.abs(dx) > 8)) {
+      el.style.transition = "transform 0.3s ease"; el.style.transform = ""; return;
+    }
+    const d = dx < 0 ? 1 : -1;
+    vwBusy = true;
+    el.style.transition = "transform 0.3s cubic-bezier(.22,.61,.36,1)"; el.style.transform = `translateX(${-d * w}px)`;
+    setTimeout(() => {
+      vwGoTo(vwWrap(d));
+      const n = vwPic();
+      if (n) {
+        n.style.transition = "none"; n.style.transform = `translateX(${d * w}px)`; void n.offsetWidth;
+        n.style.transition = "transform 0.4s cubic-bezier(.22,.61,.36,1)"; n.style.transform = "";
+      }
+      setTimeout(() => (vwBusy = false), 400);
+    }, 300);
+  };
+  stage.addEventListener("touchend", swEnd);
+  stage.addEventListener("touchcancel", swEnd);
 }
 
 // ===== Collections: a world > locations > angles =====
