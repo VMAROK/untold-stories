@@ -29,6 +29,30 @@ if not ids:
     ids = ["72177720336837184"]            # General, as a fallback
 print("albums:", ids)
 
+# The public album feed only lists the newest 20 photos. With your own Flickr API key
+# (repo secret FLICKR_KEY) the whole album is read; without it, photos from earlier
+# syncs that the feed no longer shows are kept, so nothing drops off the site.
+KEY = os.environ.get("FLICKR_KEY", "").strip() or None
+
+def full_album(sid, key):
+    out, page_n = [], 1
+    while True:
+        r = json.loads(get("https://api.flickr.com/services/rest/?method=flickr.photosets.getPhotos"
+            f"&api_key={key}&photoset_id={sid}&user_id={USER}&extras=description,date_taken,date_upload,url_m"
+            f"&per_page=500&page={page_n}&format=json&nojsoncallback=1"))
+        if r.get("stat") != "ok":
+            raise ValueError(r.get("message"))
+        ps = r["photoset"]; out += ps.get("photo", [])
+        if page_n >= int(ps.get("pages", 1)): return out
+        page_n += 1
+
+print("api key:", "set" if KEY else "not set")
+try:
+    old = json.load(open("data/flickr.json"))["photos"]
+except Exception:
+    old = []
+pid = lambda url: (re.search(r"/photos/[^/]+/(\d+)", url or "") or [None, None])[1]
+
 albums, photos = [], []
 for sid in ids:
     raw = get(f"https://www.flickr.com/services/feeds/photoset.gne?set={sid}&nsid={USER}&format=json&nojsoncallback=1&lang=en-us")
@@ -37,6 +61,7 @@ for sid in ids:
     adesc = text(feed.get("description", ""))
     kind = "story" if re.search(r"type\s*:?\s*story", adesc, re.I) else "standard"
     albums.append({"id": sid, "title": title, "type": kind, "description": adesc})
+    fed = []
     for it in feed.get("items", []):
         m = (it.get("media") or {}).get("m", "")
         if not m:
@@ -45,13 +70,41 @@ for sid in ids:
         w = re.search(r'width="(\d+)"', desc); h = re.search(r'height="(\d+)"', desc)
         paras = re.findall(r"<p>(.*?)</p>", desc, re.S)
         own = "\n".join(text(p) for p in paras[2:]).strip()
-        photos.append({
+        fed.append({
             "title": html.unescape(it.get("title", "")).strip(), "url": it.get("link", ""), "m": m,
             "w": int(w.group(1)) if w else 4, "h": int(h.group(1)) if h else 3,
             "taken": it.get("date_taken", ""), "published": it.get("published", ""),
             "description": re.sub(r"[ \t]+", " ", own), "tags": (it.get("tags") or "").split(),
             "album": sid, "category": "general",
         })
+    full = None
+    if KEY:
+        try:
+            full = full_album(sid, KEY)
+        except Exception as e:
+            print("full album failed", sid, e)
+    if full is not None:
+        byid = {pid(p["url"]): p for p in fed}
+        for x in full:
+            f = byid.get(x["id"])
+            if f:
+                photos.append(f); continue
+            photos.append({
+                "title": (x.get("title") or "").strip(),
+                "url": f"https://www.flickr.com/photos/{USER}/{x['id']}/in/set-{sid}/",
+                "m": f"https://live.staticflickr.com/{x['server']}/{x['id']}_{x['secret']}_m.jpg",
+                "w": int(x.get("width_m") or 4), "h": int(x.get("height_m") or 3),
+                "taken": (x.get("datetaken") or "").replace(" ", "T"),
+                "published": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(int(x.get("dateupload") or 0))),
+                "description": re.sub(r"[ \t]+", " ", text((x.get("description") or {}).get("_content", ""))),
+                "tags": [], "album": sid, "category": "general",
+            })
+        print(title, len(full), "photos (full album)")
+    else:
+        seen = {pid(p["url"]) for p in fed}
+        keep = [p for p in old if p.get("album") == sid and pid(p["url"]) not in seen] if len(fed) >= 20 else []
+        photos += fed + keep
+        print(title, len(fed), "from feed +", len(keep), "kept from last sync")
 photos.sort(key=lambda p: p["published"], reverse=True)
 os.makedirs("data", exist_ok=True)
 with open("data/flickr.json", "w") as f:
