@@ -594,6 +594,7 @@ function vwBuildRow() {
   if (!box) return;
   box.innerHTML = "";
   box.hidden = viewList.length < 2;
+  viewer.classList.toggle("has-row", !box.hidden);
   if (box.hidden) return;
   const vids = viewList.every((p) => p.kind === "video");
   const name = vids ? "Videos" : "Photos";
