@@ -27,6 +27,32 @@
  ],
  "photos": [
   {
+   "title": "The Bath Room",
+   "url": "https://www.flickr.com/photos/205100593@N02/55644251809/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55644251809_62db33fc63_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-09T21:17:00-08:00",
+   "published": "2026-11-10T05:17:06Z",
+   "description": "TITLE The Bath Room\n STORY The Chapel\n SCENE The Bath Room\n TIME Day\n VERSION 1",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
+   "title": "The Bath Room",
+   "url": "https://www.flickr.com/photos/205100593@N02/55644046306/in/set-72177720336726682/",
+   "m": "https://live.staticflickr.com/65535/55644046306_686f432d6e_m.jpg",
+   "w": 135,
+   "h": 240,
+   "taken": "2026-11-09T21:16:56-08:00",
+   "published": "2026-11-10T05:17:06Z",
+   "description": "TITLE The Bath Room\n STORY The Chapel\n SCENE The Bath Room\n TIME Day\n VERSION 2",
+   "tags": [],
+   "album": "72177720336726682",
+   "category": "general"
+  },
+  {
    "title": "Marek’s Dorm at Night",
    "url": "https://www.flickr.com/photos/205100593@N02/55641497838/in/set-72177720336726682/",
    "m": "https://live.staticflickr.com/65535/55641497838_ab60b547e0_m.jpg",
@@ -352,32 +378,6 @@
    "taken": "2025-10-08T00:11:00-08:00",
    "published": "2026-11-03T23:29:12Z",
    "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 1",
-   "tags": [],
-   "album": "72177720336726682",
-   "category": "general"
-  },
-  {
-   "title": "Candles For Supper",
-   "url": "https://www.flickr.com/photos/205100593@N02/55630869558/in/set-72177720336726682/",
-   "m": "https://live.staticflickr.com/65535/55630869558_2041275cb6_m.jpg",
-   "w": 135,
-   "h": 240,
-   "taken": "2025-10-08T08:26:00-08:00",
-   "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 3",
-   "tags": [],
-   "album": "72177720336726682",
-   "category": "general"
-  },
-  {
-   "title": "He Watches Me",
-   "url": "https://www.flickr.com/photos/205100593@N02/55630739676/in/set-72177720336726682/",
-   "m": "https://live.staticflickr.com/65535/55630739676_8e0e9200e8_m.jpg",
-   "w": 135,
-   "h": 240,
-   "taken": "2025-10-07T03:52:00-08:00",
-   "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE He Watches Me\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 3",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
