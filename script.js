@@ -991,6 +991,13 @@ function openColl(item, push = true) {
     toggle.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } });
     // inside the drop-down: a Videos row, then a Photos row, each a swipeable carousel
     const body = sec.querySelector(".loc-body-in");
+    body.insertAdjacentHTML("beforeend", `<div class="loc-fs-bar">${FS_BTN}</div>`);
+    body.querySelector(".loc-fs").addEventListener("click", (e) => {
+      e.stopPropagation();
+      const k = [...cover.querySelectorAll(".loc-slide")].findIndex((x) => x.classList.contains("on"));
+      const shown = (stills.length ? stills : angs)[Math.max(0, k)];
+      openFull(angs, world, loc.dataset.name, base, Math.max(0, angs.indexOf(shown)));
+    });
     [["Videos", angs.filter((a) => a.dataset.kind === "video")], ["Photos", angs.filter((a) => a.dataset.kind !== "video")]]
       .filter(([name, set]) => !(name === "Videos" && "photosOnly" in item.dataset && !set.length))   // photo collections: Videos row only if it has some
       .forEach(([name, set]) => body.appendChild(carouselRow(name, set, world, loc.dataset.name, base, W)));   // both sections always show
@@ -2780,6 +2787,13 @@ function fillMosaic(small, item, world, opts = {}) {
   });
   clSizeRows();
 }
+// "Full screen" button in a drop-down: opens the full-screen page at this scene / entry
+const FS_BTN = `<button type="button" class="loc-fs" aria-label="Open full screen"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1 5V1h4M9 1h4v4M13 9v4H9M5 13H1V9" fill="none" stroke="currentColor" stroke-width="1.4"/></svg><span>Full screen</span></button>`;
+function openFull(angs, world, locName, base, start = 0) {
+  if (!angs.length) return;
+  const list = angs.map((a, i) => anglePiece(a, i, angs.length, world, locName, base));
+  openView(list, Math.max(0, Math.min(start, list.length - 1)), "coll");
+}
 // Mosaic: tapping a photo opens its drop-down (name, note, versions row) right under that row of tiles
 function csToggle(tile, loc, angs, world, base, W) {
   const small = tile.parentElement;
@@ -2798,6 +2812,10 @@ function csToggle(tile, loc, angs, world, base, W) {
   drop.querySelector(".cs-close").addEventListener("click", () => { drop.remove(); tile.classList.remove("on"); });
   const rowH = drop.querySelector(".loc-row-h");                 // Close sits on the versions row, next to the arrows
   if (rowH) rowH.insertBefore(drop.querySelector(".cs-close"), rowH.querySelector(".car-nav"));
+  if (rowH) {
+    rowH.querySelector(".cs-close").insertAdjacentHTML("beforebegin", FS_BTN);
+    rowH.querySelector(".loc-fs").addEventListener("click", (e) => { e.stopPropagation(); openFull(angs, world, loc.dataset.name, base); });
+  }
   if (!loc.dataset.note) drop.querySelector(".cs-drop-h").remove();
   // after the last tile on the same row as the one tapped
   const tiles = [...small.querySelectorAll(".cs-tile")];
