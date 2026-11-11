@@ -581,12 +581,11 @@ function fillView(p) {
   $v("vw-next").disabled = viewIdx === viewList.length - 1;
   $v("vw-count").textContent = p.countLabel || `${viewIdx + 1} / ${viewList.length}`;
   vwMarkRow();
-  const bar = $v("vw-bar");                                   // slideshow bar: the pink part shows where you are
+  const bar = $v("vw-bar");                                   // slideshow bar: one thin segment per piece, lit up to the one showing
   if (bar) {
     bar.hidden = viewList.length < 2;
-    const n = viewList.length, th = bar.firstElementChild;
-    th.style.width = `${100 / n}%`;
-    th.style.left = n > 1 ? `calc((100% - max(${100 / n}%, 14px)) * ${viewIdx / (n - 1)})` : "0";
+    if (bar.children.length !== viewList.length) bar.innerHTML = viewList.map(() => "<i></i>").join("");
+    [...bar.children].forEach((d, i) => { d.classList.toggle("seen", i < viewIdx); d.classList.toggle("on", i === viewIdx); });
   }
 
 }
@@ -606,7 +605,8 @@ function vwBuildRow() {
     if (!idx.length) return;
     const row = document.createElement("div");
     row.className = "loc-row loc-row-" + name.toLowerCase();
-    row.innerHTML = `<div class="loc-row-h"><h4>${name}</h4><span>${idx.length}</span>
+    row.dataset.row = name;
+    row.innerHTML = `<div class="loc-row-h"><button type="button" class="vw-grip" aria-label="Drag to move the ${name} row"><svg viewBox="0 0 10 16" aria-hidden="true"><g fill="currentColor"><circle cx="2" cy="2" r="1.4"/><circle cx="8" cy="2" r="1.4"/><circle cx="2" cy="8" r="1.4"/><circle cx="8" cy="8" r="1.4"/><circle cx="2" cy="14" r="1.4"/><circle cx="8" cy="14" r="1.4"/></g></svg></button><h4>${name}</h4><span>${idx.length}</span>
         <div class="car-nav"><button type="button" class="car-prev" aria-label="Previous">‹</button><button type="button" class="car-next" aria-label="Next">›</button></div></div>
       <div class="car-track"></div>`;
     const track = row.querySelector(".car-track");
@@ -631,7 +631,43 @@ function vwBuildRow() {
     const step = (d) => track.scrollBy({ left: d * track.clientWidth * 0.8, behavior: "smooth" });
     row.querySelector(".car-prev").addEventListener("click", () => step(-1));
     row.querySelector(".car-next").addEventListener("click", () => step(1));
+    vwGripDrag(row, box);
     box.appendChild(row);
+  });
+  let order = [];
+  try { order = JSON.parse(localStorage.getItem("vwRowOrder") || "[]"); } catch (e) {}
+  order.forEach((n) => { const r = box.querySelector(`[data-row="${n}"]`); if (r) box.appendChild(r); });
+  [...box.children].forEach((r) => { if (!order.includes(r.dataset.row)) box.appendChild(r); });
+}
+// drag a row by its grip to move it above or below the others (so the row you want sits right under the photo)
+function vwGripDrag(row, box) {
+  const grip = row.querySelector(".vw-grip");
+  grip.addEventListener("click", (e) => e.stopPropagation());
+  grip.addEventListener("pointerdown", (e) => {
+    e.preventDefault(); e.stopPropagation();
+    row.classList.add("dragging");
+    let lastY = e.clientY, shift = 0;
+    const move = (ev) => {
+      shift += ev.clientY - lastY; lastY = ev.clientY;
+      row.style.transform = `translateY(${shift}px)`;
+      const prev = row.previousElementSibling, next = row.nextElementSibling;
+      const mid = row.getBoundingClientRect().top + row.offsetHeight / 2;
+      const natural = () => row.getBoundingClientRect().top - shift;   // where the row sits without the drag offset
+      const before = natural();
+      if (prev && mid < prev.getBoundingClientRect().top + prev.offsetHeight / 2) box.insertBefore(row, prev);
+      else if (next && mid > next.getBoundingClientRect().top + next.offsetHeight / 2) box.insertBefore(next, row);
+      else return;
+      shift -= natural() - before;                            // keep the row under the finger after it swaps places
+      row.style.transform = `translateY(${shift}px)`;
+    };
+    const up = () => {
+      window.removeEventListener("pointermove", move); window.removeEventListener("pointerup", up); window.removeEventListener("pointercancel", up);
+      row.classList.remove("dragging");
+      row.style.transition = "transform 0.25s ease"; row.style.transform = "";
+      setTimeout(() => (row.style.transition = ""), 260);
+      try { localStorage.setItem("vwRowOrder", JSON.stringify([...box.children].map((r) => r.dataset.row))); } catch (err) {}
+    };
+    window.addEventListener("pointermove", move); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);   // on the window: moving the row in the page drops a captured pointer
   });
 }
 function vwMarkRow() {
@@ -739,10 +775,9 @@ if (viewer) {
       if (n) { n.style.opacity = 0; void n.offsetWidth; n.style.transition = "opacity 0.6s ease"; n.style.opacity = 1; }
     }, 500);
   }, 250);
-  $v("vw-bar").addEventListener("click", (e) => {            // tap anywhere on the bar to jump there
-    const r = e.currentTarget.getBoundingClientRect();
-    const j = Math.min(viewList.length - 1, Math.max(0, Math.floor(((e.clientX - r.left) / r.width) * viewList.length)));
-    if (j !== viewIdx) stepView(j - viewIdx);
+  $v("vw-bar").addEventListener("click", (e) => {            // tap a segment to jump to that piece
+    const j = [...e.currentTarget.children].indexOf(e.target.closest("i"));
+    if (j >= 0 && j !== viewIdx) stepView(j - viewIdx);
   });
   const stage = $v("vw-media");
   let sw = null;

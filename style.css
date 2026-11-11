@@ -1299,12 +1299,24 @@ body.folio-open { overflow: hidden; }
 .vw-arrow:hover:not(:disabled) { background: rgba(142, 37, 51, 0.4); border-color: var(--crimson-bright); }
 .vw-arrow:disabled { opacity: 0.2; cursor: default; }
 .vw-arrow.prev { left: -70px; } .vw-arrow.next { right: -70px; }
-/* slideshow bar above the full-screen photo: a dark track, the pink part (like the scrollbar) shows where you are */
-.vw-bar { position: relative; max-width: 1180px; height: 6px; margin: 0 auto 16px; background: #070606; border-radius: 6px;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05); cursor: pointer; }
+/* slideshow bar at the top of full screen: thin segments, lit up to the piece showing (story-style) */
+.vw-bar { max-width: 1180px; margin: 0 auto 18px; display: flex; gap: 3px; padding: 6px 0; cursor: pointer; }
 .vw-bar[hidden] { display: none; }
-.vw-bar i { position: absolute; top: 0; bottom: 0; min-width: 14px; border-radius: 6px; background: linear-gradient(180deg, #c03446, #8e2533);
-  transition: left 0.45s cubic-bezier(.22,.61,.36,1), width 0.3s; }
+.vw-bar i { flex: 1 1 0; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, 0.16); transition: background 0.4s ease; }
+.vw-bar i.seen { background: rgba(255, 255, 255, 0.45); }
+.vw-bar i.on { background: #fff; }
+/* title above the photo */
+.vw-head { max-width: 1180px; margin: 0 auto 16px; }
+.vw-head h2 { font-family: var(--serif-2); font-weight: 400; font-size: 34px; line-height: 1.05; margin-top: 6px; }
+@media (max-width: 760px) { .vw-head h2 { font-size: 24px; } }
+/* rows can be dragged up or down by the grip */
+.vw-grip { align-self: center; display: grid; place-items: center; width: 26px; height: 30px; margin-left: -6px; padding: 0; border: 0; background: none;
+  color: rgba(255, 255, 255, 0.4); cursor: grab; touch-action: none; }
+.vw-grip svg { width: 10px; height: 16px; }
+.vw-grip:hover { color: #fff; }
+.vw-row .loc-row { position: relative; background: transparent; }
+.vw-row .loc-row.dragging { z-index: 5; background: rgba(10, 8, 8, 0.92); box-shadow: 0 18px 40px rgba(0, 0, 0, 0.6); }
+.vw-row .loc-row.dragging .vw-grip { cursor: grabbing; color: #fff; }
 .vw-media { touch-action: pan-y; }
 /* the Photos row at the bottom of the full screen (same look as in the collections) */
 .vw-row { max-width: 1180px; margin: 14px auto 0; }
@@ -1320,7 +1332,7 @@ body.folio-open { overflow: hidden; }
 .vw-row .ang-btn .ang-tile { transition: box-shadow 0.3s, opacity 0.3s; }
 .vw-row .ang-btn:not(.on) .ang-tile { opacity: 0.7; }
 /* with the row showing, the big photo shrinks so photo + row both fit on one screen */
-.viewer.has-row .vw-media .wm-wrap img { max-height: calc(100vh - 380px); max-height: calc(100svh - 380px); }
+.viewer.has-row .vw-media .wm-wrap img { max-height: calc(100vh - 440px); max-height: calc(100svh - 440px); }
 .vw-row .ang-btn.on .ang-tile { box-shadow: 0 0 0 2px #e3b25e; opacity: 1; }
 .vw-info {
   max-width: 1180px; margin: 34px auto 0; display: grid; grid-template-columns: 1.5fr 1fr; gap: 50px;
@@ -1460,9 +1472,9 @@ body.folio-open { overflow: hidden; }
 .loc.open .loc-cta .open-t { display: none; }
 .loc.open .loc-cta .close-t { display: inline; }
 .loc.open .loc-cta i { transform: rotate(180deg); }
-.loc-dots { position: absolute; z-index: 2; right: 18px; top: 16px; display: flex; gap: 6px; }
-.loc-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 255, 255, 0.35); transition: background 0.4s; }
-.loc-dots i.on { background: #f2ede6; }
+.loc-dots { position: absolute; z-index: 2; right: 18px; top: 18px; display: flex; align-items: center; gap: 4px; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)); }
+.loc-dots i { width: 12px; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, 0.35); transition: background 0.4s, width 0.4s; }
+.loc-dots i.on { width: 24px; background: #fff; }
 
 .loc-body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.6s ease; }
 .loc.open .loc-body { grid-template-rows: 1fr; }
@@ -2852,9 +2864,9 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 .gi-entry .ge-slide { position: absolute; inset: 0; background: #0a0a0a center / cover no-repeat; opacity: 0; transition: opacity 1.4s ease; pointer-events: none; }
 .gi-entry .ge-slide.on { opacity: 1; }
 .gi-entry .gi-play { z-index: 2; }
-.gi-entry .ge-dots { position: absolute; z-index: 2; top: 12px; right: 12px; display: flex; gap: 5px; pointer-events: none; }
-.gi-entry .ge-dots i { width: 5px; height: 5px; border-radius: 50%; background: rgba(255, 255, 255, 0.35); transition: background 0.4s; }
-.gi-entry .ge-dots i.on { background: #f2ede6; }
+.gi-entry .ge-dots { position: absolute; z-index: 2; top: 14px; right: 12px; display: flex; align-items: center; gap: 3px; pointer-events: none; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)); }
+.gi-entry .ge-dots i { width: 9px; height: 2px; border-radius: 2px; background: rgba(255, 255, 255, 0.35); transition: background 0.4s, width 0.4s; }
+.gi-entry .ge-dots i.on { width: 18px; background: #fff; }
 .gi-entry .gi-media { overflow: hidden; }
 .gi-entry.ge-multi .gi-media { touch-action: pan-y; user-select: none; -webkit-user-select: none; }
 /* (no will-change on slides: on iPad Safari it made big images draw in broken pieces) */
