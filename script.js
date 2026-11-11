@@ -756,6 +756,7 @@ if (viewer) {
     history.replaceState({ ...(history.state || {}), view: j }, "", location.hash || "#animation");
     fillView(viewList[j]);
   }
+  /* automatic slideshow in full screen: turned off
   setInterval(() => {                                         // every 5 s, after 5 s of no touching
     if (viewer.hidden || vwBusy || viewList.length < 2 || Date.now() - Math.max(vwHeld, vwLast, viewer._opened || 0) < 5000) return;
     if (viewList[viewIdx].kind === "video") return;           // a film is never skipped past
@@ -774,6 +775,7 @@ if (viewer) {
       if (n) { n.style.opacity = 0; void n.offsetWidth; n.style.transition = "opacity 0.6s ease"; n.style.opacity = 1; }
     }, 500);
   }, 250);
+  */
 /* removed: full-screen slideshow bar
   if ($v("vw-bar")) $v("vw-bar").addEventListener("click", (e) => {            // tap a segment to jump to that piece
     const j = [...e.currentTarget.children].indexOf(e.target.closest("i"));
