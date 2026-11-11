@@ -633,8 +633,27 @@ function vwMarkRow() {
   const on = track.children[viewIdx];
   if (on) track.scrollTo({ left: on.offsetLeft - track.offsetLeft - (track.clientWidth - on.offsetWidth) / 2, behavior: "smooth" });
 }
+// Full screen inside a collection always offers every photo of that collection, wherever it was opened from
+function vwWholeColl(list, i, ctx) {
+  const cur = list[i], d = ctx === "coll" && collItem && collItem.querySelector(".coll-data");
+  if (!d || !cur || cur.kind === "video") return [list, i];
+  const angs = [...d.querySelectorAll(".ang")].filter((a) => a.dataset.kind !== "video");
+  if (angs.length < 2) return [list, i];
+  const world = collItem.querySelector("h3").textContent, W = collWords(collItem);
+  const base = { year: collItem.dataset.year || "", tools: collItem.dataset.tools || "", piece: W.piece };
+  const out = angs.map((a, k) => {
+    const loc = a.closest(".loc"), sib = loc ? [...loc.querySelectorAll(".ang")] : angs;
+    const p = anglePiece(a, sib.indexOf(a), sib.length, world, loc ? loc.dataset.name : "", base);
+    p.label = `${W.piece} ${pad2(k + 1)}`;
+    p.countLabel = `${W.piece} ${k + 1} of ${angs.length}`;
+    return p;
+  });
+  const j = out.findIndex((p) => (cur.src && p.src === cur.src) || (!cur.src && p.title === cur.title && p.ph === cur.ph));
+  return j < 0 ? [list, i] : [out, j];
+}
 function openView(list, i, ctx = null, push = true) {
   if (!viewer || !list.length) return;
+  [list, i] = vwWholeColl(list, Math.max(0, Math.min(i, list.length - 1)), ctx);
   viewList = list; viewCtx = ctx;
   viewIdx = Math.max(0, Math.min(i, list.length - 1));
   if ($v("vw-dots")) $v("vw-dots").innerHTML = "";
