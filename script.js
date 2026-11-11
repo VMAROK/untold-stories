@@ -1810,6 +1810,13 @@ if (danceEl) {
   };
   document.querySelectorAll(".folio").forEach((f) => new MutationObserver(sync).observe(f, { attributes: true, attributeFilter: ["class"] }));
   sync();
+  // the navbar sits on top of every page: using it closes whatever is open over the portfolio (full screen, collection, reader…)
+  bar.addEventListener("click", (e) => {
+    const go = e.target.closest("[data-leave], [data-folio]");
+    if (!go) return;
+    if (go.matches(".nav-drop > a") && matchMedia("(hover: none)").matches && !bar.classList.contains("drop-on")) return;   // first tap only opens the menu
+    [closeView, closeColl, closeReader, closeFull, closeRelease].forEach((f) => { try { f(); } catch (err) {} });
+  }, true);
   // each link leaves the portfolio, then scrolls to that part of the home page
   bar.querySelectorAll("[data-leave]").forEach((a) => a.addEventListener("click", (e) => {
     e.preventDefault();

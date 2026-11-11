@@ -2130,7 +2130,7 @@ body.mini-on .site-foot { padding-bottom: 130px; }
 
 /* ================= PORTFOLIO NAVBAR: the same navbar as the home page, on top of the portfolio pages ================= */
 :root { --pnav: 53px; }   /* = navbar height */
-.nav.pnav { z-index: 105; opacity: 0; transition: opacity 0.6s ease; }   /* above the portfolio pages, below viewer / reader / collections */
+.nav.pnav { z-index: 125; opacity: 0; transition: opacity 0.6s ease; }   /* on top of everything: portfolio pages, collections, full screen, reader, release, full script */
 .pnav[hidden] { display: flex; visibility: hidden; pointer-events: none; }
 .pnav.open { opacity: 1; visibility: visible; }
 /* make room for the bar: pages start below it, the Back button sits just under it */
@@ -2996,3 +2996,11 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .coll.coll-story .row-foot .cs-close, .coll.coll-chapel .row-foot .cs-close { border-color: #c8742a; background: rgba(200, 116, 42, 0.25); }
 .coll.coll-story .car-nav button:hover, .coll.coll-chapel .car-nav button:hover { border-color: #c8742a; background: rgba(200, 116, 42, 0.2); }
 .coll.coll-story .fs-ico:hover, .coll.coll-chapel .fs-ico:hover { border-color: #c8742a; background: rgba(200, 116, 42, 0.55); }
+
+/* the navbar stays on top on every page: these pages now start below it */
+.reader, .fullscript, .viewer, .coll, .release { top: var(--pnav); }
+.reader .folio-close, .viewer .folio-close, .coll .folio-close, .release .folio-close { top: calc(var(--pnav) + 22px); }
+@media (max-width: 1100px) { .reader .folio-close, .viewer .folio-close, .coll .folio-close, .release .folio-close { top: calc(var(--pnav) + 16px); } }
+@media (max-width: 640px) { .reader .folio-close, .viewer .folio-close, .coll .folio-close, .release .folio-close { top: calc(var(--pnav) + 12px); } }
+.coll .chapel-fire, .coll.coll-chapel::before, .viewer.vw-chapel > .chapel-fire, .viewer.vw-chapel::before { top: var(--pnav); height: auto; }
+.vw-media:has(> .wm-wrap) { max-height: calc(100vh - 170px - var(--pnav)); max-height: calc(100svh - 170px - var(--pnav)); }
