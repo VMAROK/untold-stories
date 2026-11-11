@@ -2899,3 +2899,6 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
   font-family: "Cinzel", var(--serif-2); font-size: clamp(8px, 0.9vw, 11.5px); font-weight: 600; letter-spacing: 0.32em;
   color: #d9a650; padding-top: 0.5em; border-top: 1px solid rgba(217, 166, 80, 0.7);
 }
+
+/* TEMPORARY test caption: checks the iPad is getting the newest version of the site */
+.vw-test { margin: 14px auto 0; text-align: center; color: #ff1a1a; font: 700 28px/1.2 Arial, sans-serif; letter-spacing: 2px; text-transform: uppercase; }
