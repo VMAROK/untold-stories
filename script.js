@@ -775,7 +775,7 @@ if (viewer) {
     }, 500);
   }, 250);
 /* removed: full-screen slideshow bar
-  $v("vw-bar").addEventListener("click", (e) => {            // tap a segment to jump to that piece
+  if ($v("vw-bar")) $v("vw-bar").addEventListener("click", (e) => {            // tap a segment to jump to that piece
     const j = [...e.currentTarget.children].indexOf(e.target.closest("i"));
     if (j >= 0 && j !== viewIdx) stepView(j - viewIdx);
   });

@@ -1328,6 +1328,7 @@ body.folio-open { overflow: hidden; }
 .vw-row .loc-row-h h4 { font-size: 20px; }
 .vw-row .car-track { position: relative; grid-auto-columns: 130px; }
 .vw-row .car-track.fit { --ch: 150px; }
+@media (min-width: 1025px) { .vw-row .loc-row-portrait .car-track.fit { --ch: 300px; } }   /* desktop: bigger portrait row */
 .vw-row .ang-cap { display: none; }                      /* compact, so the row fits on screen under the photo */
 .vw-row .ang-no { font-size: 8.5px; }
 .vw-row .ang-btn .ang-tile { transition: box-shadow 0.3s, opacity 0.3s; }
