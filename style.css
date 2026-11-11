@@ -2971,3 +2971,28 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 /* story collections (The Chapel and any other story): the line under the rows is the Chapel's orange, not pink */
 .coll.coll-story .cs-drop, .coll.coll-chapel .cs-drop { border-bottom-color: rgba(200, 116, 42, 0.5); }
 .coll.coll-story .loc.open .loc-body-in, .coll.coll-chapel .loc.open .loc-body-in { border-bottom-color: rgba(200, 116, 42, 0.5); }
+
+/* full screen of a story collection: orange instead of pink; The Chapel also gets its firelight behind */
+.viewer.vw-chapel { background: #060302; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.viewer.vw-chapel > .chapel-fire { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; display: block; }
+.viewer.vw-chapel::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(ellipse 85% 75% at 50% 45%, transparent 35%, rgba(0, 0, 0, 0.78) 100%),
+              linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 30%);
+}
+.viewer.vw-chapel > :not(.chapel-fire):not(.viewer-close) { position: relative; z-index: 1; }
+.viewer.vw-chapel .viewer-close { z-index: 3; }
+.viewer.vw-chapel .vw-head h2 { font-family: "Cinzel", var(--serif-2); letter-spacing: 1px; }
+.viewer.vw-story .gi-cat, .viewer.vw-story .vw-row .loc-row-h span { color: #d9893a; }
+.viewer.vw-story .vw-row .ang-btn.on .ang-tile { box-shadow: 0 0 0 2px #d9893a; }
+.viewer.vw-story .vw-row .ang-tile { border-color: rgba(200, 116, 42, 0.28); }
+.viewer.vw-story .vw-play:hover, .viewer.vw-story .vw-play.on { border-color: #c8742a; background: rgba(200, 116, 42, 0.22); }
+.viewer.vw-story .vw-media:has(> .wm-wrap)::after { background: #d9893a; }
+.viewer.vw-story .vw-arrow:hover:not(:disabled), .viewer.vw-story .car-nav button:hover { border-color: #c8742a; background: rgba(200, 116, 42, 0.25); }
+.viewer.vw-story .vw-info { border-top-color: rgba(200, 116, 42, 0.3); }
+.viewer.vw-story .vw-media:has(> .wm-wrap) { box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(200, 116, 42, 0.28), 0 0 40px -12px rgba(255, 120, 30, 0.25); }
+/* story collections: the line indicators and Close button in orange too */
+.coll.coll-story .loc-dots i.on, .coll.coll-chapel .loc-dots i.on, .coll.coll-story .ge-dots i.on, .coll.coll-chapel .ge-dots i.on { background: #d9893a; }
+.coll.coll-story .row-foot .cs-close, .coll.coll-chapel .row-foot .cs-close { border-color: #c8742a; background: rgba(200, 116, 42, 0.25); }
+.coll.coll-story .car-nav button:hover, .coll.coll-chapel .car-nav button:hover { border-color: #c8742a; background: rgba(200, 116, 42, 0.2); }
+.coll.coll-story .fs-ico:hover, .coll.coll-chapel .fs-ico:hover { border-color: #c8742a; background: rgba(200, 116, 42, 0.55); }

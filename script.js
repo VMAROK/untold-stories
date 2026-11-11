@@ -725,6 +725,7 @@ function openView(list, i, ctx = null, push = true) {
   fillView(viewList[viewIdx]);
   const fol = (history.state && history.state.folio) || "animation";
   if (push) history.pushState({ ...(history.state || {}), folio: fol, view: viewIdx }, "", "#" + fol);
+  vwTheme(list, ctx);
   viewer.hidden = false; viewer.scrollTop = 0;
   requestAnimationFrame(() => viewer.classList.add("open"));
 }
@@ -732,8 +733,29 @@ function closeView() {
   if (!viewer || viewer.hidden) return;
   viewer.classList.remove("open");
   setTimeout(() => {
-    if (!viewer.classList.contains("open")) { viewer.hidden = true; $v("vw-media").innerHTML = ""; }   // stops any playing video
+    if (!viewer.classList.contains("open")) { viewer.hidden = true; $v("vw-media").innerHTML = ""; vwTheme(null); }   // stops any playing video
   }, 400);
+}
+// full screen takes on a story collection's look: orange accents, and for The Chapel the firelight behind
+function vwTheme(list, ctx) {
+  let item = null;
+  if (list && list.length) {
+    if (ctx === "coll" && collItem) item = collItem;
+    else {
+      const world = String(list[0].cat || "").split(" · ")[0].trim().toLowerCase();
+      item = [...document.querySelectorAll(".gi-coll")].find((c) => c.querySelector("h3").textContent.trim().toLowerCase() === world) || null;
+    }
+  }
+  const story = !!item && collWords(item).unit === "Scene";
+  const chapel = !!item && /^the chapel$/i.test(item.querySelector("h3").textContent.trim());
+  viewer.classList.toggle("vw-story", story);
+  viewer.classList.toggle("vw-chapel", chapel);
+  const cv = document.querySelector("canvas.chapel-fire");    // the one firelight canvas moves into full screen and back
+  if (cv) {
+    if (chapel && cv.parentElement !== viewer) viewer.prepend(cv);
+    else if (!chapel && cv.parentElement === viewer) coll.prepend(cv);
+  }
+  if (window.chapelFire) window.chapelFire();
 }
 function leaveView() {
   if (history.state && history.state.view != null) history.back();
@@ -2931,7 +2953,7 @@ addEventListener("resize", clSizeRows);
     raf = still ? 0 : requestAnimationFrame(draw);
   };
   window.chapelFire = () => {
-    const on = coll.classList.contains("coll-chapel") && !coll.hidden;
+    const on = (coll.classList.contains("coll-chapel") && !coll.hidden) || (viewer && viewer.classList.contains("vw-chapel") && !viewer.hidden);
     if (on && !raf) { size(); t0 = 0; raf = requestAnimationFrame(draw); }
     if (!on && raf) { cancelAnimationFrame(raf); raf = 0; }
   };
