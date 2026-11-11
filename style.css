@@ -1328,15 +1328,22 @@ body.folio-open { overflow: hidden; }
 .vw-row .loc-row-h h4 { font-size: 20px; }
 .vw-row .car-track { position: relative; grid-auto-columns: 130px; }
 .vw-row .car-track.fit { --ch: 150px; }
-@media (min-width: 1025px) { .vw-row .loc-row-portrait .car-track.fit { --ch: 300px; } }   /* desktop: bigger portrait row */
+@media (min-width: 1025px) { .vw-row .car-track.fit { --ch: 300px; } }   /* desktop: bigger rows (landscape and portrait) */
 .vw-row .ang-cap { display: none; }                      /* compact, so the row fits on screen under the photo */
 .vw-row .ang-no { font-size: 8.5px; }
 .vw-row .ang-btn .ang-tile { transition: box-shadow 0.3s, opacity 0.3s; }
 .vw-row .ang-btn:not(.on) .ang-tile { opacity: 0.7; }
 /* with the row showing, the big photo shrinks so photo + row both fit on one screen */
 /* fixed height, so the rows below don't jump when a tall photo follows a wide one */
-.viewer.has-row .vw-stage { min-height: calc(100vh - 440px); min-height: calc(100svh - 440px); }
-.viewer.has-row .vw-media .wm-wrap img { max-height: calc(100vh - 440px); max-height: calc(100svh - 440px); }
+/* the photo sits in a big black landscape frame (portrait shots get black either side); same size for every photo, so the rows never jump */
+.vw-media:has(> .wm-wrap) {
+  aspect-ratio: 16 / 9; max-height: calc(100vh - 170px); max-height: calc(100svh - 170px);
+  background: #000; align-items: center; container-type: size;
+  box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+@media (orientation: portrait) { .vw-media:has(> .wm-wrap) { aspect-ratio: 1 / 1; } }   /* upright screens (iPad, phone): a black square, so tall shots stay big */
+.vw-media:has(> .wm-wrap) > .wm-wrap { max-height: 100%; box-shadow: none; }
+.vw-media:has(> .wm-wrap) .wm-wrap img { max-width: 100cqw; max-height: 100cqh; }
 .vw-row .ang-btn.on .ang-tile { box-shadow: 0 0 0 2px #e3b25e; opacity: 1; }
 .vw-info {
   max-width: 1180px; margin: 34px auto 0; display: grid; grid-template-columns: 1.5fr 1fr; gap: 50px;
