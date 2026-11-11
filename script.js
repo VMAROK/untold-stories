@@ -774,10 +774,12 @@ if (viewer) {
       if (n) { n.style.opacity = 0; void n.offsetWidth; n.style.transition = "opacity 0.6s ease"; n.style.opacity = 1; }
     }, 500);
   }, 250);
+/* removed: full-screen slideshow bar
   $v("vw-bar").addEventListener("click", (e) => {            // tap a segment to jump to that piece
     const j = [...e.currentTarget.children].indexOf(e.target.closest("i"));
     if (j >= 0 && j !== viewIdx) stepView(j - viewIdx);
   });
+  */
   const stage = $v("vw-media");
   let sw = null;
   stage.addEventListener("touchstart", (e) => {

@@ -1299,11 +1299,13 @@ body.folio-open { overflow: hidden; }
 .vw-arrow:hover:not(:disabled) { background: rgba(142, 37, 51, 0.4); border-color: var(--crimson-bright); }
 .vw-arrow:disabled { opacity: 0.2; cursor: default; }
 .vw-arrow.prev { left: -70px; } .vw-arrow.next { right: -70px; }
-/* slideshow bar between the photo and the rows: one segment per piece, the one showing in the site's crimson */
+/* removed: full-screen slideshow bar
+ slideshow bar between the photo and the rows: one segment per piece, the one showing in the site's crimson 
 .vw-bar { max-width: 1180px; margin: 16px auto 14px; display: flex; gap: 3px; padding: 6px 0; cursor: pointer; }
 .vw-bar[hidden] { display: none; }
 .vw-bar i { flex: 1 1 0; height: 3px; border-radius: 2px; background: #333030; transition: background 0.4s ease; }
 .vw-bar i.on { background: #c03446; }
+*/
 /* title above the photo */
 .vw-head { max-width: 1180px; margin: 0 auto 16px; }
 .vw-head h2 { font-family: var(--serif-2); font-weight: 400; font-size: 34px; line-height: 1.05; margin-top: 6px; }
@@ -1318,7 +1320,7 @@ body.folio-open { overflow: hidden; }
 .vw-row .loc-row.dragging .vw-grip { cursor: grabbing; color: #fff; }
 .vw-media { touch-action: pan-y; }
 /* the Photos row at the bottom of the full screen (same look as in the collections) */
-.vw-row { max-width: 1180px; margin: 14px auto 0; }
+.vw-row { max-width: 1180px; margin: 24px auto 0; }
 .vw-row[hidden] { display: none; }
 .vw-row .loc-row { margin-top: 0; }
 .vw-row .loc-row + .loc-row { margin-top: 22px; }
