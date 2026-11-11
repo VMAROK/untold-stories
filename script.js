@@ -756,9 +756,19 @@ if (viewer) {
     history.replaceState({ ...(history.state || {}), view: j }, "", location.hash || "#animation");
     fillView(viewList[j]);
   }
-  /* automatic slideshow in full screen: turned off
+  // automatic slideshow: off unless the viewer presses Play
+  let vwPlay = false;
+  const playBtn = $v("vw-play");
+  const setPlay = (on) => {
+    vwPlay = on; vwLast = Date.now(); vwHeld = 0;
+    playBtn.classList.toggle("on", on);
+    playBtn.setAttribute("aria-pressed", on);
+    playBtn.querySelector("span").textContent = on ? "Pause" : "Slideshow";
+  };
+  if (playBtn) playBtn.addEventListener("click", (e) => { e.stopPropagation(); setPlay(!vwPlay); });
+  viewer.querySelector("[data-viewer-close]").addEventListener("click", () => playBtn && setPlay(false));
   setInterval(() => {                                         // every 5 s, after 5 s of no touching
-    if (viewer.hidden || vwBusy || viewList.length < 2 || Date.now() - Math.max(vwHeld, vwLast, viewer._opened || 0) < 5000) return;
+    if (!vwPlay || viewer.hidden || vwBusy || viewList.length < 2 || Date.now() - Math.max(vwHeld, vwLast, viewer._opened || 0) < 5000) return;
     if (viewList[viewIdx].kind === "video") return;           // a film is never skipped past
     const el = vwPic(); if (!el) return;
     vwBusy = true; vwLast = Date.now();
@@ -775,7 +785,6 @@ if (viewer) {
       if (n) { n.style.opacity = 0; void n.offsetWidth; n.style.transition = "opacity 0.6s ease"; n.style.opacity = 1; }
     }, 500);
   }, 250);
-  */
 /* removed: full-screen slideshow bar
   if ($v("vw-bar")) $v("vw-bar").addEventListener("click", (e) => {            // tap a segment to jump to that piece
     const j = [...e.currentTarget.children].indexOf(e.target.closest("i"));

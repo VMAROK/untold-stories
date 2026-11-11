@@ -1307,7 +1307,15 @@ body.folio-open { overflow: hidden; }
 .vw-bar i.on { background: #c03446; }
 */
 /* title above the photo */
-.vw-head { max-width: 1180px; margin: 0 auto 16px; }
+.vw-head { max-width: 1180px; margin: 0 auto 16px; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+/* Play / Pause for the automatic slideshow (off until pressed) */
+.vw-play { flex: none; display: inline-flex; align-items: center; gap: 9px; padding: 10px 16px; border: 1px solid rgba(255, 255, 255, 0.18); background: transparent;
+  color: #f2ede6; font: 500 10px/1 var(--body); letter-spacing: 2.5px; text-transform: uppercase; cursor: pointer; transition: border-color 0.25s, background 0.25s; }
+.vw-play svg { width: 9px; height: 11px; }
+.vw-play .i-pause, .vw-play.on .i-play { display: none; }
+.vw-play.on .i-pause { display: block; }
+.vw-play:hover, .vw-play.on { border-color: var(--crimson-bright); background: rgba(142, 37, 51, 0.25); }
+.viewer:not(.has-row) .vw-play { display: none; }
 .vw-head h2 { font-family: var(--serif-2); font-weight: 400; font-size: 34px; line-height: 1.05; margin-top: 6px; }
 @media (max-width: 760px) { .vw-head h2 { font-size: 24px; } }
 /* rows can be dragged up or down by the grip */
