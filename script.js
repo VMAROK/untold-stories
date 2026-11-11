@@ -581,12 +581,14 @@ function fillView(p) {
   $v("vw-next").disabled = viewIdx === viewList.length - 1;
   $v("vw-count").textContent = p.countLabel || `${viewIdx + 1} / ${viewList.length}`;
   vwMarkRow();
-  const dots = $v("vw-dots");
-  if (dots) {
-    dots.hidden = viewList.length < 2;
-    if (dots.children.length !== viewList.length) dots.innerHTML = viewList.map(() => "<i></i>").join("");
-    [...dots.children].forEach((d, i) => d.classList.toggle("on", i === viewIdx));
+  const bar = $v("vw-bar");                                   // slideshow bar: the pink part shows where you are
+  if (bar) {
+    bar.hidden = viewList.length < 2;
+    const n = viewList.length, th = bar.firstElementChild;
+    th.style.width = `${100 / n}%`;
+    th.style.left = n > 1 ? `calc((100% - max(${100 / n}%, 14px)) * ${viewIdx / (n - 1)})` : "0";
   }
+
 }
 // at the bottom of the full screen: the same Photos row as in the collections, to skim and jump to any one
 // which row a piece goes in: Landscape, Portrait or Videos
@@ -672,7 +674,6 @@ function openView(list, i, ctx = null, push = true) {
   [list, i] = vwGroupOrder(list, i);
   viewList = list; viewCtx = ctx;
   viewIdx = Math.max(0, Math.min(i, list.length - 1));
-  if ($v("vw-dots")) $v("vw-dots").innerHTML = "";
   viewer._opened = Date.now();
   vwBuildRow();
   fillView(viewList[viewIdx]);
@@ -738,6 +739,11 @@ if (viewer) {
       if (n) { n.style.opacity = 0; void n.offsetWidth; n.style.transition = "opacity 0.6s ease"; n.style.opacity = 1; }
     }, 500);
   }, 250);
+  $v("vw-bar").addEventListener("click", (e) => {            // tap anywhere on the bar to jump there
+    const r = e.currentTarget.getBoundingClientRect();
+    const j = Math.min(viewList.length - 1, Math.max(0, Math.floor(((e.clientX - r.left) / r.width) * viewList.length)));
+    if (j !== viewIdx) stepView(j - viewIdx);
+  });
   const stage = $v("vw-media");
   let sw = null;
   stage.addEventListener("touchstart", (e) => {

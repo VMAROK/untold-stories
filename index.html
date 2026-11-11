@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500;600&family=Manrope:wght@300;400;500&family=Mrs+Saint+Delafield&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20261110194537" />
+  <link rel="stylesheet" href="style.css?v=20261110194916" />
 </head>
 <body>
 
@@ -491,12 +491,12 @@
   <!-- ========== VIEWER: opens a film or still from the gallery ========== -->
   <section class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="vw-title" hidden>
     <button class="folio-close viewer-close" type="button" data-viewer-close><span>←</span> Gallery</button>
+    <div class="vw-bar" id="vw-bar"><i></i></div>
     <div class="vw-stage">
       <button type="button" class="vw-arrow prev" id="vw-prev" aria-label="Previous piece">‹</button>
       <div class="vw-media" id="vw-media"></div>
       <button type="button" class="vw-arrow next" id="vw-next" aria-label="Next piece">›</button>
     </div>
-    <div class="vw-dots" id="vw-dots" aria-hidden="true"></div>
     <div class="vw-row" id="vw-row"></div>
     <div class="vw-info">
       <div class="vw-main">
@@ -961,6 +961,6 @@
     <div class="fs-pages" id="fs-pages"></div>
   </section>
 
-  <script src="script.js?v=20261110194537"></script>
+  <script src="script.js?v=20261110194916"></script>
 </body>
 </html>
