@@ -1331,6 +1331,8 @@ body.folio-open { overflow: hidden; }
 .vw-row .ang-btn .ang-tile { transition: box-shadow 0.3s, opacity 0.3s; }
 .vw-row .ang-btn:not(.on) .ang-tile { opacity: 0.7; }
 /* with the row showing, the big photo shrinks so photo + row both fit on one screen */
+/* fixed height, so the rows below don't jump when a tall photo follows a wide one */
+.viewer.has-row .vw-stage { min-height: calc(100vh - 440px); min-height: calc(100svh - 440px); }
 .viewer.has-row .vw-media .wm-wrap img { max-height: calc(100vh - 440px); max-height: calc(100svh - 440px); }
 .vw-row .ang-btn.on .ang-tile { box-shadow: 0 0 0 2px #e3b25e; opacity: 1; }
 .vw-info {

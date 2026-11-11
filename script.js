@@ -624,7 +624,6 @@ function vwBuildRow() {
       b.addEventListener("click", (e) => {
         e.stopPropagation();
         if (i !== viewIdx) stepView(i - viewIdx);
-        viewer.scrollTop = 0;                                 // straight back up to the big photo
       });
       track.appendChild(b);
     });
