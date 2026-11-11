@@ -2968,3 +2968,6 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .loc.open .loc-body-in { border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 22px; }
 .loc-body .loc-row:first-child { margin-top: 16px; }
 .cs-drop { border-top: 0; border-bottom: 1px solid rgba(142, 37, 51, 0.5); padding-top: 12px; padding-bottom: 22px; }
+/* story collections (The Chapel and any other story): the line under the rows is the Chapel's orange, not pink */
+.coll.coll-story .cs-drop, .coll.coll-chapel .cs-drop { border-bottom-color: rgba(200, 116, 42, 0.5); }
+.coll.coll-story .loc.open .loc-body-in, .coll.coll-chapel .loc.open .loc-body-in { border-bottom-color: rgba(200, 116, 42, 0.5); }

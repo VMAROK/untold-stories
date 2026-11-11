@@ -925,6 +925,7 @@ function openColl(item, push = true) {
   collItem = item;
   coll.classList.toggle("coll-chapel", /^the chapel$/i.test(item.querySelector("h3").textContent.trim()));   // torch-lit look
   setTimeout(() => window.chapelFire && chapelFire(), 0);          // after the page is shown
+  coll.classList.toggle("coll-story", collWords(item).unit === "Scene");   // story collections: orange lines, like The Chapel
   coll.classList.toggle("coll-photos", "photosOnly" in item.dataset);   // photo collections: show each image whole, at its own shape
   setTimeout(() => clSmallBuild(item, world0(item)), 0);
   const world = item.querySelector("h3").textContent;
