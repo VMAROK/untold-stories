@@ -589,6 +589,9 @@ function fillView(p) {
   }
 }
 // at the bottom of the full screen: the same Photos row as in the collections, to skim and jump to any one
+// which row a piece goes in: Landscape, Portrait or Videos
+const vwGroup = (p) => p.kind === "video" ? 2 : (p.ratio ? parseFloat(p.ratio) < 1 : p.orient === "tall" || p.shape === "tall") ? 1 : 0;
+const VW_ROWS = ["Landscape", "Portrait", "Videos"];
 function vwBuildRow() {
   const box = $v("vw-row");
   if (!box) return;
@@ -596,64 +599,77 @@ function vwBuildRow() {
   box.hidden = viewList.length < 2;
   viewer.classList.toggle("has-row", !box.hidden);
   if (box.hidden) return;
-  const vids = viewList.every((p) => p.kind === "video");
-  const name = vids ? "Videos" : "Photos";
-  const row = document.createElement("div");
-  row.className = "loc-row loc-row-" + name.toLowerCase();
-  row.innerHTML = `<div class="loc-row-h"><h4>${name}</h4><span>${viewList.length}</span>
-      <div class="car-nav"><button type="button" class="car-prev" aria-label="Previous">‹</button><button type="button" class="car-next" aria-label="Next">›</button></div></div>
-    <div class="car-track"></div>`;
-  const track = row.querySelector(".car-track");
-  viewList.forEach((p, i) => {
-    const pic = p.poster || p.src;
-    const b = document.createElement("button");
-    b.type = "button"; b.className = "ang-btn";
-    b.innerHTML = `<div class="ang-tile ${pic ? "" : p.ph || ""}"${pic ? ` style='background:${bgLayers(pic)}, #0a0a0a'` : ""}>
-        <span class="ang-no">${p.label || (vids || p.kind === "video" ? "Video" : "Photo") + " " + pad2(i + 1)}</span>${p.kind === "video" ? '<span class="gi-play"></span>' : ""}</div>
-      <div class="ang-cap"><h4></h4><p>${p.kind === "video" ? (p.spec || "").replace(/^[^:]*:\s*/, "") : fmtTaken(p.taken) || "Still"}</p></div>`;
-    b.querySelector("h4").textContent = p.title || "";
-    if (p.orient === "tall") b.classList.add("is-tall");
-    if (p.ratio) { track.classList.add("fit"); b.style.setProperty("--r", p.ratio); }
-    b.addEventListener("click", (e) => {
-      e.stopPropagation();
-      if (i !== viewIdx) stepView(i - viewIdx);
-      viewer.scrollTop = 0;                                   // straight back up to the big photo
+  VW_ROWS.forEach((name, g) => {
+    const idx = viewList.map((p, i) => i).filter((i) => vwGroup(viewList[i]) === g);
+    if (!idx.length) return;
+    const row = document.createElement("div");
+    row.className = "loc-row loc-row-" + name.toLowerCase();
+    row.innerHTML = `<div class="loc-row-h"><h4>${name}</h4><span>${idx.length}</span>
+        <div class="car-nav"><button type="button" class="car-prev" aria-label="Previous">‹</button><button type="button" class="car-next" aria-label="Next">›</button></div></div>
+      <div class="car-track"></div>`;
+    const track = row.querySelector(".car-track");
+    idx.forEach((i, n) => {
+      const p = viewList[i], pic = p.poster || p.src;
+      const word = p.kind === "video" ? "Video" : (p.label || "Photo").replace(/\s*\d+$/, "");
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "ang-btn"; b.dataset.vi = i;
+      b.innerHTML = `<div class="ang-tile ${pic ? "" : p.ph || ""}"${pic ? ` style='background:${bgLayers(pic)}, #0a0a0a'` : ""}>
+          <span class="ang-no">${word} ${pad2(n + 1)}</span>${p.kind === "video" ? '<span class="gi-play"></span>' : ""}</div>
+        <div class="ang-cap"><h4></h4><p>${p.kind === "video" ? (p.spec || "").replace(/^[^:]*:\s*/, "") : fmtTaken(p.taken) || "Still"}</p></div>`;
+      b.querySelector("h4").textContent = p.title || "";
+      if (g === 1) b.classList.add("is-tall");
+      if (p.ratio) { track.classList.add("fit"); b.style.setProperty("--r", p.ratio); }
+      b.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if (i !== viewIdx) stepView(i - viewIdx);
+        viewer.scrollTop = 0;                                 // straight back up to the big photo
+      });
+      track.appendChild(b);
     });
-    track.appendChild(b);
+    const step = (d) => track.scrollBy({ left: d * track.clientWidth * 0.8, behavior: "smooth" });
+    row.querySelector(".car-prev").addEventListener("click", () => step(-1));
+    row.querySelector(".car-next").addEventListener("click", () => step(1));
+    box.appendChild(row);
   });
-  const step = (d) => track.scrollBy({ left: d * track.clientWidth * 0.8, behavior: "smooth" });
-  row.querySelector(".car-prev").addEventListener("click", () => step(-1));
-  row.querySelector(".car-next").addEventListener("click", () => step(1));
-  box.appendChild(row);
 }
 function vwMarkRow() {
-  const track = document.querySelector("#vw-row .car-track");
-  if (!track) return;
-  [...track.children].forEach((b, i) => b.classList.toggle("on", i === viewIdx));
-  const on = track.children[viewIdx];
-  if (on) track.scrollTo({ left: on.offsetLeft - track.offsetLeft - (track.clientWidth - on.offsetWidth) / 2, behavior: "smooth" });
+  document.querySelectorAll("#vw-row .ang-btn").forEach((b) => {
+    const on = +b.dataset.vi === viewIdx;
+    b.classList.toggle("on", on);
+    if (on) { const t = b.parentElement; t.scrollTo({ left: b.offsetLeft - t.offsetLeft - (t.clientWidth - b.offsetWidth) / 2, behavior: "smooth" }); }
+  });
+}
+// order the pieces the way the rows read (landscape, then portrait, then videos), so arrows and the slideshow follow them
+function vwGroupOrder(list, i) {
+  const cur = list[i];
+  const out = list.map((p, k) => [p, k]).sort((x, y) => vwGroup(x[0]) - vwGroup(y[0]) || x[1] - y[1]).map((x) => x[0]);
+  if (out.length > 1 && out.every((p) => p._whole)) {
+    const word = (out[0].label || "Photo").replace(/\s*\d+$/, "");
+    out.forEach((p, k) => (p.countLabel = `${p.kind === "video" ? "Video" : word} ${k + 1} of ${out.length}`));
+  }
+  return [out, out.indexOf(cur)];
 }
 // Full screen inside a collection always offers every photo of that collection, wherever it was opened from
 function vwWholeColl(list, i, ctx) {
   const cur = list[i], d = ctx === "coll" && collItem && collItem.querySelector(".coll-data");
-  if (!d || !cur || cur.kind === "video") return [list, i];
-  const angs = [...d.querySelectorAll(".ang")].filter((a) => a.dataset.kind !== "video");
+  if (!d || !cur) return [list, i];
+  const angs = [...d.querySelectorAll(".ang")];
   if (angs.length < 2) return [list, i];
   const world = collItem.querySelector("h3").textContent, W = collWords(collItem);
   const base = { year: collItem.dataset.year || "", tools: collItem.dataset.tools || "", piece: W.piece };
   const out = angs.map((a, k) => {
     const loc = a.closest(".loc"), sib = loc ? [...loc.querySelectorAll(".ang")] : angs;
     const p = anglePiece(a, sib.indexOf(a), sib.length, world, loc ? loc.dataset.name : "", base);
-    p.label = `${W.piece} ${pad2(k + 1)}`;
-    p.countLabel = `${W.piece} ${k + 1} of ${angs.length}`;
+    p.label = `${W.piece} ${pad2(k + 1)}`; p._whole = true;
     return p;
   });
-  const j = out.findIndex((p) => (cur.src && p.src === cur.src) || (!cur.src && p.title === cur.title && p.ph === cur.ph));
+  const j = out.findIndex((p) => (cur.video ? p.video === cur.video : cur.src ? p.src === cur.src : p.title === cur.title && p.ph === cur.ph));
   return j < 0 ? [list, i] : [out, j];
 }
 function openView(list, i, ctx = null, push = true) {
   if (!viewer || !list.length) return;
   [list, i] = vwWholeColl(list, Math.max(0, Math.min(i, list.length - 1)), ctx);
+  [list, i] = vwGroupOrder(list, i);
   viewList = list; viewCtx = ctx;
   viewIdx = Math.max(0, Math.min(i, list.length - 1));
   if ($v("vw-dots")) $v("vw-dots").innerHTML = "";

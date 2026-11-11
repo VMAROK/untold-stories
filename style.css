@@ -1309,6 +1309,7 @@ body.folio-open { overflow: hidden; }
 .vw-row { max-width: 1180px; margin: 14px auto 0; }
 .vw-row[hidden] { display: none; }
 .vw-row .loc-row { margin-top: 0; }
+.vw-row .loc-row + .loc-row { margin-top: 22px; }
 .vw-row .loc-row-h { margin-bottom: 10px; }
 .vw-row .loc-row-h h4 { font-size: 20px; }
 .vw-row .car-track { position: relative; grid-auto-columns: 130px; }
@@ -2900,5 +2901,3 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
   color: #d9a650; padding-top: 0.5em; border-top: 1px solid rgba(217, 166, 80, 0.7);
 }
 
-/* TEMPORARY test caption: checks the iPad is getting the newest version of the site */
-.vw-test { margin: 14px auto 0; text-align: center; color: #ff1a1a; font: 700 28px/1.2 Arial, sans-serif; letter-spacing: 2px; text-transform: uppercase; }
