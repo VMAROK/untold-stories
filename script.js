@@ -393,6 +393,9 @@ function layoutFull() {
   pages.forEach((p) => pageObserver.observe(p));
   $r("fs-count").textContent = `Page 1 of ${total}`;
 }
+document.addEventListener("keydown", (e) => {                  // the icon works from the keyboard too
+  if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("fs-ico")) { e.preventDefault(); e.stopPropagation(); e.target.click(); }
+}, true);
 function openFull(row, push = true) {
   if (!full) return;
   fullRow = row;
@@ -902,6 +905,10 @@ function carouselRow(name, set, world, where, base, W) {
   const step = (d) => track.scrollBy({ left: d * track.clientWidth * 0.8, behavior: "smooth" });
   row.querySelector(".car-prev").addEventListener("click", () => step(-1));
   row.querySelector(".car-next").addEventListener("click", () => step(1));
+  const foot = document.createElement("div");                // the arrows sit at the bottom, under the row
+  foot.className = "row-foot";
+  foot.appendChild(row.querySelector(".car-nav"));
+  row.appendChild(foot);
   return row;
 }
 const plural = (n, w) => `${n} ${w}${n === 1 || /s$/.test(w) ? "" : "s"}`;   // "series" stays "series"
@@ -991,8 +998,9 @@ function openColl(item, push = true) {
     toggle.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); flip(); } });
     // inside the drop-down: a Videos row, then a Photos row, each a swipeable carousel
     const body = sec.querySelector(".loc-body-in");
-    body.insertAdjacentHTML("beforeend", `<div class="loc-fs-bar">${FS_BTN}</div>`);
-    body.querySelector(".loc-fs").addEventListener("click", (e) => {
+    // full-screen icon in the cover's top-right corner: opens full screen at the image the cover is showing
+    cover.insertAdjacentHTML("beforeend", FS_ICO);
+    cover.querySelector(".fs-ico").addEventListener("click", (e) => {
       e.stopPropagation();
       const k = [...cover.querySelectorAll(".loc-slide")].findIndex((x) => x.classList.contains("on"));
       const shown = (stills.length ? stills : angs)[Math.max(0, k)];
@@ -1001,6 +1009,14 @@ function openColl(item, push = true) {
     [["Videos", angs.filter((a) => a.dataset.kind === "video")], ["Photos", angs.filter((a) => a.dataset.kind !== "video")]]
       .filter(([name, set]) => !(name === "Videos" && "photosOnly" in item.dataset && !set.length))   // photo collections: Videos row only if it has some
       .forEach(([name, set]) => body.appendChild(carouselRow(name, set, world, loc.dataset.name, base, W)));   // both sections always show
+    const lastFoot = [...body.querySelectorAll(".row-foot")].pop();
+    if (lastFoot) {
+      lastFoot.insertAdjacentHTML("afterbegin", `<button type="button" class="cs-close" aria-label="Close">Close <i>⌃</i></button>`);
+      lastFoot.querySelector(".cs-close").addEventListener("click", (e) => {
+        e.stopPropagation(); flip();
+        sec.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      });
+    } else sec.classList.add("no-foot");                           // nothing in the rows: Close stays on the cover
     wrap.appendChild(sec);
   });
   if (!d.querySelector(".ang") && !d.querySelector(".loc")) {
@@ -1095,7 +1111,7 @@ function swipeSlides(box, slideSel, dotSel, opts = {}) {
     settle = { run, t: setTimeout(() => { settle = null; run(); }, 580) };
   };
   box.style.touchAction = "pan-y";
-  const isCtl = (t) => { const c = t.closest("button, .gi-play, .loc-cta"); return !!c && c !== box && box.contains(c); };   // a button inside: not a swipe
+  const isCtl = (t) => { const c = t.closest("button, .gi-play, .loc-cta, .fs-ico"); return !!c && c !== box && box.contains(c); };   // a button inside: not a swipe
   // touch (iPad / phone)
   box.addEventListener("touchstart", (e) => {
     if (e.touches.length !== 1 || isCtl(e.target)) { drag = null; return; }
@@ -2773,7 +2789,8 @@ function fillMosaic(small, item, world, opts = {}) {
     b.type = "button";
     b.className = "cs-tile " + (r > 1.25 ? "cs-wide" : r < 0.86 ? "cs-tall" : "cs-sq");
     b.style.backgroundImage = `url("${angs[0].dataset.src || angs[0].dataset.poster}")`;   // a video shows its thumbnail
-    b.innerHTML = `<span class="cs-cap"><b></b><small></small></span>`;
+    b.innerHTML = `<span class="cs-cap"><b></b><small></small></span>${FS_ICO}`;
+    b.querySelector(".fs-ico").addEventListener("click", (e) => { e.stopPropagation(); openView(list, 0, "coll"); });
     b.querySelector("b").textContent = loc.dataset.name;
     if (opts.single === "view" && loc.dataset.note) {                // Photography: your Flickr description under the name
       const d = document.createElement("em"); d.className = "cs-desc"; d.textContent = loc.dataset.note;
@@ -2787,8 +2804,11 @@ function fillMosaic(small, item, world, opts = {}) {
   });
   clSizeRows();
 }
-// "Full screen" button in a drop-down: opens the full-screen page at this scene / entry
+// full-screen icon on a thumbnail (top-right corner): opens the full-screen page at this scene / entry
+const FS_ICO = `<span class="fs-ico" role="button" tabindex="0" aria-label="Full screen" title="Full screen"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1 5V1h4M9 1h4v4M13 9v4H9M5 13H1V9" fill="none" stroke="currentColor" stroke-width="1.5"/></svg></span>`;
+/* old "Full screen" button in the drop-downs (moved onto the thumbnail)
 const FS_BTN = `<button type="button" class="loc-fs" aria-label="Open full screen"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M1 5V1h4M9 1h4v4M13 9v4H9M5 13H1V9" fill="none" stroke="currentColor" stroke-width="1.4"/></svg><span>Full screen</span></button>`;
+*/
 function openFull(angs, world, locName, base, start = 0) {
   if (!angs.length) return;
   const list = angs.map((a, i) => anglePiece(a, i, angs.length, world, locName, base));
@@ -2810,12 +2830,9 @@ function csToggle(tile, loc, angs, world, base, W) {
   drop.querySelector("p").textContent = loc.dataset.note || "";
   drop.appendChild(carouselRow("Photos", angs, world, loc.dataset.name, base, W));
   drop.querySelector(".cs-close").addEventListener("click", () => { drop.remove(); tile.classList.remove("on"); });
-  const rowH = drop.querySelector(".loc-row-h");                 // Close sits on the versions row, next to the arrows
-  if (rowH) rowH.insertBefore(drop.querySelector(".cs-close"), rowH.querySelector(".car-nav"));
-  if (rowH) {
-    rowH.querySelector(".cs-close").insertAdjacentHTML("beforebegin", FS_BTN);
-    rowH.querySelector(".loc-fs").addEventListener("click", (e) => { e.stopPropagation(); openFull(angs, world, loc.dataset.name, base); });
-  }
+  const rowFoot = drop.querySelector(".row-foot");               // Close sits at the bottom, with the arrows
+  if (rowFoot) rowFoot.insertBefore(drop.querySelector(".cs-close"), rowFoot.firstChild);
+
   if (!loc.dataset.note) drop.querySelector(".cs-drop-h").remove();
   // after the last tile on the same row as the one tapped
   const tiles = [...small.querySelectorAll(".cs-tile")];

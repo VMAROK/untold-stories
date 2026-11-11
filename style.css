@@ -2947,11 +2947,24 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 }
 
 
-/* "Full screen" button in the collection drop-downs */
-.loc-fs { all: unset; cursor: pointer; display: inline-flex; align-items: center; gap: 9px; padding: 9px 14px; border: 1px solid rgba(255, 255, 255, 0.18);
-  font-family: var(--body); font-size: 10px; font-weight: 500; letter-spacing: 3px; text-transform: uppercase; color: #f2ede6; transition: border-color 0.25s, background 0.25s; }
-.loc-fs svg { width: 12px; height: 12px; }
-.loc-fs:hover { border-color: var(--crimson-bright); background: rgba(142, 37, 51, 0.25); }
-.loc-fs-bar { display: flex; justify-content: flex-end; margin-bottom: 14px; }
-.cs-drop .loc-row-h .loc-fs { margin-left: auto; margin-right: 8px; padding: 8px 12px; font-size: 9.5px; }
-.cs-drop .loc-row-h .loc-fs + .cs-close { margin-left: 0; }
+/* full-screen icon in the top-right corner of a thumbnail */
+.fs-ico { position: absolute; z-index: 4; top: 12px; right: 12px; width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer;
+  color: #f2ede6; background: rgba(8, 6, 6, 0.55); border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 3px;
+  -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); transition: background 0.25s, border-color 0.25s; }
+.fs-ico svg { width: 13px; height: 13px; }
+.fs-ico:hover, .fs-ico:focus-visible { background: rgba(142, 37, 51, 0.6); border-color: var(--crimson-bright); outline: none; }
+.loc-cover .loc-dots { right: 60px; top: 28px; }              /* the line indicators sit just left of the icon */
+.loc-soon .fs-ico { display: none; }
+.cs-tile { position: relative; }
+.cs-tile .fs-ico { top: 8px; right: 8px; width: 30px; height: 30px; }
+
+/* drop-downs: arrows and Close at the bottom, under the row; the dividing line moves under the rows,
+   so the thumbnail and its rows read as one piece */
+.row-foot { display: flex; align-items: center; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+.row-foot .car-nav { margin-left: 0; }
+.row-foot .cs-close { margin-right: auto; padding: 8px 12px; font-size: 9.5px; grid-column: auto; grid-row: auto; }
+.loc.open:not(.no-foot) .loc-cta { display: none; }            /* open: Close is at the bottom instead */
+.loc.open .loc-cover { border-bottom-color: transparent; }
+.loc.open .loc-body-in { border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 22px; }
+.loc-body .loc-row:first-child { margin-top: 16px; }
+.cs-drop { border-top: 0; border-bottom: 1px solid rgba(142, 37, 51, 0.5); padding-top: 12px; padding-bottom: 22px; }
