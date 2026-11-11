@@ -1349,7 +1349,21 @@ body.folio-open { overflow: hidden; }
   background: #000; align-items: center; container-type: size;
   box-shadow: 0 40px 80px -20px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.06);
 }
-@media (orientation: portrait) { .vw-media:has(> .wm-wrap) { aspect-ratio: 1 / 1; } }   /* upright screens (iPad, phone): a black square, so tall shots stay big */
+@media (orientation: portrait) { .vw-media:has(> .wm-wrap) { aspect-ratio: 1 / 1; } }
+/* slideshow playing: a soft blur of the photo fills the black frame, and a thin crimson line runs to the next photo */
+.vw-media:has(> .wm-wrap) { position: relative; overflow: hidden; }
+.vw-media:has(> .wm-wrap)::before {
+  content: ""; position: absolute; inset: -60px; background: var(--vw-bg, none) center / cover no-repeat;
+  filter: blur(42px) brightness(0.75) saturate(1.15); opacity: 0; transition: opacity 0.9s ease; pointer-events: none;
+}
+.vw-playing .vw-media:has(> .wm-wrap)::before { opacity: 1; }
+.vw-media:has(> .wm-wrap) > .wm-wrap { position: relative; z-index: 1; }
+.vw-media:has(> .wm-wrap)::after {
+  content: ""; position: absolute; left: 0; bottom: 0; z-index: 2; height: 2px; width: 100%; background: #c03446;
+  transform-origin: left; transform: scaleX(0); opacity: 0; pointer-events: none;
+}
+.vw-playing .vw-media.vw-tick::after { opacity: 1; animation: vwTick 4.5s linear forwards; }
+@keyframes vwTick { from { transform: scaleX(0); } to { transform: scaleX(1); } }   /* upright screens (iPad, phone): a black square, so tall shots stay big */
 .vw-media:has(> .wm-wrap) > .wm-wrap { max-height: 100%; box-shadow: none; }
 .vw-media:has(> .wm-wrap) .wm-wrap img { max-width: 100cqw; max-height: 100cqh; }
 .vw-row .ang-btn.on .ang-tile { box-shadow: 0 0 0 2px #e3b25e; opacity: 1; }

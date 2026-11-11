@@ -581,6 +581,7 @@ function fillView(p) {
   $v("vw-next").disabled = viewIdx === viewList.length - 1;
   $v("vw-count").textContent = p.countLabel || `${viewIdx + 1} / ${viewList.length}`;
   vwMarkRow();
+  vwAmbient(p);
   const bar = $v("vw-bar");                                   // slideshow bar: one thin segment per piece, lit up to the one showing
   if (bar) {
     bar.hidden = viewList.length < 2;
@@ -669,6 +670,13 @@ function vwGripDrag(row, box) {
     window.addEventListener("pointermove", move); window.addEventListener("pointerup", up); window.addEventListener("pointercancel", up);   // on the window: moving the row in the page drops a captured pointer
   });
 }
+// while the slideshow plays: the frame fills with a soft blur of the photo, and a thin line runs to the next one
+function vwAmbient(p) {
+  const m = $v("vw-media");
+  if (!m) return;
+  m.style.setProperty("--vw-bg", p && p.src && p.kind !== "video" ? `url("${p.src}")` : "none");
+  if (viewer.classList.contains("vw-playing")) { m.classList.remove("vw-tick"); void m.offsetWidth; m.classList.add("vw-tick"); }
+}
 function vwMarkRow() {
   document.querySelectorAll("#vw-row .ang-btn").forEach((b) => {
     const on = +b.dataset.vi === viewIdx;
@@ -748,7 +756,7 @@ if (viewer) {
   viewer.addEventListener("touchstart", () => vwHold(), { passive: true });
   // slideshow, the way the collections play: the photo fades to the next on its own, and can be swiped
   let vwHeld = 0, vwBusy = false, vwLast = 0;
-  function vwHold() { vwHeld = Date.now(); }
+  function vwHold() { vwHeld = Date.now(); if (vwPlay) vwAmbient(viewList[viewIdx]); }   // the line starts over after a tap
   const vwPic = () => $v("vw-media").firstElementChild;
   const vwWrap = (d) => (viewIdx + d + viewList.length) % viewList.length;
   function vwGoTo(j) {
@@ -764,6 +772,9 @@ if (viewer) {
     playBtn.classList.toggle("on", on);
     playBtn.setAttribute("aria-pressed", on);
     playBtn.querySelector("span").textContent = on ? "Pause" : "Slideshow";
+    viewer.classList.toggle("vw-playing", on);
+    if (!on) $v("vw-media").classList.remove("vw-tick");
+    vwAmbient(viewList[viewIdx]);
   };
   if (playBtn) playBtn.addEventListener("click", (e) => { e.stopPropagation(); setPlay(!vwPlay); });
   viewer.querySelector("[data-viewer-close]").addEventListener("click", () => playBtn && setPlay(false));
@@ -776,7 +787,7 @@ if (viewer) {
     el.style.transition = "opacity 0.5s ease"; el.style.opacity = 0;
     setTimeout(() => {
       vwBusy = false;
-      if (vwHeld > at || viewIdx !== from) {                 // tapped meanwhile: leave it where the tap put it
+      if (!vwPlay || vwHeld > at || viewIdx !== from) {      // paused or tapped meanwhile: stay put                 // tapped meanwhile: leave it where the tap put it
         const c = vwPic(); if (c) { c.style.transition = "opacity 0.3s ease"; c.style.opacity = 1; }
         return;
       }
