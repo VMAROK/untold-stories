@@ -762,7 +762,7 @@ function vwBuildScenes(item) {
     b.type = "button"; b.className = "vw-sc"; b.dataset.loc = name;
     b.innerHTML = `<span class="vw-sc-img ${pic ? "" : still.dataset.ph || ""}"${pic ? ` style='background:${bgLayers(pic)}, #0a0a0a'` : ""}></span>
       <span class="vw-sc-cap"><b></b><small>${plural(angs.length, (angs.every((a) => a.dataset.kind === "video") ? "video" : W.piece.toLowerCase()))}</small></span>`;
-    b.querySelector("b").textContent = name;
+    b.querySelector("b").textContent = name; b.title = name;     // full name on hover when cut short
     b.addEventListener("click", (e) => {
       e.stopPropagation();
       const j = viewList.findIndex((p) => p.loc === name && p.kind !== "video");
