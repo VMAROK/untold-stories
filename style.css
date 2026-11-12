@@ -3050,3 +3050,17 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .coll.coll-story .loc-dots i.on, .coll.coll-chapel .loc-dots i.on, .coll.coll-story .ge-dots i.on, .coll.coll-chapel .ge-dots i.on, .viewer.vw-story .vw-sc-dots i.on {
   background: #ffb15c; box-shadow: 0 0 4px rgba(255, 160, 70, 0.95), 0 0 10px rgba(217, 137, 58, 0.75), 0 0 18px rgba(217, 137, 58, 0.45);
 }
+
+/* indicators always sit in the top-right corner and never spill past the tile: with many photos the lines shrink to fit */
+.loc-dots, .gi-entry .ge-dots, .vw-sc-dots { gap: 2px; justify-content: flex-end; max-width: calc(100% - 24px); }
+.vw-sc-dots { left: auto; }
+.loc-dots i, .gi-entry .ge-dots i, .vw-sc-dots i { flex: 0 1 auto; min-width: 3px; }
+.loc-dots i { width: 12px; }
+.gi-entry .ge-dots i, .vw-sc-dots i { width: 9px; }
+
+/* indicators always sit neatly in the top-right corner: tighter gaps, and when a slideshow has many photos
+   the lines shrink to fit instead of running across the whole picture */
+.loc-dots, .gi-entry .ge-dots, .vw-sc-dots { gap: 2px; left: auto; max-width: 42%; justify-content: flex-end; }
+.loc-dots i, .gi-entry .ge-dots i, .vw-sc-dots i { flex: 0 1 auto; min-width: 3px; }
+.loc-dots i { width: 12px; }
+.gi-entry .ge-dots i, .vw-sc-dots i { width: 9px; }
