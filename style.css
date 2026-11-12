@@ -3011,7 +3011,7 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .vw-scenes .loc-row-h { margin-bottom: 14px; }
 .vw-sc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; align-items: start; }
 .vw-sc { all: unset; cursor: pointer; display: block; position: relative; }
-.vw-sc-img { display: block; aspect-ratio: 16 / 10; border: 1px solid rgba(255, 255, 255, 0.1); transition: border-color 0.25s, box-shadow 0.25s, opacity 0.25s; opacity: 0.8; }
+.vw-sc-img { display: block; position: relative; overflow: hidden; background: #0a0a0a; aspect-ratio: 16 / 10; border: 1px solid rgba(255, 255, 255, 0.1); transition: border-color 0.25s, box-shadow 0.25s, opacity 0.25s; opacity: 0.8; }
 .vw-sc-grid.tall .vw-sc-img { aspect-ratio: 3 / 4; }
 .vw-sc-cap { display: block; padding-top: 9px; }
 .vw-sc-cap b { display: block; font-family: var(--serif-2); font-weight: 400; font-size: 14px; color: #f2ede6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }   /* one line; too long gets "…" */
@@ -3026,3 +3026,11 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .viewer.vw-story .vw-sc.on .vw-sc-img { border-color: #d9893a; box-shadow: 0 0 0 1px #d9893a, 0 0 30px -6px rgba(255, 130, 40, 0.5); }
 .viewer.vw-story .vw-sc-cap small, .viewer.vw-story .vw-scenes .loc-row-h span { color: #e0913f; }
 .viewer.vw-chapel .vw-sc-cap b, .viewer.vw-chapel .vw-scenes .loc-row-h h4 { font-family: "Cinzel", var(--serif-2); letter-spacing: 0.5px; }
+
+/* scene tiles in full screen: slideshow of the scene's photos, like the collection covers */
+.vw-sl { position: absolute; inset: 0; background: #0a0a0a center / cover no-repeat; opacity: 0; transition: opacity 1.4s ease; pointer-events: none; }
+.vw-sl.on { opacity: 1; }
+.vw-sc-dots { position: absolute; z-index: 2; top: 12px; right: 10px; left: 10px; justify-content: flex-end; display: flex; align-items: center; gap: 3px; pointer-events: none; filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6)); }
+.vw-sc-dots i { flex: 0 1 10px; min-width: 2px; height: 3px; border-radius: 2px; background: #333030; transition: background 0.4s; }
+.vw-sc-dots i.on { background: #c03446; }
+.viewer.vw-story .vw-sc-dots i.on { background: #d9893a; }

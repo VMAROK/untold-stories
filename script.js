@@ -756,17 +756,33 @@ function vwBuildScenes(item) {
   const grid = box.querySelector(".vw-sc-grid");
   locs.forEach((l) => {
     const name = l.dataset.name, angs = [...l.querySelectorAll(".ang")];
-    const still = angs.find((a) => a.dataset.kind !== "video" && a.dataset.src) || angs[0];
-    const pic = still.dataset.src || still.dataset.poster || "";
+    const stills = angs.filter((a) => a.dataset.kind !== "video" && a.dataset.src);
+    const pics = (stills.length ? stills.map((a) => a.dataset.src) : angs.map((a) => a.dataset.poster).filter(Boolean));
     const b = document.createElement("button");
-    b.type = "button"; b.className = "vw-sc"; b.dataset.loc = name;
-    b.innerHTML = `<span class="vw-sc-img ${pic ? "" : still.dataset.ph || ""}"${pic ? ` style='background:${bgLayers(pic)}, #0a0a0a'` : ""}></span>
+    b.type = "button"; b.className = "vw-sc" + (pics.length > 1 ? " multi" : ""); b.dataset.loc = name;
+    const ph = pics.length ? "" : (angs[0] && angs[0].dataset.ph) || "";
+    b.innerHTML = `<span class="vw-sc-img ${ph}">${pics.map((u, i) => `<span class="vw-sl${i ? "" : " on"}" style='background:${bgLayers(u)}, #0a0a0a'></span>`).join("")}${pics.length > 1 ? `<span class="vw-sc-dots">${pics.map((_, i) => `<i${i ? "" : ' class="on"'}></i>`).join("")}</span>` : ""}</span>
       <span class="vw-sc-cap"><b></b><small>${plural(angs.length, (angs.every((a) => a.dataset.kind === "video") ? "video" : W.piece.toLowerCase()))}</small></span>`;
     b.querySelector("b").textContent = name; b.title = name;     // full name on hover when cut short
+    const box = b.querySelector(".vw-sc-img");
+    b._idx = 0;
+    b._step = (d) => {                                           // auto: fade to the next photo of the scene
+      const sl = [...box.querySelectorAll(".vw-sl")], dots = [...box.querySelectorAll(".vw-sc-dots i")];
+      const cur = sl.findIndex((x) => x.classList.contains("on")), nx = (cur + d + sl.length) % sl.length;
+      sl[cur].classList.remove("on"); sl[nx].classList.add("on");
+      dots[cur]?.classList.remove("on"); dots[nx]?.classList.add("on");
+      b._idx = nx;
+    };
+    if (pics.length > 1) swipeSlides(box, ".vw-sl", ".vw-sc-dots i", {
+      onHold: () => { b._hold = Date.now(); },
+      onChange: (nx) => { b._idx = nx; },
+    });
     b.addEventListener("click", (e) => {
       e.stopPropagation();
-      const j = viewList.findIndex((p) => p.loc === name && p.kind !== "video");
-      const k = j >= 0 ? j : viewList.findIndex((p) => p.loc === name);
+      const shown = pics[b._idx || 0];                           // open on the photo the tile is showing
+      let k = viewList.findIndex((p) => p.loc === name && p.src && p.src === shown);
+      if (k < 0) k = viewList.findIndex((p) => p.loc === name && p.kind !== "video");
+      if (k < 0) k = viewList.findIndex((p) => p.loc === name);
       if (k >= 0 && k !== viewIdx) stepView(k - viewIdx);
       viewer.scrollTo({ top: 0, behavior: "smooth" });         // up to the photo of the scene picked
     });
@@ -778,6 +794,15 @@ function vwMarkScene() {
   const cur = viewList[viewIdx];
   document.querySelectorAll("#vw-scenes .vw-sc").forEach((b) => b.classList.toggle("on", !!cur && b.dataset.loc === cur.loc));
 }
+// the scene tiles under full screen play like the collection covers: fade every few seconds, staggered, held after a swipe
+setInterval(() => {
+  if (!viewer || viewer.hidden || document.hidden) return;
+  document.querySelectorAll("#vw-scenes .vw-sc.multi").forEach((b, i) => {
+    if (b._hold && Date.now() - b._hold < 5000) return;
+    if (!b._tick) b._tick = i % 3;
+    if (++b._tick % 3 === 0 && b._step) b._step(1);
+  });
+}, 1400);
 // full screen takes on a story collection's look: orange accents, and for The Chapel the firelight behind
 function vwTheme(list, ctx) {
   const item = list ? vwItemFor(list, ctx) : null;
@@ -3151,7 +3176,7 @@ setInterval(() => {
    Blocks the right-click menu, dragging images out, and the long-press "Save" menu on pictures and videos.
    (Text and links elsewhere work normally.) */
 (() => {
-  const media = "img, video, canvas, .gi-media, .loc-cover, .ang-tile, .cs-tile, .vw-media, .ge-slide, .loc-slide, .inline-play";
+  const media = "img, video, canvas, .gi-media, .loc-cover, .ang-tile, .cs-tile, .vw-media, .ge-slide, .loc-slide, .vw-sl, .vw-sc-img, .inline-play";
   document.addEventListener("contextmenu", (e) => { if (e.target.closest(media)) e.preventDefault(); });
   document.addEventListener("dragstart", (e) => { if (e.target.closest(media)) e.preventDefault(); });
   document.addEventListener("keydown", (e) => {               // Ctrl/Cmd+S (save page) while looking at a photo
