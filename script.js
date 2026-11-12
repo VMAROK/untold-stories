@@ -724,12 +724,6 @@ function vwWholeColl(list, i, ctx) {
 function openView(list, i, ctx = null, push = true) {
   if (!viewer || !list.length) return;
   [list, i] = vwWholeColl(list, Math.max(0, Math.min(i, list.length - 1)), ctx);
-  viewer._all = null;
-  if (list[i] && list[i].loc) {                               // the rows only hold the scene you're in; the scenes below switch it
-    viewer._all = list;
-    const cur = list[i];
-    list = list.filter((p) => p.loc === cur.loc); i = list.indexOf(cur);
-  }
   [list, i] = vwGroupOrder(list, i);
   viewList = list; viewCtx = ctx;
   viewIdx = Math.max(0, Math.min(i, list.length - 1));
@@ -785,26 +779,16 @@ function vwBuildScenes(item) {
     });
     b.addEventListener("click", (e) => {
       e.stopPropagation();
-      vwShowScene(name, pics[b._idx || 0]);                      // open on the photo the tile is showing
+      const shown = pics[b._idx || 0];                           // open on the photo the tile is showing
+      let k = viewList.findIndex((p) => p.loc === name && p.src && p.src === shown);
+      if (k < 0) k = viewList.findIndex((p) => p.loc === name && p.kind !== "video");
+      if (k < 0) k = viewList.findIndex((p) => p.loc === name);
+      if (k >= 0 && k !== viewIdx) stepView(k - viewIdx);
       viewer.scrollTo({ top: 0, behavior: "smooth" });         // up to the photo of the scene picked
     });
     grid.appendChild(b);
   });
   vwMarkScene();
-}
-// switch full screen to another scene: its photos only, in the rows and the arrows
-function vwShowScene(name, src) {
-  const all = viewer._all;
-  if (!all) return;
-  let l = all.filter((p) => p.loc === name);
-  if (!l.length) return;
-  let k = l.findIndex((p) => src && p.src === src);
-  if (k < 0) k = Math.max(0, l.findIndex((p) => p.kind !== "video"));
-  [l, k] = vwGroupOrder(l, k);
-  viewList = l; viewIdx = Math.max(0, k);
-  history.replaceState({ ...(history.state || {}), view: viewIdx }, "", location.hash || "#animation");
-  vwBuildRow();
-  fillView(viewList[viewIdx]);
 }
 function vwMarkScene() {
   const cur = viewList[viewIdx];
