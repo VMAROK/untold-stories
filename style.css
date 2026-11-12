@@ -3064,3 +3064,9 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .loc-dots i, .gi-entry .ge-dots i, .vw-sc-dots i { flex: 0 1 auto; min-width: 3px; }
 .loc-dots i { width: 12px; }
 .gi-entry .ge-dots i, .vw-sc-dots i { width: 9px; }
+
+/* row sizes: small in the collection drop-downs, big in full screen */
+.coll .car-track.fit, .cs-drop .car-track.fit, .cs-drop.cs-story .car-track.fit { --ch: 170px; }
+@media (max-width: 640px) { .coll .car-track.fit, .cs-drop .car-track.fit, .cs-drop.cs-story .car-track.fit { --ch: 120px; } }
+.vw-row .car-track.fit { --ch: 200px; }
+@media (min-width: 700px) { .vw-row .car-track.fit { --ch: 300px; } }

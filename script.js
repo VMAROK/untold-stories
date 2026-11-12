@@ -724,6 +724,12 @@ function vwWholeColl(list, i, ctx) {
 function openView(list, i, ctx = null, push = true) {
   if (!viewer || !list.length) return;
   [list, i] = vwWholeColl(list, Math.max(0, Math.min(i, list.length - 1)), ctx);
+  viewer._all = null;
+  if (list[i] && list[i].loc) {                               // the rows only hold the scene you're in; the scenes below switch it
+    viewer._all = list;
+    const cur = list[i];
+    list = list.filter((p) => p.loc === cur.loc); i = list.indexOf(cur);
+  }
   [list, i] = vwGroupOrder(list, i);
   viewList = list; viewCtx = ctx;
   viewIdx = Math.max(0, Math.min(i, list.length - 1));
@@ -779,16 +785,26 @@ function vwBuildScenes(item) {
     });
     b.addEventListener("click", (e) => {
       e.stopPropagation();
-      const shown = pics[b._idx || 0];                           // open on the photo the tile is showing
-      let k = viewList.findIndex((p) => p.loc === name && p.src && p.src === shown);
-      if (k < 0) k = viewList.findIndex((p) => p.loc === name && p.kind !== "video");
-      if (k < 0) k = viewList.findIndex((p) => p.loc === name);
-      if (k >= 0 && k !== viewIdx) stepView(k - viewIdx);
+      vwShowScene(name, pics[b._idx || 0]);                      // open on the photo the tile is showing
       viewer.scrollTo({ top: 0, behavior: "smooth" });         // up to the photo of the scene picked
     });
     grid.appendChild(b);
   });
   vwMarkScene();
+}
+// switch full screen to another scene: its photos only, in the rows and the arrows
+function vwShowScene(name, src) {
+  const all = viewer._all;
+  if (!all) return;
+  let l = all.filter((p) => p.loc === name);
+  if (!l.length) return;
+  let k = l.findIndex((p) => src && p.src === src);
+  if (k < 0) k = Math.max(0, l.findIndex((p) => p.kind !== "video"));
+  [l, k] = vwGroupOrder(l, k);
+  viewList = l; viewIdx = Math.max(0, k);
+  history.replaceState({ ...(history.state || {}), view: viewIdx }, "", location.hash || "#animation");
+  vwBuildRow();
+  fillView(viewList[viewIdx]);
 }
 function vwMarkScene() {
   const cur = viewList[viewIdx];
@@ -2925,18 +2941,15 @@ function csToggle(tile, loc, angs, world, base, W) {
   if (rowFoot) rowFoot.insertBefore(drop.querySelector(".cs-close"), rowFoot.firstChild);
 
   if (!loc.dataset.note) drop.querySelector(".cs-drop-h").remove();
-  // after the last tile on the same row as the one tapped
-  const tiles = [...small.querySelectorAll(".cs-tile")];
-  const top = tile.offsetTop;
-  const last = tiles.filter((t) => Math.abs(t.offsetTop - top) < 4).pop() || tile;
-  last.after(drop);
-  // only as wide as the photo it belongs to, straight under it
+  // straight under the tapped tile: the drop-down takes the grid row right below it (the other tiles flow around it)
   const cs = getComputedStyle(small);
-  const cols = cs.gridTemplateColumns.split(" ").length;
-  const gap = parseFloat(cs.columnGap) || 0;
-  const cw = (small.clientWidth - gap * (cols - 1)) / cols;
-  const col = Math.round((tile.offsetLeft - small.offsetLeft) / (cw + gap)) + 1;
-  const span = Math.max(1, Math.round((tile.offsetWidth + gap) / (cw + gap)));
+  const gap = parseFloat(cs.rowGap) || 0;
+  const rowh = parseFloat(cs.getPropertyValue("--rowh")) || 240;
+  const firstTop = Math.min(...[...small.querySelectorAll(".cs-tile")].map((t) => t.offsetTop));
+  const startRow = Math.round((tile.offsetTop - firstTop) / (rowh + gap)) + 1;
+  const endRow = startRow + (tile.classList.contains("cs-tall") ? 2 : 1);
+  small.appendChild(drop);
+  drop.style.gridRow = String(endRow);
   drop.classList.toggle("cs-story", W.unit === "Scene");
   drop.style.gridColumn = "1 / -1";                              // the versions / shots take the whole row (story and standard)
   tile.classList.add("on");
