@@ -584,6 +584,7 @@ function fillView(p) {
   $v("vw-next").disabled = viewIdx === viewList.length - 1;
   $v("vw-count").textContent = p.countLabel || `${viewIdx + 1} / ${viewList.length}`;
   vwMarkRow();
+  vwMarkScene();
   vwAmbient(p);
   const bar = $v("vw-bar");                                   // slideshow bar: one thin segment per piece, lit up to the one showing
   if (bar) {
@@ -698,17 +699,23 @@ function vwGroupOrder(list, i) {
   return [out, out.indexOf(cur)];
 }
 // Full screen inside a collection always offers every photo of that collection, wherever it was opened from
+function vwItemFor(list, ctx) {
+  if (ctx === "coll" && collItem) return collItem;
+  if (!list || !list.length) return null;
+  const world = String(list[0].cat || "").split(" · ")[0].trim().toLowerCase();
+  return [...document.querySelectorAll(".gi-coll")].find((c) => c.querySelector("h3").textContent.trim().toLowerCase() === world) || null;
+}
 function vwWholeColl(list, i, ctx) {
-  const cur = list[i], d = ctx === "coll" && collItem && collItem.querySelector(".coll-data");
+  const item = vwItemFor(list, ctx), cur = list[i], d = item && item.querySelector(".coll-data");
   if (!d || !cur) return [list, i];
   const angs = [...d.querySelectorAll(".ang")];
   if (angs.length < 2) return [list, i];
-  const world = collItem.querySelector("h3").textContent, W = collWords(collItem);
-  const base = { year: collItem.dataset.year || "", tools: collItem.dataset.tools || "", piece: W.piece };
+  const world = item.querySelector("h3").textContent, W = collWords(item);
+  const base = { year: item.dataset.year || "", tools: item.dataset.tools || "", piece: W.piece };
   const out = angs.map((a, k) => {
     const loc = a.closest(".loc"), sib = loc ? [...loc.querySelectorAll(".ang")] : angs;
     const p = anglePiece(a, sib.indexOf(a), sib.length, world, loc ? loc.dataset.name : "", base);
-    p.label = `${W.piece} ${pad2(k + 1)}`; p._whole = true;
+    p.label = `${W.piece} ${pad2(k + 1)}`; p._whole = true; p.loc = loc ? loc.dataset.name : "";
     return p;
   });
   const j = out.findIndex((p) => (cur.video ? p.video === cur.video : cur.src ? p.src === cur.src : p.title === cur.title && p.ph === cur.ph));
@@ -736,16 +743,45 @@ function closeView() {
     if (!viewer.classList.contains("open")) { viewer.hidden = true; $v("vw-media").innerHTML = ""; vwTheme(null); }   // stops any playing video
   }, 400);
 }
+// under the rows: every scene / location of the collection as tiles; tap one to jump the full screen to it
+function vwBuildScenes(item) {
+  const box = $v("vw-scenes");
+  if (!box) return;
+  box.innerHTML = "";
+  const locs = item ? [...item.querySelectorAll(".coll-data .loc")].filter((l) => l.querySelector(".ang")) : [];
+  box.hidden = locs.length < 2 || !viewList.some((p) => p.loc);
+  if (box.hidden) return;
+  const W = collWords(item), story = W.unit === "Scene";
+  box.innerHTML = `<div class="loc-row-h"><h4>${item.querySelector("h3").textContent}</h4><span>${plural(locs.length, W.unit.toLowerCase())}</span></div><div class="vw-sc-grid${story ? " tall" : ""}"></div>`;
+  const grid = box.querySelector(".vw-sc-grid");
+  locs.forEach((l) => {
+    const name = l.dataset.name, angs = [...l.querySelectorAll(".ang")];
+    const still = angs.find((a) => a.dataset.kind !== "video" && a.dataset.src) || angs[0];
+    const pic = still.dataset.src || still.dataset.poster || "";
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "vw-sc"; b.dataset.loc = name;
+    b.innerHTML = `<span class="vw-sc-img ${pic ? "" : still.dataset.ph || ""}"${pic ? ` style='background:${bgLayers(pic)}, #0a0a0a'` : ""}></span>
+      <span class="vw-sc-cap"><b></b><small>${plural(angs.length, (angs.every((a) => a.dataset.kind === "video") ? "video" : W.piece.toLowerCase()))}</small></span>`;
+    b.querySelector("b").textContent = name;
+    b.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const j = viewList.findIndex((p) => p.loc === name && p.kind !== "video");
+      const k = j >= 0 ? j : viewList.findIndex((p) => p.loc === name);
+      if (k >= 0 && k !== viewIdx) stepView(k - viewIdx);
+      viewer.scrollTo({ top: 0, behavior: "smooth" });         // up to the photo of the scene picked
+    });
+    grid.appendChild(b);
+  });
+  vwMarkScene();
+}
+function vwMarkScene() {
+  const cur = viewList[viewIdx];
+  document.querySelectorAll("#vw-scenes .vw-sc").forEach((b) => b.classList.toggle("on", !!cur && b.dataset.loc === cur.loc));
+}
 // full screen takes on a story collection's look: orange accents, and for The Chapel the firelight behind
 function vwTheme(list, ctx) {
-  let item = null;
-  if (list && list.length) {
-    if (ctx === "coll" && collItem) item = collItem;
-    else {
-      const world = String(list[0].cat || "").split(" · ")[0].trim().toLowerCase();
-      item = [...document.querySelectorAll(".gi-coll")].find((c) => c.querySelector("h3").textContent.trim().toLowerCase() === world) || null;
-    }
-  }
+  const item = list ? vwItemFor(list, ctx) : null;
+  vwBuildScenes(item);
   const story = !!item && collWords(item).unit === "Scene";
   const chapel = !!item && /^the chapel$/i.test(item.querySelector("h3").textContent.trim());
   viewer.classList.toggle("vw-story", story);

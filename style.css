@@ -3004,3 +3004,25 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 @media (max-width: 640px) { .reader .folio-close, .viewer .folio-close, .coll .folio-close, .release .folio-close { top: calc(var(--pnav) + 12px); } }
 .coll .chapel-fire, .coll.coll-chapel::before, .viewer.vw-chapel > .chapel-fire, .viewer.vw-chapel::before { top: var(--pnav); height: auto; }
 .vw-media:has(> .wm-wrap) { max-height: calc(100vh - 170px - var(--pnav)); max-height: calc(100svh - 170px - var(--pnav)); }
+
+/* full screen, under the rows: the collection's scenes / locations as tiles, to jump between them without going back */
+.vw-scenes { max-width: 1180px; margin: 40px auto 0; padding-top: 26px; border-top: 1px solid rgba(255, 255, 255, 0.08); position: relative; z-index: 1; }
+.vw-scenes[hidden] { display: none; }
+.vw-scenes .loc-row-h { margin-bottom: 14px; }
+.vw-sc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; }
+.vw-sc { all: unset; cursor: pointer; display: block; position: relative; }
+.vw-sc-img { display: block; aspect-ratio: 16 / 10; border: 1px solid rgba(255, 255, 255, 0.1); transition: border-color 0.25s, box-shadow 0.25s, opacity 0.25s; opacity: 0.8; }
+.vw-sc-grid.tall .vw-sc-img { aspect-ratio: 3 / 4; }
+.vw-sc-cap { display: block; padding-top: 9px; }
+.vw-sc-cap b { display: block; font-family: var(--serif-2); font-weight: 400; font-size: 17px; color: #f2ede6; }
+.vw-sc-cap small { display: block; margin-top: 3px; font-size: 9.5px; letter-spacing: 2.4px; text-transform: uppercase; color: rgba(255, 255, 255, 0.5); }
+.vw-sc:hover .vw-sc-img { opacity: 1; border-color: rgba(255, 255, 255, 0.3); }
+.vw-sc.on .vw-sc-img { opacity: 1; border-color: var(--crimson-bright); box-shadow: 0 0 0 1px var(--crimson-bright); }
+.vw-sc.on .vw-sc-cap small { color: var(--crimson-bright); }
+@media (max-width: 640px) { .vw-sc-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } .vw-sc-cap b { font-size: 14px; } }
+/* story collections: orange, Cinzel names */
+.viewer.vw-story .vw-scenes { border-top-color: rgba(200, 116, 42, 0.3); }
+.viewer.vw-story .vw-sc-img { border-color: rgba(200, 116, 42, 0.28); }
+.viewer.vw-story .vw-sc.on .vw-sc-img { border-color: #d9893a; box-shadow: 0 0 0 1px #d9893a, 0 0 30px -6px rgba(255, 130, 40, 0.5); }
+.viewer.vw-story .vw-sc-cap small, .viewer.vw-story .vw-scenes .loc-row-h span { color: #e0913f; }
+.viewer.vw-chapel .vw-sc-cap b, .viewer.vw-chapel .vw-scenes .loc-row-h h4 { font-family: "Cinzel", var(--serif-2); letter-spacing: 1px; }
