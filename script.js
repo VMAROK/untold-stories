@@ -759,8 +759,20 @@ function vwBuildScenes(item) {
   if (box.hidden) return;
   const W = collWords(item), story = W.unit === "Scene";
   box.innerHTML = `<div class="loc-row-h"><h4>${item.querySelector("h3").textContent}</h4><span>${plural(locs.length, W.unit.toLowerCase())}</span></div><div class="vw-sc-grid${story ? " tall" : ""}"></div>`;
-  const grid = box.querySelector(".vw-sc-grid");
+  const tmpl = box.querySelector(".vw-sc-grid");
+  const order = [...new Set(locs.map((l) => l.dataset.setting || ""))].sort((a, b) => (a === "") - (b === ""));   // settings first, scenes without one last
+  const grids = new Map();
+  order.forEach((st) => {
+    const g = tmpl.cloneNode(false);
+    if (order.length > 1 || st) {
+      const h = document.createElement("p"); h.className = "vw-set"; h.textContent = st || "Other";
+      box.appendChild(h);
+    }
+    box.appendChild(g); grids.set(st, g);
+  });
+  tmpl.remove();
   locs.forEach((l) => {
+    const grid = grids.get(l.dataset.setting || "");
     const name = l.dataset.name, angs = [...l.querySelectorAll(".ang")];
     const stills = angs.filter((a) => a.dataset.kind !== "video" && a.dataset.src);
     const pics = (stills.length ? stills.map((a) => a.dataset.src) : angs.map((a) => a.dataset.poster).filter(Boolean));
@@ -1058,7 +1070,7 @@ function openColl(item, push = true) {
     sec.className = "loc";
     const gid = `loc-grid-${li}`;
     sec.innerHTML = `<div class="loc-toggle" role="button" tabindex="0" aria-expanded="false" aria-controls="${gid}">
-        <div class="loc-head"><span class="loc-num">${W.unit} ${pad2(li + 1)}</span><h3></h3><p></p>
+        <div class="loc-head"><span class="loc-num">${W.unit} ${pad2(li + 1)}</span>${loc.dataset.setting ? '<span class="loc-set"></span>' : ""}<h3></h3><p></p>
           <span class="loc-count">${"photosOnly" in item.dataset ? mixCount(angs, W.piece)
             : `${plural(angs.filter((a) => a.dataset.kind === "video").length, "video")} · ${plural(angs.filter((a) => a.dataset.kind !== "video").length, "photo")}`}</span></div>
         <div class="loc-cover"><div class="loc-dots"></div>
@@ -1066,6 +1078,7 @@ function openColl(item, push = true) {
       </div>
       <div class="loc-body" id="${gid}"><div class="loc-body-in"></div></div>`;
     sec.querySelector("h3").textContent = loc.dataset.name;
+    if (loc.dataset.setting) sec.querySelector(".loc-set").textContent = loc.dataset.setting;
     sec.querySelector(".loc-head p").textContent = loc.dataset.note || "";
     // "Coming soon": locations marked data-soon in index.html, until something is added to them
     const soon = loc.hasAttribute("data-soon") && !angs.length;
@@ -2250,7 +2263,7 @@ function placeLiminal(photos) {
 // "VERSION : 2", one per line or all on one line). Anything else you wrote is the photo's description.
 function flickrMeta(desc) {
   const out = { rest: "" };
-  const parts = String(desc || "").split(/\b(TITLE|STORY|SCENE|VERSION|LEVEL|TIME)\b\s*:?\s*/i);
+  const parts = String(desc || "").split(/\b(TITLE|STORY|SETTING|SCENE|VERSION|LEVEL|TIME)\b\s*:?\s*/i);
   out.rest = parts[0].trim();
   for (let i = 1; i < parts.length; i += 2) out[parts[i].toLowerCase()] = (parts[i + 1] || "").replace(/\s+/g, " ").trim();
   return out;
@@ -2288,8 +2301,9 @@ function flickrCollections(items, albums, grid) {
         ver = meta.version ? +meta.version : m && m[1].trim() ? +m[2] : 1;
       }
       const key = name.toLowerCase();
-      if (!groups.has(key)) groups.set(key, { name, list: [] });
+      if (!groups.has(key)) groups.set(key, { name, list: [], setting: "" });
       groups.get(key).list.push({ ...it, ver });
+      if (story && meta.setting && !groups.get(key).setting) groups.get(key).setting = meta.setting;   // SETTING: the place a scene belongs to
     });
     const sets = [...groups.values()].map((g) => {
       // standard: by version; story: in the order you uploaded them (version only breaks ties)
@@ -2314,6 +2328,7 @@ function flickrCollections(items, albums, grid) {
       const sec = document.createElement("section");
       sec.className = "loc";
       sec.dataset.name = g.name;
+      sec.dataset.setting = g.setting || "";
       sec.dataset.note = story ? "" : g.list[0].description || "";
       g.list.forEach((it) => {
         const a = document.createElement("div");
@@ -2899,6 +2914,10 @@ function fillMosaic(small, item, world, opts = {}) {
     b.innerHTML = `<span class="cs-cap"><b></b><small></small></span>${FS_ICO}`;
     b.querySelector(".fs-ico").addEventListener("click", (e) => { e.stopPropagation(); openView(list, 0, "coll"); });
     b.querySelector("b").textContent = loc.dataset.name;
+    if (loc.dataset.setting) {                                     // the setting: tiny, above everything, just an organizer
+      const st = document.createElement("i"); st.className = "cs-set"; st.textContent = loc.dataset.setting;
+      b.querySelector(".cs-cap").prepend(st);
+    }
     if (opts.single === "view" && loc.dataset.note) {                // Photography: your Flickr description under the name
       const d = document.createElement("em"); d.className = "cs-desc"; d.textContent = loc.dataset.note;
       b.querySelector(".cs-cap").appendChild(d);
@@ -3164,7 +3183,8 @@ function buildAllEntries() {
       const word = vids === e.angs.length ? "video" : e.angs.filter((a) => a.dataset.kind !== "video").every((a) => /^Version/.test(a.dataset.spec || "")) ? "version" : W.piece;
       const count = vids && vids < e.angs.length ? mixCount(e.angs, word)
         : e.angs.length > 1 || !isVid ? plural(e.angs.length, word.toLowerCase()) : "Video";
-      li.querySelector(".gi-cat").textContent = `${world} · ${count}`;
+      const setting = (!e.loose && e.angs[0] && e.angs[0].closest(".loc")?.dataset.setting) || "";
+      li.querySelector(".gi-cat").textContent = [world, setting, count].filter(Boolean).join(" · ");
       li.querySelector("h3").textContent = e.name;
       const list = e.angs.map((a, i) => anglePiece(a, i, e.angs.length, world, e.loose ? "" : e.name, base));
       m.addEventListener("click", () => openView(list, li._idx || 0, "coll"));   // opens on the image showing

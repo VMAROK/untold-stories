@@ -3082,3 +3082,11 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 }
 /* the square is the same size held sideways as upright (as big as the iPad's upright width), not shrunk to the screen height */
 .vw-media:has(> .wm-wrap) { width: min(100%, 960px); max-height: none; }
+
+/* SETTING (the place a scene belongs to): small and quiet, just an organizer */
+.loc-set { grid-column: 2; font-family: var(--body); font-size: 9px; letter-spacing: 2.6px; text-transform: uppercase; color: rgba(242, 237, 230, 0.38); margin-bottom: -2px; }
+@media (max-width: 760px) { .loc-set { grid-column: 1; } }
+.cs-cap .cs-set { order: 0; font-style: normal; font-family: var(--body); font-size: 8px; letter-spacing: 2.4px; text-transform: uppercase; color: rgba(242, 237, 230, 0.4); }
+.vw-set { margin: 22px 0 10px; font-family: var(--body); font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(242, 237, 230, 0.4); }
+.vw-scenes .loc-row-h + .vw-set { margin-top: 4px; }
+.vw-set + .vw-sc-grid { padding-bottom: 6px; }
