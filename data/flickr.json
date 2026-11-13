@@ -34,7 +34,7 @@
    "h": 135,
    "taken": "2026-11-12T09:03:57-08:00",
    "published": "2026-11-12T17:04:10Z",
-   "description": "TITLE The Bath Room\n STORY The Chapel\n SCENE The Bath Room\n TIME Day\n VERSION 4",
+   "description": "TITLE The Bath Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Bath Room\n TIME Day\n VERSION 4",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -47,7 +47,7 @@
    "h": 135,
    "taken": "2026-11-12T09:03:54-08:00",
    "published": "2026-11-12T17:04:10Z",
-   "description": "TITLE The Bath Room\n STORY The Chapel\n SCENE The Bath Room\n TIME Day\n VERSION 5",
+   "description": "TITLE The Bath Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Bath Room\n TIME Day\n VERSION 5",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -60,7 +60,7 @@
    "h": 135,
    "taken": "2026-11-12T09:03:53-08:00",
    "published": "2026-11-12T17:04:10Z",
-   "description": "TITLE The Bath Room\n STORY The Chapel\n SCENE The Bath Room\n TIME Day\n VERSION 6",
+   "description": "TITLE The Bath Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Bath Room\n TIME Day\n VERSION 6",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -73,7 +73,7 @@
    "h": 135,
    "taken": "2026-11-12T09:03:53-08:00",
    "published": "2026-11-12T17:04:10Z",
-   "description": "TITLE The Bath Room\n STORY The Chapel\n SCENE The Bath Room\n TIME Day\n VERSION 8",
+   "description": "TITLE The Bath Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Bath Room\n TIME Day\n VERSION 8",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -86,7 +86,7 @@
    "h": 135,
    "taken": "2026-11-12T09:03:52-08:00",
    "published": "2026-11-12T17:04:10Z",
-   "description": "TITLE The Bath Room\n STORY The Chapel\n SCENE The Bath Room\n TIME Day\n VERSION 7",
+   "description": "TITLE The Bath Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Bath Room\n TIME Day\n VERSION 7",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -99,7 +99,7 @@
    "h": 240,
    "taken": "2026-11-09T22:54:57-08:00",
    "published": "2026-11-10T06:56:03Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 18",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 18",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -112,7 +112,7 @@
    "h": 240,
    "taken": "2026-11-09T22:54:58-08:00",
    "published": "2026-11-10T06:56:03Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 17",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 17",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -125,7 +125,7 @@
    "h": 240,
    "taken": "2026-11-09T22:54:55-08:00",
    "published": "2026-11-10T06:56:03Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 22",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 22",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -138,7 +138,7 @@
    "h": 240,
    "taken": "2026-11-09T22:54:55-08:00",
    "published": "2026-11-10T06:56:03Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 20",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 20",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -151,7 +151,7 @@
    "h": 240,
    "taken": "2026-11-09T22:54:53-08:00",
    "published": "2026-11-10T06:56:03Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 19",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 19",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -164,7 +164,7 @@
    "h": 240,
    "taken": "2026-11-09T22:54:54-08:00",
    "published": "2026-11-10T06:56:03Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 21",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 21",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -177,7 +177,7 @@
    "h": 240,
    "taken": "2026-11-09T22:54:01-08:00",
    "published": "2026-11-10T06:56:02Z",
-   "description": "TITLE The Bath Room\n STORY The Chapel\n SCENE The Bath Room\n TIME Day\n VERSION 3",
+   "description": "TITLE The Bath Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Bath Room\n TIME Day\n VERSION 3",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -190,7 +190,7 @@
    "h": 240,
    "taken": "2026-11-09T21:16:45-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 11",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 11",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -203,7 +203,7 @@
    "h": 240,
    "taken": "2026-11-09T21:16:42-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 15",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 15",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -216,7 +216,7 @@
    "h": 240,
    "taken": "2026-11-09T21:16:49-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 8",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 8",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -229,7 +229,7 @@
    "h": 135,
    "taken": "2026-11-09T21:16:49-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 7",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 7",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -242,7 +242,7 @@
    "h": 240,
    "taken": "2026-11-09T21:16:46-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 9",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 9",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -255,7 +255,7 @@
    "h": 240,
    "taken": "2026-11-09T21:16:39-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 14",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 14",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -268,7 +268,7 @@
    "h": 135,
    "taken": "2026-11-09T21:16:55-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 5",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 5",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -281,7 +281,7 @@
    "h": 135,
    "taken": "2026-11-09T21:16:56-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 4",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 4",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
