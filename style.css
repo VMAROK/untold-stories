@@ -3103,3 +3103,12 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 @media (max-width: 640px) { .vw-scenes .vw-sc-grid { grid-auto-columns: 150px; gap: 10px; } }
 .vw-scenes .vw-sc-grid { touch-action: pan-x pan-y; }
 .vw-sc-img { touch-action: pan-x pan-y; }
+
+/* full-screen scene rows: scrollbar in the site's colours (crimson; amber in story collections), with room under the tiles */
+.vw-scenes .vw-sc-grid { padding-bottom: 26px; scrollbar-width: thin; scrollbar-color: #8e2533 rgba(255, 255, 255, 0.06); }
+.vw-scenes .vw-sc-grid::-webkit-scrollbar { height: 4px; }
+.vw-scenes .vw-sc-grid::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.06); border-radius: 4px; }
+.vw-scenes .vw-sc-grid::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #8e2533, #c03446); border-radius: 4px; }
+.viewer.vw-story .vw-scenes .vw-sc-grid { scrollbar-color: #c8742a rgba(200, 116, 42, 0.12); }
+.viewer.vw-story .vw-scenes .vw-sc-grid::-webkit-scrollbar-track { background: rgba(200, 116, 42, 0.12); }
+.viewer.vw-story .vw-scenes .vw-sc-grid::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #a85a1f, #e0913f); }
