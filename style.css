@@ -3101,3 +3101,5 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .vw-set-h .car-nav { margin-left: auto; }
 .vw-scenes .loc-row-h + .vw-set-h { margin-top: 4px; }
 @media (max-width: 640px) { .vw-scenes .vw-sc-grid { grid-auto-columns: 150px; gap: 10px; } }
+.vw-scenes .vw-sc-grid { touch-action: pan-x pan-y; }
+.vw-sc-img { touch-action: pan-x pan-y; }

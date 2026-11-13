@@ -765,11 +765,8 @@ function vwBuildScenes(item) {
   order.forEach((st) => {                                       // each setting: a row of scenes that scrolls sideways, with arrows
     const g = tmpl.cloneNode(false);
     const h = document.createElement("div"); h.className = "vw-set-h";
-    h.innerHTML = `<p class="vw-set"></p><div class="car-nav"><button type="button" class="car-prev" aria-label="Previous scenes">‹</button><button type="button" class="car-next" aria-label="More scenes">›</button></div>`;
+    h.innerHTML = `<p class="vw-set"></p>`;                       // no arrows: the row scrolls with a finger
     h.querySelector(".vw-set").textContent = order.length > 1 || st ? st || "Other" : "";
-    const step = (d) => g.scrollBy({ left: d * g.clientWidth * 0.8, behavior: "smooth" });
-    h.querySelector(".car-prev").addEventListener("click", (e) => { e.stopPropagation(); step(-1); });
-    h.querySelector(".car-next").addEventListener("click", (e) => { e.stopPropagation(); step(1); });
     box.appendChild(h); box.appendChild(g); grids.set(st, g);
   });
   tmpl.remove();
@@ -793,10 +790,11 @@ function vwBuildScenes(item) {
       dots[cur]?.classList.remove("on"); dots[nx]?.classList.add("on");
       b._idx = nx;
     };
+    /* swiping a tile flipped its photos and blocked scrolling the row with a finger: off, the tiles just play on their own
     if (pics.length > 1) swipeSlides(box, ".vw-sl", ".vw-sc-dots i", {
       onHold: () => { b._hold = Date.now(); },
       onChange: (nx) => { b._idx = nx; },
-    });
+    }); */
     b.addEventListener("click", (e) => {
       e.stopPropagation();
       vwShowScene(name, pics[b._idx || 0]);                      // that scene's photos only, opening on the one the tile shows
