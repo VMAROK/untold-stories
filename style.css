@@ -3144,3 +3144,5 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .vw-media { touch-action: pan-y pinch-zoom; }
 .gi-entry.ge-multi .gi-media { touch-action: pan-y pinch-zoom; }
 .vw-scenes .vw-sc-grid, .vw-sc-img { touch-action: pan-x pan-y pinch-zoom; }
+.vw-sc.multi .vw-sc-img { touch-action: pan-y pinch-zoom; }   /* sideways on the picture = flip its photos */
+.vw-sc-cap { padding-bottom: 6px; }

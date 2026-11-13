@@ -791,15 +791,14 @@ function vwBuildScenes(item) {
       dots[cur]?.classList.remove("on"); dots[nx]?.classList.add("on");
       b._idx = nx;
     };
-    /* swiping a tile flipped its photos and blocked scrolling the row with a finger: off, the tiles just play on their own
+    // swipe on a tile's picture flips its photos; the row itself scrolls from the names under the tiles, the gaps, or its scrollbar
     if (pics.length > 1) swipeSlides(box, ".vw-sl", ".vw-sc-dots i", {
       onHold: () => { b._hold = Date.now(); },
       onChange: (nx) => { b._idx = nx; },
-    }); */
+    });
     b.addEventListener("click", (e) => {
       e.stopPropagation();
       vwShowScene(name, pics[b._idx || 0]);                      // that scene's photos only, opening on the one the tile shows
-      viewer.scrollTo({ top: 0, behavior: "smooth" });         // up to the photo of the scene picked
     });
     grid.appendChild(b);
   });
