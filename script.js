@@ -768,6 +768,7 @@ function vwBuildScenes(item) {
     h.innerHTML = `<p class="vw-set"></p>`;                       // no arrows: the row scrolls with a finger
     h.querySelector(".vw-set").textContent = order.length > 1 || st ? st || "Other" : "";
     box.appendChild(h); box.appendChild(g); grids.set(st, g);
+    vwScrollBar(g);
   });
   tmpl.remove();
   locs.forEach((l) => {
@@ -817,6 +818,39 @@ function vwShowScene(name, src) {
   history.replaceState({ ...(history.state || {}), view: viewIdx }, "", location.hash || "#animation");
   vwBuildRow();
   fillView(viewList[viewIdx]);
+}
+// a scrollbar of our own under a scene row: always there, faint at rest, full colour while the row is touched or moving
+// (the phone/iPad's own one vanishes when you stop)
+function vwScrollBar(g) {
+  const bar = document.createElement("div"); bar.className = "vw-sbar";
+  bar.innerHTML = "<i></i>";
+  g.after(bar);
+  const th = bar.firstChild;
+  let idle;
+  const draw = () => {
+    const max = g.scrollWidth - g.clientWidth;
+    bar.hidden = max <= 2;
+    const w = Math.max(0.08, g.clientWidth / Math.max(1, g.scrollWidth));
+    th.style.width = w * 100 + "%";
+    th.style.left = (max > 0 ? g.scrollLeft / max : 0) * (1 - w) * 100 + "%";
+  };
+  const wake = () => { bar.classList.add("on"); clearTimeout(idle); idle = setTimeout(() => bar.classList.remove("on"), 1200); };
+  g.addEventListener("scroll", () => { draw(); wake(); }, { passive: true });
+  g.addEventListener("touchstart", wake, { passive: true });
+  g.addEventListener("pointerenter", wake);
+  // drag or tap the bar itself to move the row
+  bar.addEventListener("pointerdown", (e) => {
+    e.preventDefault(); e.stopPropagation();
+    const r = bar.getBoundingClientRect();
+    const to = (x) => { g.scrollLeft = ((x - r.left) / r.width) * g.scrollWidth - g.clientWidth / 2; };
+    to(e.clientX); wake();
+    const mv = (ev) => { to(ev.clientX); wake(); };
+    const up = () => { window.removeEventListener("pointermove", mv); window.removeEventListener("pointerup", up); };
+    window.addEventListener("pointermove", mv); window.addEventListener("pointerup", up);
+  });
+  bar.addEventListener("click", (e) => e.stopPropagation());
+  new ResizeObserver(draw).observe(g);
+  requestAnimationFrame(draw);
 }
 function vwMarkScene() {
   const cur = viewList[viewIdx];

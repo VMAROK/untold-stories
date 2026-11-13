@@ -3112,3 +3112,16 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .viewer.vw-story .vw-scenes .vw-sc-grid { scrollbar-color: #c8742a rgba(200, 116, 42, 0.12); }
 .viewer.vw-story .vw-scenes .vw-sc-grid::-webkit-scrollbar-track { background: rgba(200, 116, 42, 0.12); }
 .viewer.vw-story .vw-scenes .vw-sc-grid::-webkit-scrollbar-thumb { background: linear-gradient(90deg, #a85a1f, #e0913f); }
+
+/* our own scrollbar under each scene row (replaces the vanishing one): faint at rest, lights up when touched */
+.vw-scenes .vw-sc-grid { scrollbar-width: none; padding-bottom: 4px; }
+.vw-scenes .vw-sc-grid::-webkit-scrollbar { display: none; }
+.vw-sbar { position: relative; height: 4px; margin: 18px 0 6px; border-radius: 4px; background: rgba(255, 255, 255, 0.07); cursor: pointer; touch-action: none; }
+.vw-sbar::before { content: ""; position: absolute; inset: -10px 0; }      /* bigger touch target */
+.vw-sbar[hidden] { display: none; }
+.vw-sbar i { position: absolute; top: 0; bottom: 0; border-radius: 4px; background: linear-gradient(90deg, #8e2533, #c03446);
+  opacity: 0.4; transition: opacity 0.4s ease, box-shadow 0.4s ease; }
+.vw-sbar.on i, .vw-sbar:hover i { opacity: 1; box-shadow: 0 0 8px rgba(192, 52, 70, 0.6); }
+.viewer.vw-story .vw-sbar { background: rgba(200, 116, 42, 0.12); }
+.viewer.vw-story .vw-sbar i { background: linear-gradient(90deg, #a85a1f, #e0913f); }
+.viewer.vw-story .vw-sbar.on i, .viewer.vw-story .vw-sbar:hover i { box-shadow: 0 0 8px rgba(224, 145, 63, 0.6); }
