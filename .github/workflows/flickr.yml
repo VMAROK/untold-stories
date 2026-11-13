@@ -16,7 +16,8 @@ jobs:
       - uses: actions/checkout@v4
       - run: python3 .github/scripts/flickr.py
         env:
-          FLICKR_KEY: ${{ secrets.FLICKR_KEY }}
+          # your Flickr API key, whatever name it was saved under (secret or variable)
+          FLICKR_KEY: ${{ secrets.FLICKR_KEY || secrets.FLICKR_API_KEY || secrets.FLICKR_APIKEY || secrets.FLICKR_API || secrets.FLICKR || secrets.API_KEY || secrets.KEY || vars.FLICKR_KEY || vars.FLICKR_API_KEY }}
       - name: Save
         run: |
           git config user.name "flickr-sync"

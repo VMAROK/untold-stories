@@ -46,7 +46,7 @@ def full_album(sid, key):
         if page_n >= int(ps.get("pages", 1)): return out
         page_n += 1
 
-print("api key:", "set" if KEY else "not set")
+print("api key:", ("set, " + str(len(KEY)) + " characters") if KEY else "not set")
 try:
     old = json.load(open("data/flickr.json"))["photos"]
 except Exception:
