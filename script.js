@@ -971,6 +971,10 @@ if (viewer) {
     sw = { x0: t.clientX, y0: t.clientY, t0: performance.now(), dx: 0, axis: null };
   }, { passive: true });
   stage.addEventListener("touchmove", (e) => {
+    if (e.touches.length > 1) {                                // a second finger: it's a pinch, let the browser zoom
+      if (sw) { const el = vwPic(); if (el) { el.style.transition = "transform 0.2s ease"; el.style.transform = ""; } sw = null; }
+      return;
+    }
     if (!sw || vwBusy) return;
     const t = e.touches[0], dx = t.clientX - sw.x0, dy = t.clientY - sw.y0;
     if (!sw.axis) {
@@ -1270,7 +1274,7 @@ function swipeSlides(box, slideSel, dotSel, opts = {}) {
     };
     settle = { run, t: setTimeout(() => { settle = null; run(); }, 580) };
   };
-  box.style.touchAction = "pan-y";
+  box.style.touchAction = "pan-y pinch-zoom";                 // pinch-zoom: two fingers can always zoom the page in and back out
   const isCtl = (t) => { const c = t.closest("button, .gi-play, .loc-cta, .fs-ico"); return !!c && c !== box && box.contains(c); };   // a button inside: not a swipe
   // touch (iPad / phone)
   box.addEventListener("touchstart", (e) => {
