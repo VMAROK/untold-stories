@@ -3074,3 +3074,9 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 /* line indicators sit higher, hugging the top edge so they stay off the picture */
 .gi-entry .ge-dots, .vw-sc-dots { top: 7px; }
 .loc-dots, .loc-cover .loc-dots { top: 8px; }
+
+/* the full-screen photo always sits in a black square (any screen, any way the iPad is turned) */
+.vw-media:has(> .wm-wrap) {
+  aspect-ratio: 1 / 1; margin-inline: auto;
+  width: min(100%, calc(100vh - 170px - var(--pnav))); width: min(100%, calc(100svh - 170px - var(--pnav)));
+}
