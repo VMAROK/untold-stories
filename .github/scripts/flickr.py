@@ -105,7 +105,7 @@ for sid in ids:
         # keep only photos older than everything the feed shows: those just fell off its 20-photo list.
         # One newer than that and missing from the feed was deleted on Flickr, so it goes.
         oldest = min((p.get("published", "") for p in fed), default="")
-        keep = [p for p in old if p.get("album") == sid and pid(p["url"]) not in seen and p.get("published", "") < oldest] if len(fed) >= 20 else []
+        keep = [p for p in old if p.get("album") == sid and pid(p["url"]) not in seen and p.get("published", "") <= oldest] if len(fed) >= 20 else []   # <=: photos uploaded together share a timestamp
         photos += fed + keep
         print(title, len(fed), "from feed +", len(keep), "kept from last sync")
 photos.sort(key=lambda p: p["published"], reverse=True)
