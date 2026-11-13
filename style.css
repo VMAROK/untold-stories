@@ -3080,3 +3080,5 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
   aspect-ratio: 1 / 1; margin-inline: auto;
   width: min(100%, calc(100vh - 170px - var(--pnav))); width: min(100%, calc(100svh - 170px - var(--pnav)));
 }
+/* the square is the same size held sideways as upright (as big as the iPad's upright width), not shrunk to the screen height */
+.vw-media:has(> .wm-wrap) { width: min(100%, 960px); max-height: none; }
