@@ -798,7 +798,11 @@ function vwBuildScenes(item) {
     });
     b.addEventListener("click", (e) => {
       e.stopPropagation();
+      const before = b.getBoundingClientRect().top;
       vwShowScene(name, pics[b._idx || 0]);                      // that scene's photos only, opening on the one the tile shows
+      // the rows above change size with the new scene: keep the tile you tapped exactly where it was on screen
+      const keep = () => { viewer.scrollTop += b.getBoundingClientRect().top - before; };
+      keep(); requestAnimationFrame(keep); setTimeout(keep, 120);
     });
     grid.appendChild(b);
   });
