@@ -294,7 +294,7 @@
    "h": 135,
    "taken": "2026-11-09T21:16:50-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 6",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 6",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -307,7 +307,7 @@
    "h": 240,
    "taken": "2026-11-09T21:16:45-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 10",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 10",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -320,7 +320,7 @@
    "h": 240,
    "taken": "2026-11-09T21:16:44-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 12",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 12",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -333,7 +333,7 @@
    "h": 240,
    "taken": "2026-11-09T21:16:40-08:00",
    "published": "2026-11-10T05:45:59Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 13",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 13",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -346,7 +346,7 @@
    "h": 135,
    "taken": "2026-11-09T21:17:01-08:00",
    "published": "2026-11-10T05:45:58Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 1",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -359,7 +359,7 @@
    "h": 135,
    "taken": "2026-11-09T21:17:01-08:00",
    "published": "2026-11-10T05:45:58Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 2",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 2",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -372,7 +372,7 @@
    "h": 135,
    "taken": "2026-11-09T21:16:56-08:00",
    "published": "2026-11-10T05:45:58Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 3",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 3",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -385,7 +385,7 @@
    "h": 240,
    "taken": "2026-11-09T21:16:42-08:00",
    "published": "2026-11-10T05:45:11Z",
-   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SCENE The Confrontation Room\n TIME Day\n VERSION 16",
+   "description": "TITLE The Confrontation Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Confrontation Room\n TIME Day\n VERSION 16",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -398,7 +398,7 @@
    "h": 240,
    "taken": "2026-11-09T21:17:00-08:00",
    "published": "2026-11-10T05:17:06Z",
-   "description": "TITLE The Bath Room\n STORY The Chapel\n SCENE The Bath Room\n TIME Day\n VERSION 1",
+   "description": "TITLE The Bath Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Bath Room\n TIME Day\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -411,7 +411,7 @@
    "h": 240,
    "taken": "2026-11-09T21:16:56-08:00",
    "published": "2026-11-10T05:17:06Z",
-   "description": "TITLE The Bath Room\n STORY The Chapel\n SCENE The Bath Room\n TIME Day\n VERSION 2",
+   "description": "TITLE The Bath Room\n STORY The Chapel\n SETTING The Monastery\n SCENE The Bath Room\n TIME Day\n VERSION 2",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -424,7 +424,7 @@
    "h": 135,
    "taken": "2026-11-08T16:47:16-08:00",
    "published": "2026-11-09T00:47:31Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 10",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 10",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -437,7 +437,7 @@
    "h": 135,
    "taken": "2026-11-08T16:13:39-08:00",
    "published": "2026-11-09T00:14:41Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 5",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 5",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -450,7 +450,7 @@
    "h": 240,
    "taken": "2026-11-08T16:13:39-08:00",
    "published": "2026-11-09T00:14:41Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 8",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 8",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -463,7 +463,7 @@
    "h": 135,
    "taken": "2026-11-08T16:13:39-08:00",
    "published": "2026-11-09T00:14:41Z",
-   "description": "TITLE Where It Happened\n STORY The Chapel\n SCENE His Bedroom\n TIME Day\n VERSION 1",
+   "description": "TITLE Where It Happened\n STORY The Chapel\n SETTING The Monastery\n SCENE His Bedroom\n TIME Day\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -476,7 +476,7 @@
    "h": 135,
    "taken": "2026-11-08T16:13:40-08:00",
    "published": "2026-11-09T00:14:41Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 3",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 3",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -489,7 +489,7 @@
    "h": 240,
    "taken": "2026-11-08T16:13:38-08:00",
    "published": "2026-11-09T00:14:41Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 1",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -502,7 +502,7 @@
    "h": 240,
    "taken": "2026-11-08T16:13:39-08:00",
    "published": "2026-11-09T00:14:41Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 4",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 4",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -515,7 +515,7 @@
    "h": 240,
    "taken": "2026-11-08T16:13:38-08:00",
    "published": "2026-11-09T00:14:41Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 7",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 7",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -528,7 +528,7 @@
    "h": 135,
    "taken": "2026-11-08T16:13:38-08:00",
    "published": "2026-11-09T00:14:41Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 6",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 6",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -541,7 +541,7 @@
    "h": 135,
    "taken": "2026-11-08T16:13:40-08:00",
    "published": "2026-11-09T00:14:41Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 2",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 2",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -554,7 +554,7 @@
    "h": 240,
    "taken": "2026-11-08T16:13:40-08:00",
    "published": "2026-11-09T00:14:40Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 9",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 9",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -567,7 +567,7 @@
    "h": 135,
    "taken": "2026-11-08T16:13:40-08:00",
    "published": "2026-11-09T00:14:40Z",
-   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SCENE Marek’s Dorm\n TIME Night\n VERSION 1",
+   "description": "TITLE Marek’s Dorm at Night\n STORY The Chapel\n SETTING The Monastery\n SCENE Marek’s Dorm\n TIME Night\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -580,7 +580,7 @@
    "h": 240,
    "taken": "2025-10-27T06:13:00-08:00",
    "published": "2026-11-04T17:09:05Z",
-   "description": "TITLE Priesthood and the Heavens\n STORY The Chapel\n SCENE The Pillar Halls\n TIME Day\n VERSION 1",
+   "description": "TITLE Priesthood and the Heavens\n STORY The Chapel\n SETTING The Monastery\n SCENE The Pillar Halls\n TIME Day\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -593,7 +593,7 @@
    "h": 240,
    "taken": "2026-11-04T09:08:13-08:00",
    "published": "2026-11-04T17:08:16Z",
-   "description": "TITLE Morning School Lunchroom\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Day\n VERSION 1",
+   "description": "TITLE Morning School Lunchroom\n STORY The Chapel\n SETTING The School\n SCENE The School Lunchroom\n TIME Day\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -702,7 +702,7 @@
    "h": 240,
    "taken": "2025-10-08T08:26:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 2",
+   "description": "TITLE Candles For Supper\n STORY The Chapel\n SETTING The School\n SCENE The School Lunchroom\n TIME Night\n VERSION 2",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -715,7 +715,7 @@
    "h": 240,
    "taken": "2025-10-27T07:07:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Masonry and the Chapel\n STORY The Chapel\n SCENE The Pillar Halls\n TIME Night\n VERSION 1",
+   "description": "TITLE Masonry and the Chapel\n STORY The Chapel\n SETTING The Monastery\n SCENE The Pillar Halls\n TIME Night\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -728,7 +728,7 @@
    "h": 240,
    "taken": "2025-10-07T01:29:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE He Watches Me\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 2",
+   "description": "TITLE He Watches Me\n STORY The Chapel\n SETTING The School\n SCENE The School Lunchroom\n TIME Night\n VERSION 2",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -741,7 +741,7 @@
    "h": 240,
    "taken": "2025-10-08T00:11:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 1",
+   "description": "TITLE Candles For Supper\n STORY The Chapel\n SETTING The School\n SCENE The School Lunchroom\n TIME Night\n VERSION 1",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -754,7 +754,7 @@
    "h": 240,
    "taken": "2025-10-08T08:26:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE Candles For Supper\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 3",
+   "description": "TITLE Candles For Supper\n STORY The Chapel\n SETTING The School\n SCENE The School Lunchroom\n TIME Night\n VERSION 3",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
@@ -767,7 +767,7 @@
    "h": 240,
    "taken": "2025-10-07T03:52:00-08:00",
    "published": "2026-11-03T23:29:12Z",
-   "description": "TITLE He Watches Me\n STORY The Chapel\n SCENE The School Lunchroom\n TIME Night\n VERSION 3",
+   "description": "TITLE He Watches Me\n STORY The Chapel\n SETTING The School\n SCENE The School Lunchroom\n TIME Night\n VERSION 3",
    "tags": [],
    "album": "72177720336726682",
    "category": "general"
