@@ -3070,3 +3070,7 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 @media (max-width: 640px) { .coll .car-track.fit, .cs-drop .car-track.fit, .cs-drop.cs-story .car-track.fit { --ch: 120px; } }
 .vw-row .car-track.fit { --ch: 200px; }
 @media (min-width: 700px) { .vw-row .car-track.fit { --ch: 300px; } }
+
+/* line indicators sit higher, hugging the top edge so they stay off the picture */
+.gi-entry .ge-dots, .vw-sc-dots { top: 7px; }
+.loc-dots, .loc-cover .loc-dots { top: 8px; }
