@@ -7,7 +7,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Gloock&family=Courier+Prime:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,400;1,500&family=Jost:wght@300;400;500;600&family=Manrope:wght@300;400;500&family=Mrs+Saint+Delafield&family=Cinzel:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css?v=20261113120947" />
+  <link rel="stylesheet" href="style.css?v=20261113122126" />
 </head>
 <body>
 
@@ -225,7 +225,7 @@
        Put each script's PDF in /scripts and set its href, e.g. href="scripts/the-quiet-archive.pdf" -->
   <section class="folio" id="screenplays" role="dialog" aria-modal="true" aria-label="Screenplays" hidden>
     <div class="folio-inner">
-      <button class="folio-close" type="button" data-close><span>←</span> Back</button>
+      <button class="folio-close" type="button" data-close aria-label="Back" title="Back"><svg viewBox="0 0 20 14" aria-hidden="true"><path d="M7 1L1 7l6 6M1 7h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
       <header class="folio-head">
         <p class="folio-kicker"><span>01</span><span class="dash"></span>Hidden Places</p>
@@ -274,7 +274,7 @@
   <section class="folio gallery" id="animation" role="dialog" aria-modal="true" aria-label="3D art and film" hidden>
     <canvas class="bokeh" aria-hidden="true"></canvas><!-- Photography tab: drifting lens bubbles (script.js) -->
     <div class="folio-inner gal-inner">
-      <button class="folio-close" type="button" data-close><span>←</span> Back</button>
+      <button class="folio-close" type="button" data-close aria-label="Back" title="Back"><svg viewBox="0 0 20 14" aria-hidden="true"><path d="M7 1L1 7l6 6M1 7h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
 
       <header class="folio-head">
         <p class="folio-kicker"><span>02</span><span class="dash"></span>Forgotten Spaces</p>
@@ -470,7 +470,7 @@
   <!-- ========== COLLECTION PAGE: a world, its locations and their angles ========== -->
   <section class="coll" id="coll" role="dialog" aria-modal="true" aria-labelledby="cl-title" hidden>
     <canvas class="chapel-fire" aria-hidden="true"></canvas><!-- The Chapel: torch-lit background (script.js) -->
-    <button class="folio-close coll-close" type="button" data-coll-close><span>←</span> Gallery</button>
+    <button class="folio-close coll-close" type="button" data-coll-close aria-label="Back to Gallery" title="Back"><svg viewBox="0 0 20 14" aria-hidden="true"><path d="M7 1L1 7l6 6M1 7h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="coll-inner">
       <header class="coll-head">
         <p class="folio-kicker"><span class="dash"></span><span id="cl-kicker"></span></p>
@@ -490,7 +490,7 @@
 
   <!-- ========== VIEWER: opens a film or still from the gallery ========== -->
   <section class="viewer" id="viewer" role="dialog" aria-modal="true" aria-labelledby="vw-title" hidden>
-    <button class="folio-close viewer-close" type="button" data-viewer-close><span>←</span> Gallery</button>
+    <button class="folio-close viewer-close" type="button" data-viewer-close aria-label="Back to Gallery" title="Back"><svg viewBox="0 0 20 14" aria-hidden="true"><path d="M7 1L1 7l6 6M1 7h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="vw-head">
       <div><p class="gi-cat" id="vw-cat"></p>
       <h2 id="vw-title"></h2></div>
@@ -522,7 +522,7 @@
        Placeholder clips: add data-video="YouTube/Vimeo/Instagram-free link or file" or data-src="images/photo.jpg" to each item. -->
   <section class="folio dance" id="dance" role="dialog" aria-modal="true" aria-label="Dance" hidden>
     <div class="folio-inner dn-inner">
-      <button class="folio-close" type="button" data-close><span>←</span> Back</button>
+      <button class="folio-close" type="button" data-close aria-label="Back" title="Back"><svg viewBox="0 0 20 14" aria-hidden="true"><path d="M7 1L1 7l6 6M1 7h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <header class="folio-head">
         <p class="folio-kicker"><span>04</span><span class="dash"></span>Modern Traces</p>
         <h2>Movement</h2>
@@ -621,7 +621,7 @@
   <!-- ========== PORTFOLIO VIEW: UNSEEN PERSPECTIVES = MUSIC ========== -->
   <section class="folio music" id="music" role="dialog" aria-modal="true" aria-label="Music" hidden>
     <div class="folio-inner mu-inner">
-      <button class="folio-close" type="button" data-close><span>←</span> Back</button>
+      <button class="folio-close" type="button" data-close aria-label="Back" title="Back"><svg viewBox="0 0 20 14" aria-hidden="true"><path d="M7 1L1 7l6 6M1 7h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
       <header class="folio-head">
         <p class="folio-kicker"><span>03</span><span class="dash"></span>Unseen Perspectives</p>
         <h2>Music</h2>
@@ -679,7 +679,7 @@
   <!-- ========== RELEASE PAGE: one album / EP / single ========== -->
   <section class="release" id="release" role="dialog" aria-modal="true" aria-labelledby="rl-title" hidden>
     <div class="rl-panel">   <!-- a pop-up window on iPad / desktop, full screen on phones -->
-    <button class="folio-close release-close" type="button" data-release-close><span>←</span> Music</button>
+    <button class="folio-close release-close" type="button" data-release-close aria-label="Back to Music" title="Back"><svg viewBox="0 0 20 14" aria-hidden="true"><path d="M7 1L1 7l6 6M1 7h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="release-inner" id="release-inner"></div>
     <nav class="rd-nav" aria-label="Other releases">
       <button type="button" id="rl-prev"><span class="ar">←</span><span class="lb">Previous</span><span class="t"></span></button>
@@ -920,7 +920,7 @@
 
   <!-- ========== SCRIPT READER: opens when you tap a screenplay ========== -->
   <section class="reader" id="reader" role="dialog" aria-modal="true" aria-labelledby="rd-title" hidden>
-    <button class="folio-close reader-close" type="button" data-reader-close><span>←</span> Screenplays</button>
+    <button class="folio-close reader-close" type="button" data-reader-close aria-label="Back to Screenplays" title="Back"><svg viewBox="0 0 20 14" aria-hidden="true"><path d="M7 1L1 7l6 6M1 7h18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
     <div class="reader-inner">
       <aside class="rd-info">
         <p class="sp-num" id="rd-num"></p>
@@ -965,6 +965,6 @@
     <div class="fs-pages" id="fs-pages"></div>
   </section>
 
-  <script src="script.js?v=20261113120947"></script>
+  <script src="script.js?v=20261113122126"></script>
 </body>
 </html>

@@ -3125,3 +3125,17 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .viewer.vw-story .vw-sbar { background: rgba(200, 116, 42, 0.12); }
 .viewer.vw-story .vw-sbar i { background: linear-gradient(90deg, #a85a1f, #e0913f); }
 .viewer.vw-story .vw-sbar.on i, .viewer.vw-story .vw-sbar:hover i { box-shadow: 0 0 8px rgba(224, 145, 63, 0.6); }
+
+/* full screen: no backdrop blur (it made the Gallery button scroll away with the page instead of staying put) */
+.viewer { background: rgba(3, 2, 2, 0.985); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.viewer .viewer-close, .coll .folio-close, .reader .folio-close, .release .folio-close { z-index: 30; touch-action: manipulation; }
+
+/* back buttons: just an arrow icon, tucked into the left corner */
+.folio-close, .folio .folio-close, .viewer .folio-close, .coll .folio-close, .reader .folio-close, .release .folio-close {
+  left: 18px; width: 44px; height: 44px; padding: 0; display: grid; place-items: center; letter-spacing: 0;
+}
+.folio-close svg { width: 18px; height: 13px; transition: transform 0.25s; }
+.folio-close:hover svg { transform: translateX(-3px); }
+@media (max-width: 640px) {
+  .folio-close, .folio .folio-close, .viewer .folio-close, .coll .folio-close, .reader .folio-close, .release .folio-close { left: 10px; width: 40px; height: 40px; }
+}

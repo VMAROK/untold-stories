@@ -893,6 +893,19 @@ function stepView(d) {
 }
 if (viewer) {
   viewer.querySelector("[data-viewer-close]").addEventListener("click", leaveView);
+  // Back / Gallery buttons answer the moment a finger lifts: iPad otherwise often swallows the tap
+  // (to stop the page's scrolling, or waiting to see if it's a double-tap)
+  document.querySelectorAll(".viewer-close, .coll .folio-close, .reader .folio-close, .release .folio-close, .folio [data-close]").forEach((btn) => {
+    let t0 = null;
+    btn.addEventListener("touchstart", (e) => { const t = e.touches[0]; t0 = { x: t.clientX, y: t.clientY }; }, { passive: true });
+    btn.addEventListener("touchend", (e) => {
+      const t = e.changedTouches[0];
+      if (!t0 || Math.hypot(t.clientX - t0.x, t.clientY - t0.y) > 12) { t0 = null; return; }
+      t0 = null;
+      e.preventDefault();                                    // no second, delayed click
+      btn.click();
+    });
+  });
   $v("vw-prev").addEventListener("click", () => stepView(-1));
   $v("vw-next").addEventListener("click", () => stepView(1));
   document.addEventListener("keydown", (e) => {
