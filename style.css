@@ -3090,3 +3090,14 @@ img, video, .gi-media, .loc-cover, .loc-slide, .ang-tile, .cs-tile, .ge-slide, .
 .vw-set { margin: 22px 0 10px; font-family: var(--body); font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(242, 237, 230, 0.4); }
 .vw-scenes .loc-row-h + .vw-set { margin-top: 4px; }
 .vw-set + .vw-sc-grid { padding-bottom: 6px; }
+
+/* full screen: each setting's scenes scroll sideways in one row (no tall stack, however many scenes) */
+.vw-scenes .vw-sc-grid { display: grid; grid-auto-flow: column; grid-auto-columns: 220px; grid-template-columns: none; gap: 14px;
+  overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x proximity; padding-bottom: 10px;
+  scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.18) transparent; -webkit-overflow-scrolling: touch; }
+.vw-scenes .vw-sc { scroll-snap-align: start; }
+.vw-set-h { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 22px 0 10px; }
+.vw-set-h .vw-set { margin: 0; }
+.vw-set-h .car-nav { margin-left: auto; }
+.vw-scenes .loc-row-h + .vw-set-h { margin-top: 4px; }
+@media (max-width: 640px) { .vw-scenes .vw-sc-grid { grid-auto-columns: 150px; gap: 10px; } }

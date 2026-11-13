@@ -762,13 +762,15 @@ function vwBuildScenes(item) {
   const tmpl = box.querySelector(".vw-sc-grid");
   const order = [...new Set(locs.map((l) => l.dataset.setting || ""))].sort((a, b) => (a === "") - (b === ""));   // settings first, scenes without one last
   const grids = new Map();
-  order.forEach((st) => {
+  order.forEach((st) => {                                       // each setting: a row of scenes that scrolls sideways, with arrows
     const g = tmpl.cloneNode(false);
-    if (order.length > 1 || st) {
-      const h = document.createElement("p"); h.className = "vw-set"; h.textContent = st || "Other";
-      box.appendChild(h);
-    }
-    box.appendChild(g); grids.set(st, g);
+    const h = document.createElement("div"); h.className = "vw-set-h";
+    h.innerHTML = `<p class="vw-set"></p><div class="car-nav"><button type="button" class="car-prev" aria-label="Previous scenes">‹</button><button type="button" class="car-next" aria-label="More scenes">›</button></div>`;
+    h.querySelector(".vw-set").textContent = order.length > 1 || st ? st || "Other" : "";
+    const step = (d) => g.scrollBy({ left: d * g.clientWidth * 0.8, behavior: "smooth" });
+    h.querySelector(".car-prev").addEventListener("click", (e) => { e.stopPropagation(); step(-1); });
+    h.querySelector(".car-next").addEventListener("click", (e) => { e.stopPropagation(); step(1); });
+    box.appendChild(h); box.appendChild(g); grids.set(st, g);
   });
   tmpl.remove();
   locs.forEach((l) => {
